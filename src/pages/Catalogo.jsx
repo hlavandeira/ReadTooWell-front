@@ -94,7 +94,7 @@ const Catalogo = () => {
                     }}
                 >
                     {libros.map((libro) => (
-                        <Grid item key={libro.id}>
+                        <Grid key={libro.id}>
                             <BookCard libro={libro} />
                         </Grid>
                     ))}

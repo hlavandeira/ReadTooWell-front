@@ -38,7 +38,7 @@ const BookCard = ({ libro }) => {
                             objectFit: "cover",
                         }}
                         onError={(e) => {
-                            e.target.src = "/placeholder-book-cover.jpg";
+                            e.target.src = "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743761214/readtoowell/covers/error_s7dry1.jpg";
                         }}
                     />
                 </Box>
