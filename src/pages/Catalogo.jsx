@@ -11,13 +11,17 @@ import {
     CircularProgress,
     Pagination
 } from "@mui/material";
+import { useSearchParams } from 'react-router-dom';
+import BookCard from '../components/BookCard.jsx'
 
 const Catalogo = () => {
     const [libros, setLibros] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const itemsPerPage = 30;
+
+    const [searchParams, setSearchParams] = useSearchParams();
+    const page = parseInt(searchParams.get('page')) || 1;
 
     useEffect(() => {
         const fetchLibros = async () => {
@@ -42,7 +46,7 @@ const Catalogo = () => {
     }, [page]);
 
     const handlePageChange = (event, newPage) => {
-        setPage(newPage);
+        setSearchParams({ page: newPage });
     };
 
     if (loading) {
@@ -63,7 +67,20 @@ const Catalogo = () => {
 
     return (
         <Container maxWidth="lg" sx={{ py: 4 }}>
-            <Typography variant="h3" component="h1" gutterBottom align="center">
+            <Typography
+                variant="h3"
+                component="h1"
+                gutterBottom
+                align="center"
+                sx={{
+                    fontFamily: '"Domine", serif',
+                    fontOpticalSizing: 'auto',
+                    fontWeight: 600,
+                    fontStyle: 'normal',
+                    letterSpacing: '1px',
+                    color: '#432818'
+                }}
+            >
                 Catálogo de libros
             </Typography>
 
@@ -77,61 +94,8 @@ const Catalogo = () => {
                     }}
                 >
                     {libros.map((libro) => (
-                        <Grid item key={libro.id} xs={12} sm={6} md={4} lg={3}>
-                            <Card
-                                sx={{
-                                    width: 200,
-                                    height: "100%",
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    transition: "transform 0.3s",
-                                    "&:hover": {
-                                        transform: "scale(1.03)",
-                                        boxShadow: 6,
-                                    },
-                                }}
-                            >
-                                <Box sx={{
-                                    width: "100%",
-                                    height: 300,
-                                    overflow: "hidden",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center"
-                                }}>
-                                    <CardMedia
-                                        component="img"
-                                        image={libro.cover}
-                                        alt={`Portada de ${libro.title}`}
-                                        sx={{
-                                            width: "100%",
-                                            height: "100%",
-                                            objectFit: "cover",
-                                        }}
-                                        onError={(e) => {
-                                            e.target.src = "/placeholder-book-cover.jpg";
-                                        }}
-                                    />
-                                </Box>
-                                <CardContent>
-                                    <Typography
-                                        gutterBottom
-                                        variant="h6"
-                                        component="h2"
-                                        noWrap
-                                        sx={{ textAlign: "center" }}
-                                    >
-                                        {libro.title}
-                                    </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        color="text.secondary"
-                                        sx={{ textAlign: "center" }}
-                                    >
-                                        {libro.author}
-                                    </Typography>
-                                </CardContent>
-                            </Card>
+                        <Grid item key={libro.id}>
+                            <BookCard libro={libro} />
                         </Grid>
                     ))}
                 </Grid>
