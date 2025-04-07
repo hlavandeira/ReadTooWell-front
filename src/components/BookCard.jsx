@@ -1,12 +1,12 @@
 import React from 'react';
-import { Card, CardMedia, CardContent, Typography, Box } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import {Card, CardMedia, CardContent, Typography, Box} from '@mui/material';
+import {useNavigate} from 'react-router-dom';
 
-const BookCard = ({ libro }) => {
+const BookCard = ({libro}) => {
     const navigate = useNavigate();
 
     return (
-        <Box onClick={() => navigate(`/detalles/${libro.id}`)} sx={{ cursor: 'pointer' }}>
+        <Box onClick={() => navigate(`/detalles/${libro.id}`)} sx={{cursor: 'pointer'}}>
             <Card
                 sx={{
                     width: 200,

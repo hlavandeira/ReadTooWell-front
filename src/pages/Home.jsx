@@ -1,11 +1,39 @@
-import { Box, Typography, Button, useTheme } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../AuthContext';
+import {Box, Typography, Button, useTheme, TextField, InputAdornment, Grid, Paper} from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import {useNavigate} from 'react-router-dom';
+import {useAuth} from '../context/AuthContext.jsx';
 
 const Home = () => {
-    const { role, token, name } = useAuth();
+    const {role, token, name} = useAuth();
     const theme = useTheme();
     const navigate = useNavigate();
+
+    const actionsUser = [
+        {
+            label: 'Mi biblioteca',
+            icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743863885/readtoowell/iconos/Biblioteca_sinfondo_blanco_dw69k5.png",
+            path: '/biblioteca',
+            color: '#432818'
+        },
+        {
+            label: 'Objetivos',
+            icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743864520/readtoowell/iconos/v1olxvdjhbpfagohyv7c.png",
+            path: '/objetivos',
+            color: '#8B0000'
+        },
+        {
+            label: 'Recomendaciones',
+            icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743863885/readtoowell/iconos/Recom_sinfondo_blanco_avcur7.png",
+            path: '/recomendaciones',
+            color: '#876C40'
+        },
+        {
+            label: 'Explorar novedades',
+            icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743863885/readtoowell/iconos/Buscar_sinfondo_blanco_xbjtvs.png",
+            path: '/catalogo',
+            color: '#2E5266'
+        }
+    ];
 
     // Página para usuarios NO autenticados
     if (!token) {
@@ -17,7 +45,7 @@ const Home = () => {
                     flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    backgroundImage: 'url(https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743594361/readtoowell/other/fondo4_farnjf.jpg)',
+                    backgroundImage: 'url(https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743798070/readtoowell/other/background_lrqby8.jpg)',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     textAlign: 'center',
@@ -35,16 +63,16 @@ const Home = () => {
                     },
                 }}
             >
-                <Box sx={{ position: 'relative', zIndex: 2, maxWidth: '800px', px: 4 }}>
+                <Box sx={{position: 'relative', zIndex: 2, maxWidth: '800px', px: 4}}>
                     <img
                         src="https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743519261/readtoowell/iconos/LogoImagen_blanco_r72r75.png"
                         alt="ReadToWell Logo"
-                        style={{ height: '120px', marginBottom: theme.spacing(4) }}
+                        style={{height: '120px', marginBottom: theme.spacing(4)}}
                     />
-                    <Typography variant="h5" component="h2" sx={{ fontStyle: 'italic', mb: 5 }}>
+                    <Typography variant="h5" component="h2" sx={{fontStyle: 'italic', mb: 5}}>
                         Todo sobre tus libros, en un solo lugar
                     </Typography>
-                    <Box sx={{ '& > *:not(:last-child)': { mr: 2 } }}>
+                    <Box sx={{'& > *:not(:last-child)': {mr: 2}}}>
                         <Button
                             variant="contained"
                             size="large"
@@ -54,7 +82,7 @@ const Home = () => {
                                 py: 1.5,
                                 borderRadius: '8px',
                                 backgroundColor: '#432818',
-                                '&:hover': { backgroundColor: '#BB9457' }
+                                '&:hover': {backgroundColor: '#BB9457'}
                             }}
                         >
                             Comenzar
@@ -70,7 +98,7 @@ const Home = () => {
                                 borderWidth: '2px',
                                 color: 'white',
                                 borderColor: '#432818',
-                                '&:hover': { borderColor: '#BB9457' }
+                                '&:hover': {borderColor: '#BB9457'}
                             }}
                         >
                             Iniciar sesión
@@ -84,33 +112,94 @@ const Home = () => {
     // Página para usuarios autenticados
     return (
         <Box sx={{
-            p: 4,
-            backgroundSize: 'cover',
-            minHeight: '100vh',
-            color: 'white'
+            p: {xs: 2, sm: 4},
+            maxWidth: '1200px',
+            mx: 'auto'
         }}>
-            <Typography
-                variant="h3"
-                component="h1"
-                gutterBottom
-                sx={{
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
-                    fontWeight: 700
-                }}
-            >
-                ¡Hola, {name}!
-            </Typography>
+            {/* Barra de búsqueda */}
+            <Box sx={{
+                mb: 4,
+                textAlign: 'center'
+            }}>
+                <Typography
+                    variant="h3"
+                    component="h1"
+                    sx={{
+                        fontWeight: 700,
+                        mb: 3,
+                        color: '#432818',
+                        fontSize: {xs: '2rem', sm: '2.5rem'}
+                    }}
+                >
+                    ¡Hola, {name}!
+                </Typography>
 
-            <Button
-                variant="contained"
-                onClick={() => navigate(role === 0 ? '/mis-libros' : role === 1 ? '/gestion' : '/admin')}
-                sx={{
-                    backgroundColor: '#8B0000',
-                    '&:hover': { backgroundColor: '#A52A2A' }
-                }}
-            >
-                Ir a {role === 0 ? 'mis libros' : role === 1 ? 'gestión' : 'panel admin'}
-            </Button>
+                {/* Barra de búsqueda */}
+                <TextField
+                    fullWidth
+                    placeholder="Buscar libros, autores, colecciones..."
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <SearchIcon color="action"/>
+                            </InputAdornment>
+                        ),
+                    }}
+                    sx={{
+                        maxWidth: '600px',
+                        mx: 'auto',
+                        '& .MuiOutlinedInput-root': {
+                            borderRadius: '50px',
+                            backgroundColor: 'background.paper',
+                            boxShadow: 1
+                        }
+                    }}
+                />
+            </Box>
+
+            {/* Botones */}
+            <Box sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: 3,
+                justifyContent: 'center'
+            }}>
+                {actionsUser.map((action) => (
+                    <Box key={action.label} sx={{
+                        width: {xs: '100%', sm: 'calc(50% - 12px)'},
+                        maxWidth: '400px',
+                        minWidth: '280px'
+                    }}>
+                        <Button
+                            fullWidth
+                            onClick={() => navigate(action.path)}
+                            sx={{
+                                justifyContent: 'flex-start',
+                                pl: 2,
+                                py: 1.5,
+                                borderRadius: '12px',
+                                bgcolor: action.color,
+                                color: 'white',
+                                fontSize: '1.1rem',
+                                '&:hover': {bgcolor: `${action.color}E6`},
+                                minHeight: '100px',
+                                boxShadow: 2,
+                                textTransform: 'none'
+                            }}
+                        >
+                            <Box
+                                component="img"
+                                src={action.icon}
+                                sx={{width: 90, height: 90}}
+                            />
+                            {action.label}
+                        </Button>
+                    </Box>
+                ))}
+            </Box>
+
+            {/* Sección opcional: "Continuar leyendo" */}
+            {/* Aquí podrías añadir libros en progreso si los tienes */}
         </Box>
     );
 };

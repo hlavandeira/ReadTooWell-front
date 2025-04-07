@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {useState} from "react";
+import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import {
     Box,
@@ -12,8 +12,8 @@ import {
     Paper,
     useTheme
 } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Link } from 'react-router-dom';
+import {createTheme, ThemeProvider} from '@mui/material/styles';
+import {Link} from 'react-router-dom';
 import ErrorIcon from '@mui/icons-material/Error';
 
 const theme = createTheme({
@@ -122,20 +122,20 @@ const Register = () => {
 
     return (
         <ThemeProvider theme={theme}>
-            <CssBaseline />
+            <CssBaseline/>
             <Box
                 sx={{
                     minHeight: '100vh',
                     display: 'flex',
                     alignItems: 'flex-start',
                     justifyContent: 'center',
-                    backgroundImage: 'url(https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743594361/readtoowell/other/fondo4_farnjf.jpg)',
+                    backgroundImage: 'url(https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743798070/readtoowell/other/background_lrqby8.jpg)',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     pt: 2,
                 }}
             >
-                <Paper elevation={6} sx={{ mt: 8 }}>
+                <Paper elevation={6} sx={{mt: 8}}>
                     <Card sx={{
                         width: 400,
                         p: 3,
@@ -147,7 +147,7 @@ const Register = () => {
                                 variant="h4"
                                 align="center"
                                 gutterBottom
-                                sx={{ mb: 4 }}
+                                sx={{mb: 4}}
                             >
                                 Únete a ReadTooWell
                             </Typography>
@@ -161,7 +161,7 @@ const Register = () => {
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
                                     required
-                                    sx={{ mb: 3 }}
+                                    sx={{mb: 3}}
                                     InputProps={{
                                         style: {
                                             borderRadius: 8,
@@ -180,7 +180,7 @@ const Register = () => {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
-                                    sx={{ mb: 3 }}
+                                    sx={{mb: 3}}
                                     InputProps={{
                                         style: {
                                             borderRadius: 8,
@@ -199,7 +199,7 @@ const Register = () => {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
-                                    sx={{ mb: 3 }}
+                                    sx={{mb: 3}}
                                     InputProps={{
                                         style: {
                                             borderRadius: 8,
@@ -218,7 +218,7 @@ const Register = () => {
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                     required
-                                    sx={{ mb: 3 }}
+                                    sx={{mb: 3}}
                                     InputProps={{
                                         style: {
                                             borderRadius: 8,
@@ -254,7 +254,7 @@ const Register = () => {
                                     mt: 1,
                                     mb: 2
                                 }}>
-                                    <Typography variant="body2" sx={{ mr: 1 }}>
+                                    <Typography variant="body2" sx={{mr: 1}}>
                                         ¿Tienes una cuenta?
                                     </Typography>
                                     <Link
@@ -282,7 +282,7 @@ const Register = () => {
                                             justifyContent: 'center'
                                         }}
                                     >
-                                        <ErrorIcon fontSize="small" sx={{ mr: 1 }} />
+                                        <ErrorIcon fontSize="small" sx={{mr: 1}}/>
                                         {generalError}
                                     </Typography>
                                 )}

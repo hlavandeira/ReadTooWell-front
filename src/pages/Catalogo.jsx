@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import {
     Container,
@@ -11,7 +11,7 @@ import {
     CircularProgress,
     Pagination
 } from "@mui/material";
-import { useSearchParams } from 'react-router-dom';
+import {useSearchParams} from 'react-router-dom';
 import BookCard from '../components/BookCard.jsx'
 
 const Catalogo = () => {
@@ -46,13 +46,13 @@ const Catalogo = () => {
     }, [page]);
 
     const handlePageChange = (event, newPage) => {
-        setSearchParams({ page: newPage });
+        setSearchParams({page: newPage});
     };
 
     if (loading) {
         return (
             <Box display="flex" justifyContent="center" mt={4}>
-                <CircularProgress />
+                <CircularProgress/>
             </Box>
         );
     }
@@ -66,7 +66,7 @@ const Catalogo = () => {
     }
 
     return (
-        <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Container maxWidth="lg" sx={{py: 4}}>
             <Typography
                 variant="h3"
                 component="h1"
@@ -95,7 +95,7 @@ const Catalogo = () => {
                 >
                     {libros.map((libro) => (
                         <Grid key={libro.id}>
-                            <BookCard libro={libro} />
+                            <BookCard libro={libro}/>
                         </Grid>
                     ))}
                 </Grid>
@@ -109,7 +109,7 @@ const Catalogo = () => {
                     color="primary"
                     showFirstButton
                     showLastButton
-                    sx={{ '& .MuiPaginationItem-root': { fontSize: '1rem' } }}
+                    sx={{'& .MuiPaginationItem-root': {fontSize: '1rem'}}}
                 />
             </Box>
         </Container>

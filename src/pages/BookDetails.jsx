@@ -1,17 +1,25 @@
-import { Box, Typography, Button, CardMedia, CircularProgress, Rating, Paper, Chip,
-    Grid, Divider, TextField } from '@mui/material';
-import { useParams } from 'react-router-dom';
-import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from 'react';
+import {Navigate, useParams} from 'react-router-dom';
+import {useNavigate} from "react-router-dom";
+import {useState, useEffect} from 'react';
 import axios from 'axios';
+import {
+    Box, Typography, Button, CardMedia, CircularProgress, Rating, Paper, Chip,
+    Grid, Divider, TextField, Dialog, DialogTitle, DialogContent, DialogActions,
+    FormControl, RadioGroup, FormControlLabel, Radio
+} from '@mui/material';
 
 const BookDetails = () => {
-    const { id } = useParams();
+    const {id} = useParams();
     const navigate = useNavigate();
     const [details, setDetails] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    const [modalOpen, setModalOpen] = useState(false);
+    const [selectedStatus, setSelectedStatus] = useState(0);
+
     const [userReview, setUserReview] = useState('');
+    const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
+    const [reviewText, setReviewText] = useState(userReview || '');
 
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString('es-ES', {
@@ -21,9 +29,96 @@ const BookDetails = () => {
         });
     };
 
-    const handleSaveReview = () => {
-        if (!details.saved) return;
-        console.log('Reseña guardada:', userReview); //TODO
+    const handleSaveToLibrary = async () => {
+        try {
+            const token = localStorage.getItem('token');
+
+            const response = await axios.post(
+                `http://localhost:8080/biblioteca/${id}`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            setDetails(prev => ({
+                ...prev,
+                saved: true,
+                readingStatus: response.data.readingStatus
+            }));
+        } catch (error) {
+            console.error("Error al guardar el libro: ", error);
+        }
+    };
+
+    const handleSaveStatus = async () => {
+        try {
+            const token = localStorage.getItem('token');
+
+            await axios.put(`http://localhost:8080/biblioteca/${id}/estado?estado=${selectedStatus}`, null, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            setDetails(prev => ({
+                ...prev,
+                readingStatus: selectedStatus
+            }));
+
+            setModalOpen(false);
+        } catch (error) {
+            console.error("Error al actualizar el estado de lectura: ", error);
+        }
+    };
+
+    const handleSaveReview = async (reviewText) => {
+        try {
+            const token = localStorage.getItem('token');
+
+            const response = await axios.put(
+                `http://localhost:8080/biblioteca/${id}/escribir-reseña`,
+                null,
+                {
+                    params: {review: reviewText},
+                    headers: {Authorization: `Bearer ${token}`},
+                }
+            );
+
+            setUserReview(reviewText);
+            setReviewText(reviewText);
+            setDetails((prevDetails) => ({
+                ...prevDetails,
+                review: reviewText,
+            }));
+        } catch (error) {
+            console.error("Error al guardar la reseña:", error);
+        }
+    };
+
+    const handleSaveRating = async (newValue) => {
+        try {
+            const token = localStorage.getItem('token');
+
+            const response = await axios.put(
+                `http://localhost:8080/biblioteca/${details.book.id}/calificar`,
+                null,
+                {
+                    params: { calificacion: newValue },
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+
+            setDetails(prev => ({
+                ...prev,
+                rating: response.data.libraryBook.rating,
+                averageRating: response.data.averageRating
+            }));
+        } catch (error) {
+            console.error("Error al guardar la valoración:", error);
+        }
     };
 
     useEffect(() => {
@@ -31,24 +126,17 @@ const BookDetails = () => {
             try {
                 const token = localStorage.getItem('token');
 
-                if (!token) {
-                    throw new Error('No token found');
-                }
-
                 const response = await axios.get(`http://localhost:8080/libros/${id}/detalles`, {
                     headers: {
-                        'Authorization': 'Bearer '+token
+                        'Authorization': 'Bearer ' + token
                     }
                 });
 
-                setUserReview(response.data.review);
+                setUserReview(response.data.review === null ? '' : response.data.review);
                 setDetails(response.data);
+                setSelectedStatus(response.data.readingStatus);
             } catch (error) {
-                if (error.response?.status === 401 || error.message.includes('token')
-                        || error.response?.status === 403) {
-                    localStorage.removeItem('token');
-                    navigate('/inicio-sesion');
-                }
+                return <Navigate to="/inicio-sesion" replace/>;
             } finally {
                 setLoading(false);
             }
@@ -57,21 +145,17 @@ const BookDetails = () => {
         fetchBookDetails();
     }, [id, navigate]);
 
-  if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" mt={4}>
-        <CircularProgress />
-      </Box>
-    );
-  }
+    if (loading) {
+        return (
+            <Box display="flex" justifyContent="center" mt={4}>
+                <CircularProgress/>
+            </Box>
+        );
+    }
 
-  if (!details) {
-    return (
-      <Typography variant="h6" align="center" mt={4}>
-        Libro no encontrado
-      </Typography>
-    );
-  }
+    if (!details) {
+        return <Navigate to="/catalogo" replace/>;
+    }
 
     return (
         <Box sx={{
@@ -80,7 +164,7 @@ const BookDetails = () => {
             p: 3
         }}>
             <Grid container spacing={6}>
-                {/* Columna izquierda (contenido existente sin cambios) */}
+                {/* Columna izquierda */}
                 <Grid>
                     <Box sx={{
                         display: 'flex',
@@ -89,14 +173,14 @@ const BookDetails = () => {
                         gap: 0.5,
                         position: 'sticky',
                         top: 2,
-                        width: { xs: '100%', sm: '300px' }
+                        width: {xs: '100%', sm: '300px'}
                     }}>
                         {/* Portada del libro */}
                         <Box
                             sx={{
-                                width: { xs: '200px', sm: '300px' },
-                                height: { xs: '300px', sm: '450px' },
-                                mt: { xs: 2, sm: 3.5 },
+                                width: {xs: '200px', sm: '300px'},
+                                height: {xs: '300px', sm: '450px'},
+                                mt: {xs: 2, sm: 3.5},
                                 mb: 0.5,
                                 boxShadow: 3,
                                 borderRadius: 1,
@@ -121,34 +205,34 @@ const BookDetails = () => {
                         {/* Título y autor */}
                         <Typography variant="h5" component="h1" sx={{
                             mb: 0.5,
-                            width: { xs: '90%', sm: '300px' },
+                            width: {xs: '90%', sm: '300px'},
                             maxWidth: '300px',
                             textAlign: 'center',
                             wordWrap: 'break-word',
                             whiteSpace: 'normal',
-                            fontSize: { xs: '1.25rem', sm: '1.5rem' }
-                        }} >
+                            fontSize: {xs: '1.25rem', sm: '1.5rem'}
+                        }}>
                             {details.book.title}
                         </Typography>
                         <Typography variant="subtitle1" color="text.secondary" sx={{
                             mt: 0,
                             mb: 0.5,
-                            width: { xs: '90%', sm: '300px' },
+                            width: {xs: '90%', sm: '300px'},
                             maxWidth: '300px',
                             textAlign: 'center',
                             whiteSpace: 'normal',
-                            fontSize: { xs: '0.875rem', sm: '1rem' }
-                        }} >
+                            fontSize: {xs: '0.875rem', sm: '1rem'}
+                        }}>
                             {details.book.author}
                         </Typography>
 
                         {/* Colección */}
                         {details.book.collectionId && (
                             <Typography variant="subtitle2" color="text.secondary" gutterBottom sx={{
-                                width: { xs: '90%', sm: '300px' },
+                                width: {xs: '90%', sm: '300px'},
                                 maxWidth: '300px',
                                 textAlign: 'center',
-                                fontSize: { xs: '0.75rem', sm: '0.875rem' }
+                                fontSize: {xs: '0.75rem', sm: '0.875rem'}
                             }}>
                                 #{details.book.numCollection} {details.collectionName}
                             </Typography>
@@ -170,27 +254,30 @@ const BookDetails = () => {
                                 precision={0.5}
                                 size="large"
                                 sx={{
-                                    '& .MuiRating-iconFilled': {
-                                        color: '#FFD700',
-                                    },
-                                    '& .MuiRating-iconHover': {
-                                        color: '#FFC107',
-                                    }
+                                    '& .MuiRating-iconFilled': { color: '#FFD700' },
+                                    '& .MuiRating-iconHover': { color: '#FFC107' },
+                                    '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' }
                                 }}
-                                onChange={(event, newValue) => {
-                                    handleSaveRating(newValue);
-                                }}
+                                onChange={(event, newValue) => handleSaveRating(newValue)}
                             />
                         </Box>
 
                         {/* Botón para guardar / cambiar estado */}
                         <Button
                             variant="contained"
+                            onClick={() => {
+                                if (details.saved) {
+                                    setSelectedStatus(details.readingStatus ?? 0);
+                                    setModalOpen(true);
+                                } else {
+                                    handleSaveToLibrary();
+                                }
+                            }}
                             sx={{
                                 mt: 1,
-                                px: { xs: 3, sm: 4 },
+                                px: {xs: 3, sm: 4},
                                 py: 1,
-                                width: { xs: '90%', sm: 'auto' },
+                                width: {xs: '90%', sm: 'auto'},
                                 maxWidth: '300px',
                                 borderRadius: 2,
                                 backgroundColor: details.saved ? '#8B0000' : '#432818',
@@ -198,7 +285,7 @@ const BookDetails = () => {
                                     backgroundColor: details.saved ? '#A52A2A' : '#BB9457'
                                 },
                                 textTransform: 'none',
-                                fontSize: { xs: '0.875rem', sm: '1rem' }
+                                fontSize: {xs: '0.875rem', sm: '1rem'}
                             }}
                         >
                             {details.saved ? (
@@ -211,12 +298,120 @@ const BookDetails = () => {
                                 }[details.readingStatus] || 'Guardado'
                             ) : 'Guardar'}
                         </Button>
+
+                        {/* Diálogo para el cambio de estado de lectura */}
+                        <Dialog
+                            open={modalOpen}
+                            onClose={() => setModalOpen(false)}
+                            PaperProps={{
+                                sx: {
+                                    borderRadius: '12px',
+                                    minWidth: '350px',
+                                    background: '#f5f5f5'
+                                }
+                            }}
+                        >
+                            <DialogTitle
+                                sx={{
+                                    backgroundColor: '#432818',
+                                    color: 'white',
+                                    fontWeight: 'bold',
+                                    padding: '16px 24px'
+                                }}
+                            >
+                                Cambiar estado de lectura
+                            </DialogTitle>
+
+                            <DialogContent sx={{padding: '40px 24px 16px', pt: 10}}>
+                                <FormControl component="fieldset" fullWidth>
+                                    <RadioGroup
+                                        value={selectedStatus}
+                                        onChange={(e) => setSelectedStatus(parseInt(e.target.value))}
+                                        sx={{gap: '8px', pt: '10px'}}
+                                    >
+                                        {[
+                                            {value: 0, label: 'Pendiente', color: '#6c757d'},
+                                            {value: 1, label: 'Leyendo', color: '#4C88A8'},
+                                            {value: 2, label: 'Leído', color: '#1C945C'},
+                                            {value: 3, label: 'Pausado', color: '#DEA807'},
+                                            {value: 4, label: 'Abandonado', color: '#CC4D3D'}
+                                        ].map((item) => (
+                                            <FormControlLabel
+                                                key={item.value}
+                                                value={item.value}
+                                                control={
+                                                    <Radio
+                                                        sx={{
+                                                            color: item.color,
+                                                            '&.Mui-checked': {color: item.color}
+                                                        }}
+                                                    />
+                                                }
+                                                label={
+                                                    <Typography
+                                                        variant="body1"
+                                                        sx={{
+                                                            fontWeight: 500,
+                                                            color: selectedStatus === item.value ? item.color : 'inherit'
+                                                        }}
+                                                    >
+                                                        {item.label}
+                                                    </Typography>
+                                                }
+                                                sx={{
+                                                    margin: 0,
+                                                    padding: '8px 12px',
+                                                    pb: '3px',
+                                                    borderRadius: '8px',
+                                                    backgroundColor: selectedStatus === item.value ? `${item.color}10` : 'transparent',
+                                                    '&:hover': {
+                                                        backgroundColor: `${item.color}15`
+                                                    }
+                                                }}
+                                            />
+                                        ))}
+                                    </RadioGroup>
+                                </FormControl>
+                            </DialogContent>
+
+                            <DialogActions sx={{padding: '16px 24px', pt: '2px'}}>
+                                <Button
+                                    onClick={() => setModalOpen(false)}
+                                    sx={{
+                                        textTransform: 'none',
+                                        fontWeight: '500',
+                                        color: '#6c757d',
+                                        '&:hover': {
+                                            backgroundColor: '#f0f0f0'
+                                        }
+                                    }}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    onClick={handleSaveStatus}
+                                    variant="contained"
+                                    sx={{
+                                        textTransform: 'none',
+                                        fontWeight: '500',
+                                        backgroundColor: '#432818',
+                                        borderRadius: '8px',
+                                        padding: '8px 16px',
+                                        '&:hover': {
+                                            backgroundColor: '#5a3a23'
+                                        }
+                                    }}
+                                >
+                                    Guardar
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
                     </Box>
                 </Grid>
 
                 {/* Columna derecha */}
                 <Grid>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                    <Box sx={{display: 'flex', flexDirection: 'column', gap: 3}}>
 
                         {/* Géneros */}
                         <Box sx={{
@@ -264,7 +459,7 @@ const BookDetails = () => {
                                 mx: 'auto'
                             }}
                         >
-                            <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
+                            <Typography variant="h5" gutterBottom sx={{fontWeight: 'bold'}}>
                                 Sinopsis
                             </Typography>
                             <Typography
@@ -288,11 +483,11 @@ const BookDetails = () => {
                                 backgroundColor: 'background.paper'
                             }}
                         >
-                            <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
+                            <Typography variant="h5" gutterBottom sx={{fontWeight: 'bold', mb: 2}}>
                                 Detalles del libro
                             </Typography>
 
-                            {/* Nueva sección de puntuación media */}
+                            {/* Valoración media */}
                             <Box sx={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -300,25 +495,26 @@ const BookDetails = () => {
                                 mb: 3,
                                 p: 1.5,
                                 backgroundColor: 'action.hover',
-                                borderRadius: 1
+                                borderRadius: 1,
+                                flexWrap: 'wrap'
                             }}>
                                 <Typography variant="subtitle1" component="span">
                                     Valoración media:
                                 </Typography>
-                                <Rating
-                                    value={details.averageRating || 0}
-                                    precision={0.1}
-                                    readOnly
-                                    size="medium"
-                                    sx={{
-                                        '& .MuiRating-iconFilled': {
-                                            color: '#FFD700',
-                                        }
-                                    }}
-                                />
-                                <Typography variant="h6" component="span">
-                                    {details.averageRating?.toFixed(2) || 'N/A'}
-                                </Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <Rating
+                                        value={details.averageRating || 0}
+                                        precision={0.1}
+                                        readOnly
+                                        size="medium"
+                                        sx={{
+                                            '& .MuiRating-iconFilled': { color: '#FFD700' }
+                                        }}
+                                    />
+                                    <Typography variant="h6" component="span">
+                                        {details.averageRating ? details.averageRating.toFixed(2) : 'N/A'}
+                                    </Typography>
+                                </Box>
                             </Box>
 
                             <Grid container spacing={6}>
@@ -368,8 +564,8 @@ const BookDetails = () => {
             </Grid>
 
             {/* Sección de reseñas */}
-            <Box sx={{ width: '100%', mt: 4 }}>
-                <Divider sx={{ my: 4, borderColor: 'divider' }} />
+            <Box sx={{width: '100%', mt: 4}}>
+                <Divider sx={{my: 4, borderColor: 'divider'}}/>
 
                 {/* Reseña y fechas del usuario */}
                 <Box sx={{
@@ -380,46 +576,50 @@ const BookDetails = () => {
                     borderRadius: 2,
                     backgroundColor: 'background.paper'
                 }}>
-                    <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
-                        Tu reseña
-                    </Typography>
+                    <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3}}>
+                        <Typography variant="h5" sx={{fontWeight: 'bold'}}>
+                            Tu reseña
+                        </Typography>
 
-                    {/* Editor de reseña */}
-                    <TextField
-                        fullWidth
-                        multiline
-                        disabled={!details.saved}
-                        rows={4}
-                        value={userReview}
-                        onChange={(e) => setUserReview(e.target.value)}
-                        placeholder="Escribe tu reseña sobre este libro..."
-                        variant="outlined"
-                        sx={{ mb: 3 }}
-                    />
-
-                    {/* Botón para guardar */}
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                         <Button
                             variant="contained"
-                            onClick={handleSaveReview}
+                            onClick={() => setReviewDialogOpen(true)}
                             disabled={!details.saved}
                             sx={{
                                 backgroundColor: '#432818',
-                                '&:hover': { backgroundColor: '#5a3a23'},
+                                '&:hover': {backgroundColor: '#5a3a23'},
                                 textTransform: 'none'
                             }}
                         >
-                            Guardar reseña
+                            {userReview ? 'Editar reseña' : 'Añadir reseña'}
                         </Button>
                     </Box>
 
+                    {/* Visualización de la reseña existente */}
+                    {userReview ? (
+                        <Typography variant="body1" sx={{
+                            whiteSpace: 'pre-line',
+                            lineHeight: 1.6,
+                            p: 2,
+                            backgroundColor: 'action.hover',
+                            borderRadius: 1,
+                            mb: 3
+                        }}>
+                            {userReview}
+                        </Typography>
+                    ) : (
+                        <Typography variant="body2" color="text.secondary" sx={{mb: 3}}>
+                            No has escrito ninguna reseña todavía.
+                        </Typography>
+                    )}
+
                     {/* Fechas de lectura */}
-                    {(details.dateStart || details.DateFinish) && (
-                        <Box sx={{ mt: 3, pt: 2, borderTop: '1px solid', borderColor: 'divider' }}>
-                            <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                    {(details.dateStart || details.dateFinish) && (
+                        <Box sx={{mt: 3, pt: 2, borderTop: '1px solid', borderColor: 'divider'}}>
+                            <Typography variant="subtitle1" sx={{mb: 1}}>
                                 Tu última lectura:
                             </Typography>
-                            <Box sx={{ display: 'flex', gap: 3 }}>
+                            <Box sx={{display: 'flex', gap: 3}}>
                                 {details.dateStart && (
                                     <Box>
                                         <Typography variant="subtitle2" color="text.secondary">
@@ -443,6 +643,51 @@ const BookDetails = () => {
                             </Box>
                         </Box>
                     )}
+
+                    {/* Diálogo para editar reseña */}
+                    <Dialog open={reviewDialogOpen} onClose={() => setReviewDialogOpen(false)}>
+                        <DialogTitle sx={{
+                            backgroundColor: '#432818',
+                            color: 'white',
+                            fontWeight: 'bold'
+                        }}>
+                            {userReview.trim() === '' ? 'Añadir reseña' : 'Editar reseña'}
+                        </DialogTitle>
+                        <DialogContent sx={{p: 3, pb: 1}}>
+                            <TextField
+                                fullWidth
+                                multiline
+                                rows={6}
+                                value={reviewText}
+                                onChange={(e) => setReviewText(e.target.value)}
+                                placeholder="Escribe tu reseña sobre este libro..."
+                                variant="outlined"
+                                sx={{minWidth: '400px', pt: 2}}
+                            />
+                        </DialogContent>
+                        <DialogActions sx={{p: 2, pt: 0.5}}>
+                            <Button
+                                onClick={() => setReviewDialogOpen(false)}
+                                sx={{color: 'text.secondary', textTransform: 'none'}}
+                            >
+                                Cancelar
+                            </Button>
+                            <Button
+                                onClick={() => {
+                                    handleSaveReview(reviewText);
+                                    setReviewDialogOpen(false);
+                                }}
+                                variant="contained"
+                                sx={{
+                                    backgroundColor: '#432818',
+                                    '&:hover': {backgroundColor: '#5a3a23'},
+                                    textTransform: 'none'
+                                }}
+                            >
+                                Guardar
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
                 </Box>
 
                 {details.otherUsersReviews?.length > 0 && (
@@ -456,7 +701,7 @@ const BookDetails = () => {
                         flexDirection: 'column',
                         alignItems: 'center'
                     }}>
-                        <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
+                        <Typography variant="h5" gutterBottom sx={{fontWeight: 'bold', mb: 2}}>
                             Reseñas de la comunidad
                         </Typography>
 
@@ -489,11 +734,11 @@ const BookDetails = () => {
                                         alignItems: 'center',
                                         mb: 1
                                     }}>
-                                        <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
+                                        <Typography variant="subtitle1" sx={{fontWeight: 500}}>
                                             {review.profileName} (@{review.username})
                                         </Typography>
 
-                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <Box sx={{display: 'flex', alignItems: 'center'}}>
                                             <Rating
                                                 value={review.rating}
                                                 size="small"
@@ -524,9 +769,7 @@ const BookDetails = () => {
                         </Box>
                     </Box>
                 )}
-
             </Box>
-
         </Box>
     );
 };

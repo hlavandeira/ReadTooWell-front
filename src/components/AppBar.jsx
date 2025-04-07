@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../AuthContext';
+import {useState, useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {useAuth} from '../context/AuthContext.jsx';
 import {
     AppBar,
     Box,
@@ -22,7 +22,7 @@ import {
 } from '@mui/icons-material';
 
 export default function DynamicAppBar() {
-    const { role, logout } = useAuth();
+    const {role, logout} = useAuth();
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
 
@@ -38,19 +38,19 @@ export default function DynamicAppBar() {
     // AppBar para usuarios NO autenticados
     if (role === null) {
         return (
-            <Box sx={{ flexGrow: 1 }}>
-                <AppBar position="fixed" sx={{ backgroundColor: '#8B0000' }}>
+            <Box sx={{flexGrow: 1}}>
+                <AppBar position="fixed" sx={{backgroundColor: '#8B0000'}}>
                     <Toolbar>
                         <img
                             src="https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743519261/readtoowell/iconos/LogoImagen_blanco_r72r75.png"
                             alt="Logo"
-                            style={{ height: 45, cursor: 'pointer' }}
+                            style={{height: 45, cursor: 'pointer'}}
                             onClick={() => navigate('/')}
                         />
-                        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                        <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
                             <Button
                                 onClick={() => navigate('/catalogo')}
-                                sx={{ my: 2, color: 'white', textTransform: 'none' }}
+                                sx={{my: 2, color: 'white', textTransform: 'none'}}
                             >
                                 Nuestro catálogo
                             </Button>
@@ -58,43 +58,43 @@ export default function DynamicAppBar() {
                         <Button
                             color="inherit"
                             onClick={() => navigate('/inicio-sesion')}
-                            startIcon={<LoginIcon />}
-                            sx={{ textTransform: 'none', mr: 1 }}
+                            startIcon={<LoginIcon/>}
+                            sx={{textTransform: 'none', mr: 1}}
                         >
                             Iniciar sesión
                         </Button>
                         <Button
                             color="inherit"
                             onClick={() => navigate('/registro')}
-                            startIcon={<HowToRegIcon />}
-                            sx={{ textTransform: 'none' }}
+                            startIcon={<HowToRegIcon/>}
+                            sx={{textTransform: 'none'}}
                         >
                             Registro
                         </Button>
                     </Toolbar>
                 </AppBar>
-                <Toolbar />
+                <Toolbar/>
             </Box>
         );
     }
 
     // AppBar COMÚN para todos los roles autenticados
     return (
-        <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="fixed" sx={{ backgroundColor: '#8B0000' }}>
+        <Box sx={{flexGrow: 1}}>
+            <AppBar position="fixed" sx={{backgroundColor: '#8B0000'}}>
                 <Toolbar>
                     <img
                         src="https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743519261/readtoowell/iconos/LogoImagen_blanco_r72r75.png"
                         alt="Logo"
-                        style={{ height: 45, cursor: 'pointer' }}
+                        style={{height: 45, cursor: 'pointer'}}
                         onClick={() => navigate('/')}
                     />
 
                     {/* Menú específico por rol */}
-                    <Box sx={{ flexGrow: 1, display: 'flex', ml: 3 }}>
+                    <Box sx={{flexGrow: 1, display: 'flex', ml: 3}}>
                         <Button
                             onClick={() => navigate('/catalogo')}
-                            sx={{ my: 2, color: 'white', textTransform: 'none' }}
+                            sx={{my: 2, color: 'white', textTransform: 'none'}}
                         >
                             Catálogo
                         </Button>
@@ -104,25 +104,25 @@ export default function DynamicAppBar() {
                             <>
                                 <Button
                                     onClick={() => navigate('/biblioteca')}
-                                    sx={{ color: 'white', textTransform: 'none' }}
+                                    sx={{color: 'white', textTransform: 'none'}}
                                 >
                                     Mi biblioteca
                                 </Button>
                                 <Button
                                     onClick={() => navigate('/objetivos')}
-                                    sx={{ color: 'white', textTransform: 'none' }}
+                                    sx={{color: 'white', textTransform: 'none'}}
                                 >
                                     Objetivos
                                 </Button>
                                 <Button
                                     onClick={() => navigate('/recomendaciones')}
-                                    sx={{ color: 'white', textTransform: 'none' }}
+                                    sx={{color: 'white', textTransform: 'none'}}
                                 >
                                     Recomendaciones
                                 </Button>
                                 <Button
                                     onClick={() => navigate('/resumen')}
-                                    sx={{ color: 'white', textTransform: 'none' }}
+                                    sx={{color: 'white', textTransform: 'none'}}
                                 >
                                     Resumen anual
                                 </Button>
@@ -134,8 +134,8 @@ export default function DynamicAppBar() {
                             <>
                                 <Button
                                     onClick={() => navigate('/libros-autor')}
-                                    sx={{ color: 'white', textTransform: 'none', mr: 2 }}
-                                    startIcon={<LibrarianIcon />}
+                                    sx={{color: 'white', textTransform: 'none', mr: 2}}
+                                    startIcon={<LibrarianIcon/>}
                                 >
                                     Mis libros
                                 </Button>
@@ -147,22 +147,22 @@ export default function DynamicAppBar() {
                             <>
                                 <Button
                                     onClick={() => navigate('/admin/sugerencias')}
-                                    sx={{ color: 'white', textTransform: 'none' }}
-                                    startIcon={<AdminIcon />}
+                                    sx={{color: 'white', textTransform: 'none'}}
+                                    startIcon={<AdminIcon/>}
                                 >
                                     Sugerencias
                                 </Button>
                                 <Button
                                     onClick={() => navigate('/admin/solicitudes-autor')}
-                                    sx={{ color: 'white', textTransform: 'none' }}
-                                    startIcon={<AdminIcon />}
+                                    sx={{color: 'white', textTransform: 'none'}}
+                                    startIcon={<AdminIcon/>}
                                 >
                                     Solicitudes de autor
                                 </Button>
                                 <Button
                                     onClick={() => navigate('/admin/añadir-libro')}
-                                    sx={{ color: 'white', textTransform: 'none' }}
-                                    startIcon={<AdminIcon />}
+                                    sx={{color: 'white', textTransform: 'none'}}
+                                    startIcon={<AdminIcon/>}
                                 >
                                     Añadir libro
                                 </Button>
@@ -171,18 +171,21 @@ export default function DynamicAppBar() {
                     </Box>
 
                     {/* Menú de usuario (común a todos los roles autenticados) */}
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <IconButton onClick={handleMenu} sx={{ color: 'white' }}>
-                            <AccountCircleIcon sx={{ fontSize: 30 }} />
-                            <ExpandMoreIcon sx={{ fontSize: 16 }} />
+                    <Box sx={{display: 'flex', alignItems: 'center'}}>
+                        <IconButton onClick={handleMenu} sx={{color: 'white'}}>
+                            <AccountCircleIcon sx={{fontSize: 30}}/>
+                            <ExpandMoreIcon sx={{fontSize: 16}}/>
                         </IconButton>
                         <Menu
                             anchorEl={anchorEl}
                             open={Boolean(anchorEl)}
                             onClose={handleClose}
                         >
-                            <MenuItem onClick={() => { navigate('/perfil'); handleClose(); }}>
-                                <AccountCircleIcon sx={{ mr: 1 }} />
+                            <MenuItem onClick={() => {
+                                navigate('/perfil');
+                                handleClose();
+                            }}>
+                                <AccountCircleIcon sx={{mr: 1}}/>
                                 Mi perfil
                             </MenuItem>
                             <MenuItem onClick={handleLogout}>
@@ -190,7 +193,7 @@ export default function DynamicAppBar() {
                                     mr: 1,
                                     transform: 'rotate(180deg)',
                                     color: '#432818'
-                                }} />
+                                }}/>
                                 <Typography color="error">
                                     Cerrar sesión
                                 </Typography>
@@ -199,7 +202,7 @@ export default function DynamicAppBar() {
                     </Box>
                 </Toolbar>
             </AppBar>
-            <Toolbar />
+            <Toolbar/>
         </Box>
     );
 }
