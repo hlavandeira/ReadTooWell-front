@@ -1,12 +1,15 @@
 import {Box, Typography, Button, useTheme, TextField, InputAdornment, Grid, Paper} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useSearchParams} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext.jsx';
+import { useState } from 'react';
 
 const Home = () => {
     const {role, token, name} = useAuth();
     const theme = useTheme();
     const navigate = useNavigate();
+
+    const [searchInput, setSearchInput] = useState('');
 
     const actionsUser = [
         {
@@ -66,7 +69,7 @@ const Home = () => {
                 <Box sx={{position: 'relative', zIndex: 2, maxWidth: '800px', px: 4}}>
                     <img
                         src="https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743519261/readtoowell/iconos/LogoImagen_blanco_r72r75.png"
-                        alt="ReadToWell Logo"
+                        alt="ReadTooWell Logo"
                         style={{height: '120px', marginBottom: theme.spacing(4)}}
                     />
                     <Typography variant="h5" component="h2" sx={{fontStyle: 'italic', mb: 5}}>
@@ -137,6 +140,13 @@ const Home = () => {
                 {/* Barra de búsqueda */}
                 <TextField
                     fullWidth
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    onKeyPress={(e) => {
+                        if (e.key === 'Enter' && searchInput.trim()) {
+                            navigate(`/buscar?searchString=${encodeURIComponent(searchInput.trim())}`);
+                        }
+                    }}
                     placeholder="Buscar libros, autores, colecciones..."
                     InputProps={{
                         startAdornment: (
@@ -197,9 +207,6 @@ const Home = () => {
                     </Box>
                 ))}
             </Box>
-
-            {/* Sección opcional: "Continuar leyendo" */}
-            {/* Aquí podrías añadir libros en progreso si los tienes */}
         </Box>
     );
 };

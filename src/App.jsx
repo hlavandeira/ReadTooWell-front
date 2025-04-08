@@ -1,12 +1,14 @@
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import {AuthProvider} from './context/AuthContext.jsx';
-import Catalogo from "./pages/Catalogo.jsx";
+import Catalog from "./pages/Catalog.jsx";
 import AppBar from "./components/AppBar.jsx";
+import BooksByGenre from "./pages/BooksByGenre.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Home from "./pages/Home.jsx";
 import BookDetails from "./pages/BookDetails.jsx";
 import RequireAuth from "./context/RequireAuth";
+import Search from "./pages/Search.jsx";
 
 function App() {
     return (
@@ -23,7 +25,7 @@ function App() {
                     <Route path="/catalogo" element={
                         <>
                             <AppBar/>
-                            <Catalogo/>
+                            <Catalog/>
                         </>
                     }/>
 
@@ -46,6 +48,24 @@ function App() {
                             <>
                                 <AppBar/>
                                 <BookDetails/>
+                            </>
+                        </RequireAuth>
+                    }/>
+
+                    <Route path="/genero/:idGenero" element={
+                        <RequireAuth>
+                            <>
+                                <AppBar/>
+                                <BooksByGenre/>
+                            </>
+                        </RequireAuth>
+                    }/>
+
+                    <Route path="/buscar" element={
+                        <RequireAuth>
+                            <>
+                                <AppBar/>
+                                <Search/>
                             </>
                         </RequireAuth>
                     }/>
