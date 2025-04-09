@@ -7,6 +7,7 @@ import {
     Grid, Divider, TextField, Dialog, DialogTitle, DialogContent, DialogActions,
     FormControl, RadioGroup, FormControlLabel, Radio
 } from '@mui/material';
+import SmallBookCard from '../components/SmallBookCard';
 
 const BookDetails = () => {
     const {id} = useParams();
@@ -20,6 +21,8 @@ const BookDetails = () => {
     const [userReview, setUserReview] = useState('');
     const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
     const [reviewText, setReviewText] = useState(userReview || '');
+
+    const [collectionBooks, setCollectionBooks] = useState([]);
 
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString('es-ES', {
@@ -125,16 +128,27 @@ const BookDetails = () => {
         const fetchBookDetails = async () => {
             try {
                 const token = localStorage.getItem('token');
-
                 const response = await axios.get(`http://localhost:8080/libros/${id}/detalles`, {
                     headers: {
-                        'Authorization': 'Bearer ' + token
+                        Authorization: `Bearer ${token}`
                     }
                 });
 
                 setUserReview(response.data.review === null ? '' : response.data.review);
                 setDetails(response.data);
                 setSelectedStatus(response.data.readingStatus);
+
+                if (response.data.book.collectionId) {
+                    const collectionResponse = await axios.get(
+                        `http://localhost:8080/libros/coleccion/${response.data.book.id}`,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`
+                            }
+                        }
+                    );
+                    setCollectionBooks(collectionResponse.data);
+                }
             } catch (error) {
                 return <Navigate to="/inicio-sesion" replace/>;
             } finally {
@@ -567,6 +581,35 @@ const BookDetails = () => {
                                 </Grid>
                             </Grid>
                         </Paper>
+
+                        {/* Botón para otros libros del autor */}
+                        <Box textAlign='center'>
+                            <Button
+                                variant="contained"
+                                onClick={() => navigate(`/autor`, {
+                                    state: {
+                                        authorName: details.book.author
+                                    }
+                                })}
+                                sx={{
+                                    mt: 1,
+                                    px: {xs: 3, sm: 4},
+                                    py: 1,
+                                    width: {xs: '90%', sm: 'auto'},
+                                    maxWidth: '300px',
+                                    borderRadius: 2,
+                                    backgroundColor: '#2E5266',
+                                    '&:hover': {
+                                        backgroundColor: '#3A6B8A'
+                                    },
+                                    textTransform: 'none',
+                                    fontSize: {xs: '0.875rem', sm: '1rem'},
+                                    justifyContent: 'center'
+                                }}
+                            >
+                                Otros libros del autor
+                            </Button>
+                        </Box>
                     </Box>
                 </Grid>
             </Grid>
@@ -777,6 +820,44 @@ const BookDetails = () => {
                         </Box>
                     </Box>
                 )}
+
+                <Divider sx={{my: 4, borderColor: 'divider'}}/>
+
+                {/* Otros libros de la colección */}
+                {details.book.collectionId && (
+                    <Box sx={{
+                        mt: 4,
+                        width: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center'
+                    }}>
+                        <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
+                            Otros libros de la colección "{details.collectionName}"
+                        </Typography>
+
+                        {loading ? (
+                            <Box display="flex" justifyContent="center">
+                                <CircularProgress />
+                            </Box>
+                        ) : collectionBooks.length > 0 ? (
+                            <Grid container spacing={2}>
+                                {collectionBooks.map(book => (
+                                    <Grid key={book.id}>
+                                        <SmallBookCard
+                                            libro={book}
+                                        />
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        ) : (
+                            <Typography variant="body2" color="text.secondary">
+                                No se encontraron otros libros en esta colección
+                            </Typography>
+                        )}
+                    </Box>
+                )}
+
             </Box>
         </Box>
     );

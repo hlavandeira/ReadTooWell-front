@@ -2,13 +2,14 @@ import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import {AuthProvider} from './context/AuthContext.jsx';
 import Catalog from "./pages/Catalog.jsx";
 import AppBar from "./components/AppBar.jsx";
-import BooksByGenre from "./pages/BooksByGenre.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Home from "./pages/Home.jsx";
 import BookDetails from "./pages/BookDetails.jsx";
 import RequireAuth from "./context/RequireAuth";
 import Search from "./pages/Search.jsx";
+import BooksByGenre from "./pages/BooksByGenre.jsx";
+import BooksByAuthor from "./pages/BooksByAuthor.jsx";
 
 function App() {
     return (
@@ -66,6 +67,15 @@ function App() {
                             <>
                                 <AppBar/>
                                 <Search/>
+                            </>
+                        </RequireAuth>
+                    }/>
+
+                    <Route path="/autor" element={
+                        <RequireAuth>
+                            <>
+                                <AppBar/>
+                                <BooksByAuthor/>
                             </>
                         </RequireAuth>
                     }/>
