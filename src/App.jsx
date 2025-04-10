@@ -10,6 +10,8 @@ import RequireAuth from "./context/RequireAuth";
 import Search from "./pages/Search.jsx";
 import BooksByGenre from "./pages/BooksByGenre.jsx";
 import BooksByAuthor from "./pages/BooksByAuthor.jsx";
+import Library from "./pages/Library.jsx";
+import Bookshelf from "./pages/Bookshelf.jsx";
 
 function App() {
     return (
@@ -79,6 +81,25 @@ function App() {
                             </>
                         </RequireAuth>
                     }/>
+
+                    <Route path="/biblioteca" element={
+                        <RequireAuth>
+                            <>
+                                <AppBar/>
+                                <Library/>
+                            </>
+                        </RequireAuth>
+                    }/>
+
+                    <Route path="/biblioteca/:status" element={
+                        <RequireAuth>
+                            <>
+                                <AppBar/>
+                                <Bookshelf/>
+                            </>
+                        </RequireAuth>
+                    }/>
+
                 </Routes>
             </Router>
         </AuthProvider>

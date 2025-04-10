@@ -1,6 +1,6 @@
 import {Box, Typography, Button, useTheme, TextField, InputAdornment, Grid, Paper} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import {useNavigate, useSearchParams} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext.jsx';
 import { useState } from 'react';
 
