@@ -1,12 +1,14 @@
-import { Box, Typography, CircularProgress, Pagination, Dialog, DialogTitle, DialogContent,
-FormGroup, FormControlLabel, Checkbox, DialogActions, Button } from '@mui/material';
+import {
+    Box, Typography, CircularProgress, Pagination, Dialog, DialogTitle, DialogContent,
+    FormGroup, FormControlLabel, Checkbox, DialogActions, Button
+} from '@mui/material';
 import ShelvedBookCard from '../components/ShelvedBookCard';
-import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import {useParams} from "react-router-dom";
+import {useState, useEffect} from "react";
 import axios from 'axios';
 
 const Bookshelf = () => {
-    const { status } = useParams();
+    const {status} = useParams();
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -135,16 +137,18 @@ const Bookshelf = () => {
         };
 
         fetchBooks();
+    }, [readingStatus, page]);
 
+    useEffect(() => {
         if (!modalOpen) {
             setSelectedFormats([]);
             setCurrentBookId(null);
         }
-    }, [readingStatus, page, modalOpen]);
+    }, [modalOpen]);
 
     const handlePageChange = (event, value) => {
         setPage(value);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({top: 0, behavior: 'smooth'});
     };
 
     return (
@@ -167,10 +171,10 @@ const Bookshelf = () => {
 
             {loading ? (
                 <Box display="flex" justifyContent="center">
-                    <CircularProgress />
+                    <CircularProgress/>
                 </Box>
             ) : books.length === 0 ? (
-                <Typography variant="body1" textAlign="center" sx={{ mt: 2 }}>
+                <Typography variant="body1" textAlign="center" sx={{mt: 2}}>
                     Aún no tienes libros en esta categoría
                 </Typography>
             ) : (
@@ -310,7 +314,7 @@ const Bookshelf = () => {
                                 color="primary"
                                 showFirstButton
                                 showLastButton
-                                sx={{ '& .MuiPaginationItem-root': { fontSize: '1rem' } }}
+                                sx={{'& .MuiPaginationItem-root': {fontSize: '1rem'}}}
                             />
                         </Box>
                     )}

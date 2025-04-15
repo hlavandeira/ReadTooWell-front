@@ -1,8 +1,8 @@
-import {Box, Typography, Button, useTheme, TextField, InputAdornment, Grid, Paper} from '@mui/material';
+import {Box, Typography, Button, useTheme, TextField, InputAdornment} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import {useNavigate} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext.jsx';
-import { useState } from 'react';
+import {useState} from 'react';
 
 const Home = () => {
     const {role, token, name} = useAuth();
@@ -119,7 +119,6 @@ const Home = () => {
             maxWidth: '1200px',
             mx: 'auto'
         }}>
-            {/* Barra de búsqueda */}
             <Box sx={{
                 mb: 4,
                 textAlign: 'center'

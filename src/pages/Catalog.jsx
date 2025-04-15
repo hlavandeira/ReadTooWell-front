@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
-import { Box, CircularProgress, Typography } from "@mui/material";
-import { useSearchParams } from 'react-router-dom';
+import {Box, CircularProgress, Typography} from "@mui/material";
+import {useSearchParams} from 'react-router-dom';
 import BookGrid from '../components/BookGrid.jsx';
 
 const Catalog = () => {
@@ -36,13 +36,13 @@ const Catalog = () => {
     }, [page]);
 
     const handlePageChange = (event, newPage) => {
-        setSearchParams({ page: newPage });
+        setSearchParams({page: newPage});
     };
 
     if (loading) {
         return (
             <Box display="flex" justifyContent="center" mt={4}>
-                <CircularProgress />
+                <CircularProgress/>
             </Box>
         );
     }

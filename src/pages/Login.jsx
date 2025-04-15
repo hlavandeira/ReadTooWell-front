@@ -10,8 +10,7 @@ import {
     TextField,
     Typography,
     CssBaseline,
-    Paper,
-    useTheme
+    Paper
 } from '@mui/material';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 import {Link} from 'react-router-dom';

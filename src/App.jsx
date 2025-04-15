@@ -12,6 +12,7 @@ import BooksByGenre from "./pages/BooksByGenre.jsx";
 import BooksByAuthor from "./pages/BooksByAuthor.jsx";
 import Library from "./pages/Library.jsx";
 import Bookshelf from "./pages/Bookshelf.jsx";
+import BookList from "./pages/BookList.jsx";
 
 function App() {
     return (
@@ -96,6 +97,15 @@ function App() {
                             <>
                                 <AppBar/>
                                 <Bookshelf/>
+                            </>
+                        </RequireAuth>
+                    }/>
+
+                    <Route path="/listas/:idList" element={
+                        <RequireAuth>
+                            <>
+                                <AppBar/>
+                                <BookList/>
                             </>
                         </RequireAuth>
                     }/>

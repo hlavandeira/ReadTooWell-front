@@ -7,9 +7,9 @@ import {
 } from "@mui/material";
 import BookCard from "./BookCard";
 
-const BookGrid = ({ titulo, libros = [], page, totalPages, onPageChange }) => {
+const BookGrid = ({titulo, libros = [], page, totalPages, onPageChange}) => {
     return (
-        <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Container maxWidth="lg" sx={{py: 4}}>
             <Typography
                 variant="h3"
                 component="h1"
@@ -38,7 +38,7 @@ const BookGrid = ({ titulo, libros = [], page, totalPages, onPageChange }) => {
                 >
                     {libros.map((libro) => (
                         <Grid key={libro.id}>
-                            <BookCard libro={libro} />
+                            <BookCard libro={libro}/>
                         </Grid>
                     ))}
                 </Grid>
@@ -53,7 +53,7 @@ const BookGrid = ({ titulo, libros = [], page, totalPages, onPageChange }) => {
                         color="primary"
                         showFirstButton
                         showLastButton
-                        sx={{ '& .MuiPaginationItem-root': { fontSize: '1rem' } }}
+                        sx={{'& .MuiPaginationItem-root': {fontSize: '1rem'}}}
                     />
                 </Box>
             )}

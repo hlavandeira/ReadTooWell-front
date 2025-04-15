@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { useParams, useLocation } from 'react-router-dom';
+import {useEffect, useState} from "react";
+import {useParams, useLocation} from 'react-router-dom';
 import axios from "axios";
-import { Box, CircularProgress, Typography } from "@mui/material";
-import { useSearchParams } from 'react-router-dom';
+import {Box, CircularProgress, Typography} from "@mui/material";
+import {useSearchParams} from 'react-router-dom';
 import BookGrid from '../components/BookGrid.jsx';
 
 const BooksByGenre = () => {
@@ -14,8 +14,8 @@ const BooksByGenre = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const page = parseInt(searchParams.get('page')) || 1;
 
-    const { idGenero } = useParams();
-    const { state } = useLocation();
+    const {idGenero} = useParams();
+    const {state} = useLocation();
     const nombreGenero = state?.genreName || 'Género';
 
     useEffect(() => {
@@ -46,13 +46,13 @@ const BooksByGenre = () => {
     }, [page]);
 
     const handlePageChange = (event, newPage) => {
-        setSearchParams({ page: newPage });
+        setSearchParams({page: newPage});
     };
 
     if (loading) {
         return (
             <Box display="flex" justifyContent="center" mt={4}>
-                <CircularProgress />
+                <CircularProgress/>
             </Box>
         );
     }

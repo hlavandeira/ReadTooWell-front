@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import {useState, useEffect} from 'react';
+import {useSearchParams} from 'react-router-dom';
 import {
     Box,
     TextField,
@@ -49,11 +49,11 @@ const SearchPage = () => {
             };
 
             setSearchParams({
-                ...(searchInput && { searchString: searchInput }),
-                ...(filters.minYear !== 1900 && { minYear: filters.minYear }),
-                ...(filters.maxYear !== new Date().getFullYear() && { maxYear: filters.maxYear }),
-                ...(filters.minPages !== 0 && { minPages: filters.minPages }),
-                ...(filters.maxPages !== 1000 && { maxPages: filters.maxPages }),
+                ...(searchInput && {searchString: searchInput}),
+                ...(filters.minYear !== 1900 && {minYear: filters.minYear}),
+                ...(filters.maxYear !== new Date().getFullYear() && {maxYear: filters.maxYear}),
+                ...(filters.minPages !== 0 && {minPages: filters.minPages}),
+                ...(filters.maxPages !== 1000 && {maxPages: filters.maxPages}),
                 page: currentPage
             });
 
@@ -82,7 +82,7 @@ const SearchPage = () => {
     const handleSearchSubmit = (e) => {
         e.preventDefault();
         setSearchParams({
-            ...(searchInput && { searchString: searchInput }),
+            ...(searchInput && {searchString: searchInput}),
             page: 1
         });
     };
@@ -112,7 +112,7 @@ const SearchPage = () => {
     };
 
     return (
-        <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 1400, mx: 'auto' }}>
+        <Box sx={{p: {xs: 2, md: 3}, maxWidth: 1400, mx: 'auto'}}>
             {/* Barra de búsqueda */}
             <Box
                 component="form"
@@ -132,7 +132,7 @@ const SearchPage = () => {
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
-                                <SearchIcon color="action" />
+                                <SearchIcon color="action"/>
                             </InputAdornment>
                         ),
                         endAdornment: (
@@ -140,9 +140,9 @@ const SearchPage = () => {
                                 <Button
                                     variant="outlined"
                                     onClick={() => setIsFilterOpen(!isFilterOpen)}
-                                    startIcon={<FilterAltIcon />}
+                                    startIcon={<FilterAltIcon/>}
                                     sx={{
-                                        display: { md: 'none' },
+                                        display: {md: 'none'},
                                         color: '#432818',
                                         borderColor: '#432818',
                                         '&:hover': {
@@ -162,7 +162,7 @@ const SearchPage = () => {
                             borderRadius: '50px',
                             backgroundColor: 'background.paper',
                             boxShadow: 1,
-                            paddingRight: { xs: '140px', md: '14px' }
+                            paddingRight: {xs: '140px', md: '14px'}
                         }
                     }}
                 />
@@ -177,13 +177,13 @@ const SearchPage = () => {
                     backgroundColor: '#f8f4f0',
                     border: '1px solid #e0d6cc'
                 }}>
-                    <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} alignItems="center">
+                    <Stack direction={{xs: 'column', md: 'row'}} spacing={3} alignItems="center">
                         {/* Filtro por año */}
-                        <Box sx={{ width: { xs: '100%', md: '220px' } }}>
-                            <Typography variant="subtitle1" gutterBottom sx={{ color: '#432818', fontWeight: 500 }}>
+                        <Box sx={{width: {xs: '100%', md: '220px'}}}>
+                            <Typography variant="subtitle1" gutterBottom sx={{color: '#432818', fontWeight: 500}}>
                                 Año de publicación
                             </Typography>
-                            <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+                            <Box sx={{display: 'flex', gap: 2, mt: 2}}>
                                 <TextField
                                     label="Desde"
                                     type="number"
@@ -191,8 +191,8 @@ const SearchPage = () => {
                                     width="large"
                                     value={filters.minYear}
                                     onChange={(e) => handleFilterChange('minYear', parseInt(e.target.value) || 0)}
-                                    sx={{ width: '60%' }}
-                                    inputProps={{ min: 0 }}
+                                    sx={{width: '60%'}}
+                                    inputProps={{min: 0}}
                                 />
                                 <TextField
                                     label="Hasta"
@@ -201,8 +201,8 @@ const SearchPage = () => {
                                     width="large"
                                     value={filters.maxYear}
                                     onChange={(e) => handleFilterChange('maxYear', parseInt(e.target.value) || 0)}
-                                    sx={{ width: '60%' }}
-                                    inputProps={{ min: filters.minYear }}
+                                    sx={{width: '60%'}}
+                                    inputProps={{min: filters.minYear}}
                                 />
                             </Box>
                         </Box>
@@ -214,7 +214,7 @@ const SearchPage = () => {
                             px: 1,
                             maxWidth: '100%'
                         }}>
-                            <Typography variant="subtitle1" gutterBottom sx={{ color: '#432818', fontWeight: 500 }}>
+                            <Typography variant="subtitle1" gutterBottom sx={{color: '#432818', fontWeight: 500}}>
                                 Número de páginas
                             </Typography>
                             <Box sx={{
@@ -232,11 +232,11 @@ const SearchPage = () => {
                                     max={1600}
                                     step={100}
                                     marks={[
-                                        { value: 0, label: '0' },
-                                        { value: 400, label: '400' },
-                                        { value: 800, label: '800' },
-                                        { value: 1200, label: '1200' },
-                                        { value: 1600, label: '1600' }
+                                        {value: 0, label: '0'},
+                                        {value: 400, label: '400'},
+                                        {value: 800, label: '800'},
+                                        {value: 1200, label: '1200'},
+                                        {value: 1600, label: '1600'}
                                     ]}
                                     sx={{
                                         color: '#8B0000',
@@ -264,9 +264,9 @@ const SearchPage = () => {
                         {/* Botones de aplicar/limpiar filtros */}
                         <Box sx={{
                             display: 'flex',
-                            flexDirection: { xs: 'row', md: 'column' },
+                            flexDirection: {xs: 'row', md: 'column'},
                             gap: 2,
-                            width: { xs: '100%', md: 'auto' },
+                            width: {xs: '100%', md: 'auto'},
                             justifyContent: 'flex-end'
                         }}>
                             <Button
@@ -307,8 +307,8 @@ const SearchPage = () => {
 
             {/* Resultados de búsqueda */}
             {isLoading ? (
-                <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
-                    <CircularProgress size={60} sx={{ color: '#8B0000' }} />
+                <Box sx={{display: 'flex', justifyContent: 'center', py: 10}}>
+                    <CircularProgress size={60} sx={{color: '#8B0000'}}/>
                 </Box>
             ) : books.length > 0 ? (
                 <BookGrid
@@ -325,7 +325,7 @@ const SearchPage = () => {
                     minHeight: '300px',
                     textAlign: 'center'
                 }}>
-                    <Typography variant="h5" sx={{ color: '#432818' }}>
+                    <Typography variant="h5" sx={{color: '#432818'}}>
                         No se han encontrado libros
                     </Typography>
                 </Box>

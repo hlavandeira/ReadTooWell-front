@@ -1,7 +1,7 @@
-import { Card, CardMedia, CardContent, Typography, Button, Box, Grid, Divider } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import {Card, CardMedia, CardContent, Typography, Button, Box, Grid, Divider} from '@mui/material';
+import {useNavigate} from 'react-router-dom';
 
-const ShelvedBookCard = ({ book, onDelete, onFormatClick }) => {
+const ShelvedBookCard = ({book, onDelete, onFormatClick}) => {
     const navigate = useNavigate();
 
     return (
@@ -18,7 +18,7 @@ const ShelvedBookCard = ({ book, onDelete, onFormatClick }) => {
             }
         }}>
             {/* Portada */}
-            <Box sx={{ width: 140, flexShrink: 0 }}>
+            <Box sx={{width: 140, flexShrink: 0}}>
                 <CardMedia
                     component="img"
                     height="100%"

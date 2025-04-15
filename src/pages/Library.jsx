@@ -4,15 +4,18 @@ import axios from 'axios';
 import {
     Box, Typography, CircularProgress, Paper, Card, CardMedia, CardContent, LinearProgress, Button,
     Dialog, DialogTitle, DialogContent, DialogActions, RadioGroup, FormControlLabel, Radio, TextField,
-    Grid, Divider
+    Grid, Divider, Chip
 } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 
 const Library = () => {
     const navigate = useNavigate();
 
+    const [isInitialLoading, setIsInitialLoading] = useState(false);
+
     const [currentlyReading, setCurrentlyReading] = useState([]);
 
-    const [loading, setLoading] = useState(true);
     const [totalPages, setTotalPages] = useState(1);
     const [searchParams, setSearchParams] = useSearchParams();
     const page = parseInt(searchParams.get('page')) || 1;
@@ -25,63 +28,48 @@ const Library = () => {
     const [progressType, setProgressType] = useState('paginas');
     const [progressValue, setProgressValue] = useState(0);
 
+    const [lists, setLists] = useState([]);
+    const [newListDialogOpen, setNewListDialogOpen] = useState(false);
+    const [newListName, setNewListName] = useState('');
+
+    const [newListDescription, setNewListDescription] = useState('');
+    const [genres, setGenres] = useState([]);
+    const [selectedGenreIds, setSelectedGenreIds] = useState(new Set());
+
     const bookshelves = [
         {
             label: 'Pendientes',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1744206368/readtoowell/other/pendientes_gtdds6.jpg",
             path: '/biblioteca/pendientes',
             color: '#E3C9A8',
-            readingStatus: 0
+            readingStatus: 0,
+            fontColor: 'black'
         },
         {
             label: 'Leídos',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1744206369/readtoowell/other/leyendo_yuueyf.jpg",
             path: '/biblioteca/leidos',
             color: '#A8BBA2',
-            readingStatus: 2
+            readingStatus: 2,
+            fontColor: 'black'
         },
         {
             label: 'Pausados',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1744206368/readtoowell/other/pausados_j9dowa.jpg",
             path: '/biblioteca/pausados',
             color: '#FFF8F0',
-            readingStatus: 3
+            readingStatus: 3,
+            fontColor: 'black'
         },
         {
             label: 'Abandonados',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1744206369/readtoowell/other/abandonados_yaixwe.jpg",
             path: '/biblioteca/abandonados',
             color: '#7E6651',
-            readingStatus: 4
+            readingStatus: 4,
+            fontColor: 'white'
         }
     ];
-
-    useEffect(() => {
-        const fetchCurrentlyReading = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                const response = await axios.get('http://localhost:8080/biblioteca', {
-                    params: {
-                        page: page - 1,
-                        size: itemsPerPage,
-                        status: 1
-                    },
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-
-                setCurrentlyReading(response.data.content);
-                setTotalPages(response.data.totalPages);
-            } catch (error) {
-                console.error('Error fetching currently reading books:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchCurrentlyReading();
-    }, [page]);
 
     const handlePageChange = (event, newPage) => {
         setSearchParams({page: newPage});
@@ -119,13 +107,94 @@ const Library = () => {
         }
     };
 
-    if (loading) {
+    const handleGenreToggle = (genreId) => {
+        setSelectedGenreIds(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(genreId)) {
+                newSet.delete(genreId);
+            } else {
+                newSet.add(genreId);
+            }
+            return newSet;
+        });
+    };
+
+    const handleCreateList = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.post('http://localhost:8080/listas',
+                {
+                    name: newListName,
+                    description: newListDescription
+                },
+                {
+                    params: {
+                        genreIds: Array.from(selectedGenreIds).join(',')
+                    },
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+
+            const listsResponse = await axios.get('http://localhost:8080/listas', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setLists(listsResponse.data.content);
+
+            setNewListDialogOpen(false);
+            setNewListName('');
+            setNewListDescription('');
+            setSelectedGenreIds(new Set());
+        } catch (error) {
+            console.error('Error creating list:', error);
+        }
+    };
+
+    if (isInitialLoading) {
         return (
             <Box display="flex" justifyContent="center" mt={4}>
                 <CircularProgress/>
             </Box>
         );
     }
+
+    useEffect(() => {
+        const fetchInitialData = async () => {
+            try {
+                const token = localStorage.getItem('token');
+
+                const [readingRes, listsRes, genresRes] = await Promise.all([
+                    axios.get('http://localhost:8080/biblioteca', {
+                        params: {page: page - 1, size: itemsPerPage, status: 1},
+                        headers: {Authorization: `Bearer ${token}`}
+                    }),
+                    axios.get('http://localhost:8080/listas', {
+                        params: {page: 0, size: 10},
+                        headers: {Authorization: `Bearer ${token}`}
+                    }),
+                    axios.get('http://localhost:8080/libros/generos', {
+                        headers: {Authorization: `Bearer ${token}`}
+                    })
+                ]);
+
+                setCurrentlyReading(readingRes.data.content);
+                setTotalPages(readingRes.data.totalPages);
+                setLists(listsRes.data.content);
+                setGenres(genresRes.data);
+
+            } catch (error) {
+                console.error('Error fetching initial data:', error);
+            } finally {
+                setIsInitialLoading(false);
+            }
+        };
+
+        fetchInitialData();
+    }, [page]);
 
     return (
         <Box sx={{p: 4, maxWidth: 1400, mx: 'auto'}}>
@@ -366,7 +435,7 @@ const Library = () => {
                                 alignItems: 'stretch',
                                 borderRadius: '12px',
                                 bgcolor: shelf.color,
-                                color: 'black',
+                                color: shelf.fontColor,
                                 fontSize: '1.3rem',
                                 minHeight: '100px',
                                 textTransform: 'none',
@@ -408,7 +477,251 @@ const Library = () => {
 
             <Divider sx={{my: 4, borderColor: 'divider'}}/>
 
+            {/* Listas */}
+            <Box sx={{mt: 4, width: '100%'}}>
+                {/* Título */}
+                <Typography variant="h4" component="h2" sx={{
+                    mb: 2,
+                    fontWeight: 'medium',
+                    color: '#432818',
+                    textAlign: 'center'
+                }}>
+                    Mis listas de libros
+                </Typography>
 
+                {/* Botón para añadir lista */}
+                <Box sx={{display: 'flex', justifyContent: 'center', mb: 3}}>
+                    <Button
+                        variant="contained"
+                        startIcon={<AddIcon/>}
+                        onClick={() => setNewListDialogOpen(true)}
+                        sx={{
+                            textTransform: 'none',
+                            color: 'white',
+                            backgroundColor: '#432818',
+                            borderRadius: '20px',
+                            px: 3,
+                            py: 1,
+                            '&:hover': {
+                                backgroundColor: '#5a3a23'
+                            }
+                        }}
+                    >
+                        Añadir lista
+                    </Button>
+                </Box>
+
+                {/* Listas */}
+                {isInitialLoading ? (
+                    <Box display="flex" justifyContent="center">
+                        <CircularProgress size={24}/>
+                    </Box>
+                ) : (
+                    <Grid container spacing={3} sx={{mt: 1, justifyContent: 'center'}}>
+                        {lists.map((list) => (
+                            <Grid key={list.id}>
+                                <Card
+                                    onClick={() => navigate(`/listas/${list.id}`)}
+                                    sx={{
+                                        height: '100%',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        borderRadius: '12px',
+                                        boxShadow: 3,
+                                        transition: 'transform 0.3s, box-shadow 0.3s',
+                                        '&:hover': {
+                                            transform: 'translateY(-4px)',
+                                            boxShadow: 6,
+                                            cursor: 'pointer'
+                                        },
+                                        backgroundColor: '#F7EFDD',
+                                        maxWidth: 450
+                                    }}
+                                >
+                                    <CardContent sx={{flexGrow: 1}}>
+                                        {/* Nombre de la lista */}
+                                        <Typography variant="h6" component="h3" sx={{
+                                            fontWeight: 'bold',
+                                            color: '#432818'
+                                        }}>
+                                            {list.name}
+                                        </Typography>
+                                        {/* Número de libros */}
+                                        <Typography variant="caption" color="text.secondary"
+                                                    sx={{display: 'block', mb: 1}}>
+                                            {list.books?.length || 0} libros
+                                        </Typography>
+
+                                        {/* Descripción */}
+                                        <Typography variant="body2" sx={{
+                                            mb: 2,
+                                            minHeight: 'auto',
+                                            display: '-webkit-box',
+                                            WebkitLineClamp: 2,
+                                            WebkitBoxOrient: 'vertical',
+                                            overflow: 'hidden'
+                                        }}>
+                                            {list.description || "Sin descripción"}
+                                        </Typography>
+
+                                        {/* Géneros */}
+                                        <Box sx={{
+                                            display: 'flex',
+                                            flexWrap: 'wrap',
+                                            gap: 1,
+                                            justifyContent: 'center'
+                                        }}>
+                                            {list.genres?.slice(0, 4).map((genre) => (
+                                                <Chip
+                                                    key={genre.id}
+                                                    label={genre.name}
+                                                    size="small"
+                                                    sx={{
+                                                        backgroundColor: '#7C4B3A',
+                                                        color: 'white',
+                                                        fontSize: '0.75rem',
+                                                        height: '24px'
+                                                    }}
+                                                />
+                                            ))}
+                                            {list.genres?.length > 4 && (
+                                                <Chip
+                                                    label={`+${list.genres.length - 4}`}
+                                                    size="small"
+                                                    sx={{
+                                                        backgroundColor: '#f0e6dd',
+                                                        color: '#432818',
+                                                        fontSize: '0.75rem',
+                                                        height: '24px'
+                                                    }}
+                                                />
+                                            )}
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        ))}
+                    </Grid>
+                )}
+
+                {/* Diálogo para crear nueva lista */}
+                <Dialog
+                    open={newListDialogOpen}
+                    onClose={() => setNewListDialogOpen(false)}
+                    maxWidth="sm"
+                    fullWidth
+                >
+                    <DialogTitle sx={{
+                        backgroundColor: '#432818',
+                        color: 'white',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1
+                    }}>
+                        <LibraryBooksIcon/>
+                        Nueva lista de libros
+                    </DialogTitle>
+
+                    <DialogContent sx={{p: 3}}>
+                        <Box component="form" sx={{mt: 1}}>
+                            {/* Nombre */}
+                            <TextField
+                                autoFocus
+                                margin="normal"
+                                label="Nombre de la lista*"
+                                fullWidth
+                                value={newListName}
+                                onChange={(e) => setNewListName(e.target.value)}
+                                sx={{ mb: 2 }}
+                            />
+
+                            {/* Descripción */}
+                            <TextField
+                                margin="normal"
+                                label="Descripción (opcional)"
+                                fullWidth
+                                multiline
+                                rows={3}
+                                value={newListDescription}
+                                onChange={(e) => {
+                                    if (e.target.value.length <= 2000) {
+                                        setNewListDescription(e.target.value);
+                                    }
+                                }}
+                                inputProps={{
+                                    maxLength: 2000
+                                }}
+                                helperText={`${newListDescription.length}/2000 caracteres`}
+                                sx={{ mb: 3 }}
+                            />
+
+                            {/* Selección de géneros */}
+                            <Typography variant="subtitle2" sx={{mb: 1, color: '#432818'}}>
+                                Selecciona géneros (opcional):
+                            </Typography>
+
+                            <Box sx={{
+                                display: 'flex',
+                                flexWrap: 'wrap',
+                                gap: 1,
+                                mb: 2,
+                                maxHeight: '200px',
+                                overflowY: 'auto',
+                                p: 1
+                            }}>
+                                {genres.map((genre) => (
+                                    <Chip
+                                        key={genre.id}
+                                        label={genre.name}
+                                        clickable
+                                        variant={selectedGenreIds.has(genre.id) ? 'filled' : 'outlined'}
+                                        color={selectedGenreIds.has(genre.id) ? 'primary' : 'default'}
+                                        onClick={() => handleGenreToggle(genre.id)}
+                                        sx={{
+                                            borderRadius: '4px',
+                                            borderColor: selectedGenreIds.has(genre.id) ? '#432818' : '#ddd',
+                                            backgroundColor: selectedGenreIds.has(genre.id) ? '#CCC4B7' : 'transparent',
+                                            '&:hover': {
+                                                backgroundColor: selectedGenreIds.has(genre.id) ? '#E0DCD3' : 'black'
+                                            },
+                                            color: selectedGenreIds.has(genre.id) ? 'black' : 'inherit'
+                                        }}
+                                    />
+                                ))}
+                            </Box>
+                        </Box>
+                    </DialogContent>
+
+                    <DialogActions sx={{p: 2}}>
+                        <Button
+                            onClick={() => {
+                                setNewListDialogOpen(false);
+                                setSelectedGenreIds(new Set());
+                            }}
+                            sx={{
+                                textTransform: 'none',
+                                color: '#6c757d'
+                            }}
+                        >
+                            Cancelar
+                        </Button>
+                        <Button
+                            onClick={handleCreateList}
+                            variant="contained"
+                            disabled={!newListName.trim()}
+                            sx={{
+                                textTransform: 'none',
+                                backgroundColor: '#8B0000',
+                                '&:hover': {backgroundColor: '#6d0000'},
+                                borderRadius: '20px',
+                                px: 3
+                            }}
+                        >
+                            Crear lista
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </Box>
         </Box>
     );
 };

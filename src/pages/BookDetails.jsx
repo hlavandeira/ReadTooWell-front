@@ -24,6 +24,10 @@ const BookDetails = () => {
 
     const [collectionBooks, setCollectionBooks] = useState([]);
 
+    const [lists, setLists] = useState([]);
+    const [addToListDialogOpen, setAddToListDialogOpen] = useState(false);
+    const [selectedListId, setSelectedListId] = useState(null);
+
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString('es-ES', {
             day: 'numeric',
@@ -109,8 +113,8 @@ const BookDetails = () => {
                 `http://localhost:8080/biblioteca/${details.book.id}/calificar`,
                 null,
                 {
-                    params: { calificacion: newValue },
-                    headers: { Authorization: `Bearer ${token}` },
+                    params: {calificacion: newValue},
+                    headers: {Authorization: `Bearer ${token}`},
                 }
             );
 
@@ -121,6 +125,24 @@ const BookDetails = () => {
             }));
         } catch (error) {
             console.error("Error al guardar la valoración:", error);
+        }
+    };
+
+    const handleAddToList = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            await axios.post(
+                `http://localhost:8080/listas/${selectedListId}/añadir-libro/${id}`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            setAddToListDialogOpen(false);
+        } catch (error) {
+            console.error('Error adding book to list:', error);
         }
     };
 
@@ -158,6 +180,26 @@ const BookDetails = () => {
 
         fetchBookDetails();
     }, [id, navigate]);
+
+    useEffect(() => {
+        const fetchUserLists = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get(`http://localhost:8080/listas/${id}/otras-listas`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                setLists(response.data.content);
+            } catch (error) {
+                console.error('Error fetching user lists:', error);
+            }
+        };
+
+        if (details?.saved) {
+            fetchUserLists();
+        }
+    }, [details?.saved]);
 
     if (loading) {
         return (
@@ -259,7 +301,7 @@ const BookDetails = () => {
                             alignItems: 'center',
                             justifyContent: 'center',
                             gap: 1,
-                            width: { xs: '90%', sm: '300px' },
+                            width: {xs: '90%', sm: '300px'},
                             maxWidth: '300px'
                         }}>
                             <Rating
@@ -268,9 +310,9 @@ const BookDetails = () => {
                                 precision={0.5}
                                 size="large"
                                 sx={{
-                                    '& .MuiRating-iconFilled': { color: '#FFD700' },
-                                    '& .MuiRating-iconHover': { color: '#FFC107' },
-                                    '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' }
+                                    '& .MuiRating-iconFilled': {color: '#FFD700'},
+                                    '& .MuiRating-iconHover': {color: '#FFC107'},
+                                    '&:hover': {transform: 'scale(1.05)', transition: 'transform 0.2s'}
                                 }}
                                 onChange={(event, newValue) => handleSaveRating(newValue)}
                             />
@@ -523,14 +565,14 @@ const BookDetails = () => {
                                 <Typography variant="subtitle1" component="span">
                                     Valoración media:
                                 </Typography>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
                                     <Rating
                                         value={details.averageRating || 0}
                                         precision={0.1}
                                         readOnly
                                         size="medium"
                                         sx={{
-                                            '& .MuiRating-iconFilled': { color: '#FFD700' }
+                                            '& .MuiRating-iconFilled': {color: '#FFD700'}
                                         }}
                                     />
                                     <Typography variant="h6" component="span">
@@ -582,8 +624,8 @@ const BookDetails = () => {
                             </Grid>
                         </Paper>
 
-                        {/* Botón para otros libros del autor */}
-                        <Box textAlign='center'>
+                        <Box justifyContent='center' sx={{display: 'flex', gap: 3}}>
+                            {/* Botón para otros libros del autor */}
                             <Button
                                 variant="contained"
                                 onClick={() => navigate(`/autor`, {
@@ -609,7 +651,136 @@ const BookDetails = () => {
                             >
                                 Otros libros del autor
                             </Button>
+
+                            {/* Botón añadir a lista */}
+                            {details.saved && (
+                                <Button
+                                    variant="contained"
+                                    onClick={() => setAddToListDialogOpen(true)}
+                                    sx={{
+                                        mt: 1,
+                                        px: {xs: 3, sm: 4},
+                                        py: 1,
+                                        width: {xs: '90%', sm: 'auto'},
+                                        maxWidth: '300px',
+                                        borderRadius: 2,
+                                        backgroundColor: '#E3D5C8',
+                                        color: 'black',
+                                        '&:hover': {
+                                            backgroundColor: '#D5C7BA'
+                                        },
+                                        textTransform: 'none',
+                                        fontSize: {xs: '0.875rem', sm: '1rem'}
+                                    }}
+                                >
+                                    Añadir a lista
+                                </Button>
+                            )}
                         </Box>
+
+                        {/* Diálogo para añadir a lista */}
+                        <Dialog
+                            open={addToListDialogOpen}
+                            onClose={() => setAddToListDialogOpen(false)}
+                            PaperProps={{
+                                sx: {
+                                    borderRadius: '12px',
+                                    minWidth: '350px'
+                                }
+                            }}
+                        >
+                            <DialogTitle sx={{
+                                backgroundColor: '#432818',
+                                color: 'white',
+                                fontWeight: 'bold',
+                                padding: '16px 24px'
+                            }}>
+                                Añadir a lista
+                            </DialogTitle>
+
+                            <DialogContent sx={{padding: '24px', mt: 3}}>
+                                {lists.length === 0 ? (
+                                    <Typography variant="body1" textAlign="center" sx={{mt: 2}}>
+                                        No tienes ninguna lista creada
+                                    </Typography>
+                                ) : (
+                                    <Box sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: 1
+                                    }}>
+                                        {lists.map((list) => (
+                                            <Button
+                                                key={list.id}
+                                                variant={selectedListId === list.id ? 'contained' : 'outlined'}
+                                                onClick={() => setSelectedListId(list.id)}
+                                                sx={{
+                                                    textTransform: 'none',
+                                                    justifyContent: 'flex-start',
+                                                    backgroundColor: selectedListId === list.id ? '#43281820' : 'transparent',
+                                                    borderColor: '#432818',
+                                                    color: 'text.primary',
+                                                    '&:hover': {
+                                                        backgroundColor: '#43281810'
+                                                    }
+                                                }}
+                                            >
+                                                {list.name}
+                                                {list.genres?.length > 0 && (
+                                                    <Box sx={{ml: 'auto', display: 'flex', gap: 0.5}}>
+                                                        {list.genres.slice(0, 2).map(genre => (
+                                                            <Chip
+                                                                key={genre.id}
+                                                                label={genre.name}
+                                                                size="small"
+                                                                sx={{
+                                                                    fontSize: '0.6rem',
+                                                                    height: '20px'
+                                                                }}
+                                                            />
+                                                        ))}
+                                                        {list.genres.length > 2 && (
+                                                            <Chip
+                                                                label={`+${list.genres.length - 2}`}
+                                                                size="small"
+                                                                sx={{
+                                                                    fontSize: '0.6rem',
+                                                                    height: '20px'
+                                                                }}
+                                                            />
+                                                        )}
+                                                    </Box>
+                                                )}
+                                            </Button>
+                                        ))}
+                                    </Box>
+                                )}
+                            </DialogContent>
+
+                            <DialogActions sx={{padding: '16px 24px'}}>
+                                <Button
+                                    onClick={() => setAddToListDialogOpen(false)}
+                                    sx={{
+                                        textTransform: 'none',
+                                        color: '#6c757d'
+                                    }}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    onClick={handleAddToList}
+                                    variant="contained"
+                                    disabled={!selectedListId || lists.length === 0}
+                                    sx={{
+                                        textTransform: 'none',
+                                        backgroundColor: '#432818',
+                                        '&:hover': {backgroundColor: '#5a3a23'}
+                                    }}
+                                >
+                                    Añadir
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
                     </Box>
                 </Grid>
             </Grid>
@@ -832,13 +1003,13 @@ const BookDetails = () => {
                         flexDirection: 'column',
                         alignItems: 'center'
                     }}>
-                        <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
+                        <Typography variant="h5" gutterBottom sx={{fontWeight: 'bold', mb: 3}}>
                             Otros libros de la colección "{details.collectionName}"
                         </Typography>
 
                         {loading ? (
                             <Box display="flex" justifyContent="center">
-                                <CircularProgress />
+                                <CircularProgress/>
                             </Box>
                         ) : collectionBooks.length > 0 ? (
                             <Grid container spacing={2}>
