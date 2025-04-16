@@ -108,7 +108,7 @@ export default function DynamicAppBar() {
                                     Mi biblioteca
                                 </Button>
                                 <Button
-                                    onClick={() => navigate('/objetivos')}
+                                    onClick={() => navigate('/objetivos-lectura')}
                                     sx={{color: 'white', textTransform: 'none'}}
                                 >
                                     Objetivos

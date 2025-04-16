@@ -120,6 +120,8 @@ const BookDetails = () => {
 
             setDetails(prev => ({
                 ...prev,
+                saved: true,
+                readingStatus: 2,
                 rating: response.data.libraryBook.rating,
                 averageRating: response.data.averageRating
             }));

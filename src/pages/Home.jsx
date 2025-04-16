@@ -21,7 +21,7 @@ const Home = () => {
         {
             label: 'Objetivos',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743864520/readtoowell/iconos/v1olxvdjhbpfagohyv7c.png",
-            path: '/objetivos',
+            path: '/objetivos-lectura',
             color: '#8B0000'
         },
         {

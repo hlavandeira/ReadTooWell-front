@@ -95,11 +95,21 @@ const Library = () => {
                 }
             });
 
-            setCurrentlyReading(currentlyReading.map(book =>
-                book.id.bookId === selectedBook.id.bookId
-                    ? {...book, progress: progressValue, progressType}
-                    : book
-            ));
+            const isFinished = progressType === 'paginas'
+                ? progressValue >= selectedBook.book.pageNumber
+                : progressValue >= 100;
+
+            if (isFinished) {
+                setCurrentlyReading(currentlyReading.filter(
+                    book => book.id.bookId !== selectedBook.id.bookId
+                ));
+            } else {
+                setCurrentlyReading(currentlyReading.map(book =>
+                    book.id.bookId === selectedBook.id.bookId
+                        ? {...book, progress: progressValue, progressType}
+                        : book
+                ));
+            }
 
             setProgressDialogOpen(false);
         } catch (error) {
@@ -375,8 +385,11 @@ const Library = () => {
                         fullWidth
                         type="number"
                         label={progressType === 'paginas' ? 'Páginas leídas' : 'Porcentaje completado'}
-                        value={progressValue}
-                        onChange={(e) => setProgressValue(parseInt(e.target.value) || 0)}
+                        value={progressValue === 0 ? '' : progressValue}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            setProgressValue(value === '' ? 0 : parseInt(value) || 0);
+                        }}
                         inputProps={{
                             min: 0,
                             max: progressType === 'paginas' ? selectedBook?.book.pageNumber : 100

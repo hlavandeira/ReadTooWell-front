@@ -78,14 +78,13 @@ const Register = () => {
 
             const token = response.data.token;
             localStorage.setItem("token", token);
-
             localStorage.setItem("role", response.data.user.role);
+            localStorage.setItem("name", response.data.user.profileName);
 
-            navigate("/catalogo");
+            navigate("/");
         } catch (err) {
             if (err.response && err.response.data) {
                 if (err.response.status === 400) {
-                    // Limpiamos errores anteriores
                     setFieldErrors({
                         email: '',
                         password: '',
@@ -93,7 +92,6 @@ const Register = () => {
                     });
                     setGeneralError('');
 
-                    // Si es un objeto con errores de campo
                     if (typeof err.response.data === 'object' &&
                         (err.response.data.email || err.response.data.password || err.response.data.username)) {
                         setFieldErrors({
@@ -102,11 +100,9 @@ const Register = () => {
                             username: err.response.data.username || ''
                         });
                     }
-                    // Si es un error general (como contraseñas no coinciden)
                     else if (err.response.data.error) {
                         setGeneralError(err.response.data.error);
                     }
-                    // Si el backend devuelve el mensaje directamente como string
                     else if (typeof err.response.data === 'string') {
                         setGeneralError(err.response.data);
                     }
