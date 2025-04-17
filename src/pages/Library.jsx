@@ -272,11 +272,16 @@ const Library = () => {
                                             component="img"
                                             image={item.book.cover}
                                             alt={item.book.title}
+                                            onClick={() => navigate(`/detalles/${item.id.bookId}`)}
                                             sx={{
                                                 height: 100,
                                                 width: '100%',
                                                 objectFit: 'cover',
-                                                borderRadius: 1
+                                                borderRadius: 1,
+                                                cursor: 'pointer',
+                                                '&:hover': {
+                                                    opacity: 0.9
+                                                }
                                             }}
                                         />
                                     </Grid>

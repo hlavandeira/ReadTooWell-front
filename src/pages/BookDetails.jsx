@@ -8,6 +8,7 @@ import {
     FormControl, RadioGroup, FormControlLabel, Radio
 } from '@mui/material';
 import SmallBookCard from '../components/SmallBookCard';
+import GenreButton from '../components/GenreButton';
 
 const BookDetails = () => {
     const {id} = useParams();
@@ -484,27 +485,7 @@ const BookDetails = () => {
                         }}>
                             {details.book.genres?.length > 0 ? (
                                 details.book.genres.map((genre) => (
-                                    <Chip
-                                        key={genre.id}
-                                        label={genre.name}
-                                        clickable
-                                        onClick={() => navigate(`/genero/${genre.id}`, {
-                                            state: {
-                                                genreName: genre.name
-                                            }
-                                        })}
-                                        sx={{
-                                            borderRadius: '16px',
-                                            backgroundColor: '#f0f0f0',
-                                            color: 'text.primary',
-                                            border: '1px solid #ddd',
-                                            '&:hover': {
-                                                backgroundColor: '#e0e0e0',
-                                                transform: 'scale(1.05)'
-                                            },
-                                            transition: 'all 0.2s ease-in-out'
-                                        }}
-                                    />
+                                    <GenreButton key={genre.id} genre={genre} />
                                 ))
                             ) : (
                                 <Typography variant="body2" color="text.secondary">

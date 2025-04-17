@@ -9,7 +9,8 @@ import {
     IconButton,
     Menu,
     MenuItem,
-    Typography
+    Typography,
+    Avatar
 } from '@mui/material';
 import {
     Login as LoginIcon,
@@ -21,7 +22,7 @@ import {
 } from '@mui/icons-material';
 
 export default function DynamicAppBar() {
-    const {role, logout} = useAuth();
+    const {role, logout, profilePic} = useAuth();
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
 
@@ -172,7 +173,15 @@ export default function DynamicAppBar() {
                     {/* Menú de usuario (común a todos los roles autenticados) */}
                     <Box sx={{display: 'flex', alignItems: 'center'}}>
                         <IconButton onClick={handleMenu} sx={{color: 'white'}}>
-                            <AccountCircleIcon sx={{fontSize: 30}}/>
+                            <Avatar
+                                src={profilePic ? profilePic : "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1741801696/readtoowell/profilepics/pfp.jpg"}
+                                alt="Foto de perfil"
+                                sx={{
+                                    width: 32,
+                                    height: 32,
+                                    border: '2px solid white'
+                                }}
+                            />
                             <ExpandMoreIcon sx={{fontSize: 16}}/>
                         </IconButton>
                         <Menu

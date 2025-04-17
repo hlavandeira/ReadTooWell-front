@@ -8,26 +8,46 @@ export const AuthProvider = ({children}) => {
         const token = localStorage.getItem('token');
         const role = localStorage.getItem('role');
         const name = localStorage.getItem('name');
+        const profilePic = localStorage.getItem('profilePic');
+        const id = localStorage.getItem('id');
 
         if (!token) { // Si no hay token, se considera la sesión inválida
-            return {token: null, role: null, name: null};
+            return {token: null, role: null, name: null, profilePic: null, id: null};
         }
 
-        return {token, role: role ? parseInt(role) : null, name};
+        return {
+            token,
+            role: role ? parseInt(role) : null,
+            name,
+            profilePic,
+            id
+        };
     });
 
-    const updateAuth = (token, role, name) => {
+    const updateAuth = (token, role, name, profilePic, id) => {
         localStorage.setItem('token', token);
         localStorage.setItem('role', role);
         localStorage.setItem('name', name);
-        setAuthState({token, role, name});
+        localStorage.setItem('profilePic', profilePic || '');
+        localStorage.setItem('id', id);
+        setAuthState({token, role, name, profilePic, id});
+    };
+
+    const updateProfileImage = (profilePicUrl) => {
+        localStorage.setItem('profilePic', profilePicUrl);
+        setAuthState(prev => ({
+            ...prev,
+            profilePic: profilePicUrl
+        }));
     };
 
     const logout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('role');
         localStorage.removeItem('name');
-        setAuthState({token: null, role: null, name: null});
+        localStorage.removeItem('profilePic');
+        localStorage.removeItem('id');
+        setAuthState({token: null, role: null, name: null, profileImage: null, id: null});
     };
 
     useEffect(() => {
@@ -35,7 +55,7 @@ export const AuthProvider = ({children}) => {
             if (!authState.token) return;
 
             try {
-                await axios.get("http://localhost:8080/auth/validar", {
+                const response = await axios.get("http://localhost:8080/auth/validar", {
                     headers: {
                         Authorization: 'Bearer ' + authState.token,
                     },
@@ -55,7 +75,10 @@ export const AuthProvider = ({children}) => {
             token: authState.token,
             role: authState.role,
             name: authState.name,
+            profilePic: authState.profilePic,
+            id: authState.id,
             updateAuth,
+            updateProfileImage,
             logout
         }}>
             {children}

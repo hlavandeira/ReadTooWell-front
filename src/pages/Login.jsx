@@ -69,7 +69,7 @@ const Login = () => {
                 password,
             });
 
-            updateAuth(response.data.token, response.data.user.role, response.data.user.profileName);
+            updateAuth(response.data.token, response.data.user.role, response.data.user.profileName, response.data.user.profilePic, response.data.user.id);
 
             navigate('/');
         } catch (err) {

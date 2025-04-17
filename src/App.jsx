@@ -14,6 +14,7 @@ import Library from "./pages/Library.jsx";
 import Bookshelf from "./pages/Bookshelf.jsx";
 import BookList from "./pages/BookList.jsx";
 import Goal from "./pages/Goal.jsx";
+import YearRecap from "./pages/YearRecap.jsx";
 
 function App() {
     return (
@@ -116,6 +117,15 @@ function App() {
                             <>
                                 <AppBar/>
                                 <Goal/>
+                            </>
+                        </RequireAuth>
+                    }/>
+
+                    <Route path="/resumen" element={
+                        <RequireAuth>
+                            <>
+                                <AppBar/>
+                                <YearRecap/>
                             </>
                         </RequireAuth>
                     }/>
