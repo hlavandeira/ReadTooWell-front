@@ -143,7 +143,16 @@ const BookDetails = () => {
                     }
                 }
             );
+
+            const updatedListsResponse = await axios.get(`http://localhost:8080/listas/${id}/otras-listas`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setLists(updatedListsResponse.data.content);
+
             setAddToListDialogOpen(false);
+            setSelectedListId(null);
         } catch (error) {
             console.error('Error adding book to list:', error);
         }
@@ -995,7 +1004,7 @@ const BookDetails = () => {
                                 <CircularProgress/>
                             </Box>
                         ) : collectionBooks.length > 0 ? (
-                            <Grid container spacing={2}>
+                            <Grid container spacing={2} justifyContent="center">
                                 {collectionBooks.map(book => (
                                     <Grid key={book.id}>
                                         <SmallBookCard

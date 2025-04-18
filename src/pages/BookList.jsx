@@ -10,6 +10,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import ListedBook from '../components/ListedBook';
+import GenreButton from "../components/GenreButton.jsx";
 
 const BookList = () => {
     const {idList} = useParams();
@@ -255,16 +256,8 @@ const BookList = () => {
                 )}
 
                 <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 1}}>
-                    {listDetails.genres.map((genre, index) => (
-                        <Chip
-                            key={genre.id}
-                            label={genre.name}
-                            sx={{
-                                backgroundColor: '#7C4B3A',
-                                color: 'white',
-                                fontSize: '0.75rem'
-                            }}
-                        />
+                    {listDetails.genres.map((genre) => (
+                        <GenreButton key={genre.id} genre={genre} />
                     ))}
                 </Box>
             </Box>

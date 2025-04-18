@@ -93,6 +93,12 @@ export default function DynamicAppBar() {
                     {/* Menú específico por rol */}
                     <Box sx={{flexGrow: 1, display: 'flex', ml: 3}}>
                         <Button
+                            onClick={() => navigate('/')}
+                            sx={{my: 2, color: 'white', textTransform: 'none'}}
+                        >
+                            Inicio
+                        </Button>
+                        <Button
                             onClick={() => navigate('/catalogo')}
                             sx={{my: 2, color: 'white', textTransform: 'none'}}
                         >

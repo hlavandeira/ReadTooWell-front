@@ -9,11 +9,12 @@ import {
     Slider,
     CircularProgress,
     Paper,
-    Stack
+    Stack, Divider
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import BookGrid from '../components/BookGrid';
+import GenreButton from '../components/GenreButton';
 import axios from "axios";
 
 const SearchPage = () => {
@@ -30,6 +31,8 @@ const SearchPage = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [isFilterOpen, setIsFilterOpen] = useState(true);
+
+    const [genres, setGenres] = useState([]);
 
     const itemsPerPage = 10;
     const currentPage = parseInt(searchParams.get('page')) || 1;
@@ -110,6 +113,27 @@ const SearchPage = () => {
             maxPages: 1600
         });
     };
+
+    useEffect(() => {
+        const fetchGenres = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get('http://localhost:8080/libros/generos', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                setGenres(response.data);
+            } catch (err) {
+                console.error('Error fetching genres:', err);
+                setError('No se pudieron cargar los géneros');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchGenres();
+    }, []);
 
     return (
         <Box sx={{p: {xs: 2, md: 3}, maxWidth: 1400, mx: 'auto'}}>
@@ -330,6 +354,43 @@ const SearchPage = () => {
                     </Typography>
                 </Box>
             )}
+
+            <Divider sx={{my: 4, borderColor: 'divider'}}/>
+
+            <Box sx={{ my: 6 }}>
+                <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
+                    <Typography
+                        variant="h4"
+                        component="h2"
+                        sx={{
+                            mb: 4,
+                            fontWeight: 'bold',
+                            textAlign: 'center',
+                            color: '#432818'
+                        }}
+                    >
+                        ¿Quieres buscar algún género en concreto?
+                    </Typography>
+
+                    <Box sx={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        justifyContent: 'center',
+                        gap: 2,
+                        mt: 3
+                    }}>
+                        {genres.length > 0 ? (
+                            genres.map((genre) => (
+                                <GenreButton key={genre.id} genre={genre} />
+                            ))
+                        ) : (
+                            <Typography variant="body1" color="text.secondary">
+                                No hay géneros disponibles
+                            </Typography>
+                        )}
+                    </Box>
+                </Paper>
+            </Box>
         </Box>
     );
 };

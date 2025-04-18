@@ -34,7 +34,7 @@ const YearRecap = () => {
                 const responseUser = await axios.get(`http://localhost:8080/usuarios/${id}`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
-                setUserBio(responseUser.data.biography);
+                setUserBio(responseUser.data.biography || '');
             } catch (error) {
                 console.error('Error fetching year recap:', error);
             } finally {
@@ -98,7 +98,7 @@ const YearRecap = () => {
 
             {/* Estadísticas principales */}
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Grid container spacing={3} sx={{ mb: 4, maxWidth: '600px', justifyContent: 'center' }}>
+                <Grid container spacing={5} sx={{ mb: 4, maxWidth: '600px', justifyContent: 'center' }}>
                     <Grid item>
                         <Paper elevation={3} sx={{ p: 3, minWidth: 200, borderRadius: 2, textAlign: 'center' }}>
                             <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
@@ -123,42 +123,54 @@ const YearRecap = () => {
             </Box>
 
 
-            {/* Objetivos anuales */}
-            <Box sx={{display: 'flex', justifyContent: 'center'}}>
-                <Paper elevation={3} sx={{p: 3, mb: 4, borderRadius: 2, width: '80%'}}>
-                    <Typography variant="h5" component="h2" sx={{ mb: 3, fontWeight: 'bold', textAlign: "center" }}>
-                        Tus objetivos para este año
-                    </Typography>
+            {/* Objetivos completados */}
+            {yearRecap.annualGoals.length > 0 && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
+                    <Box sx={{ width: '80%' }}>
+                        <Typography variant="h5" component="h2" sx={{ mb: 3, fontWeight: 'bold', textAlign: "center" }}>
+                            Tus objetivos de lectura completados este año
+                        </Typography>
 
-                    {yearRecap.annualGoals.map((goal) => (
-                        <Box key={goal.id} sx={{mb: 3}}>
-                            <Box sx={{display: 'flex', justifyContent: 'space-between', mb: 1}}>
-                                <Typography variant="h6">
-                                    {goal.currentAmount.toLocaleString()} {goal.type.toLowerCase()} de {goal.amount.toLocaleString()} ({goal.percentage.toFixed(1)}%)
-                                </Typography>
-                                <Chip
-                                    label={`${goal.remainingDays} días restantes`}
-                                    size="small"
-                                    sx={{backgroundColor: '#f0e6dd', color: '#432818'}}
-                                />
-                            </Box>
-                            <LinearProgress
-                                variant="determinate"
-                                value={goal.percentage}
-                                sx={{
-                                    height: 10,
-                                    borderRadius: 5,
-                                    backgroundColor: '#f0f0f0',
-                                    '& .MuiLinearProgress-bar': {
-                                        backgroundColor: goal.type === 'Libros' ? '#432818' : '#8B0000',
-                                        borderRadius: 5
-                                    }
-                                }}
-                            />
-                        </Box>
-                    ))}
-                </Paper>
-            </Box>
+                        <Grid container spacing={3} sx={{ justifyContent: 'center' }}>
+                            {yearRecap.annualGoals.map((goal) => (
+                                <Grid key={goal.id}>
+                                    <Paper elevation={3} sx={{
+                                        p: 2,
+                                        minWidth: 180,
+                                        height: '80%',
+                                        borderRadius: 2,
+                                        textAlign: 'center',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        backgroundColor: goal.duration === 'Anual' ? '#F5EBE4' : 'white'
+                                    }}>
+                                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                                            Objetivo de {goal.duration === 'Mensual'
+                                            ? new Date(goal.dateStart).toLocaleString('es-ES', { month: 'long' })
+                                            : new Date(goal.dateStart).getFullYear()}
+                                        </Typography>
+
+                                        <Box sx={{
+                                            mt: 2
+                                        }}>
+                                            <Typography variant="h2" sx={{
+                                                color: '#8B0000',
+                                                fontWeight: 'bold',
+                                                lineHeight: 1
+                                            }}>
+                                                {goal.currentAmount}/{goal.amount}
+                                            </Typography>
+                                            <Typography variant="h6" sx={{ mt: 1 }}>
+                                                {goal.type.toLowerCase()}
+                                            </Typography>
+                                        </Box>
+                                    </Paper>
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </Box>
+                </Box>
+            )}
 
             {/* Géneros más leídos */}
             <Box sx={{display: 'flex', justifyContent: 'center'}}>
