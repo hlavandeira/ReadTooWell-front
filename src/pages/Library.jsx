@@ -3,11 +3,11 @@ import {useSearchParams, useNavigate} from 'react-router-dom';
 import axios from 'axios';
 import {
     Box, Typography, CircularProgress, Paper, Card, CardMedia, CardContent, LinearProgress, Button,
-    Dialog, DialogTitle, DialogContent, DialogActions, RadioGroup, FormControlLabel, Radio, TextField,
     Grid, Divider, Chip
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import NewListDialog from '../components/dialogs/NewListDialog';
+import UpdateProgressDialog from '../components/dialogs/UpdateProgressDialog';
 
 const Library = () => {
     const navigate = useNavigate();
@@ -22,7 +22,6 @@ const Library = () => {
     const itemsPerPage = 100;
 
     const [selectedBook, setSelectedBook] = useState(null);
-
     const [progressDialogOpen, setProgressDialogOpen] = useState(false);
 
     const [progressType, setProgressType] = useState('paginas');
@@ -30,11 +29,11 @@ const Library = () => {
 
     const [lists, setLists] = useState([]);
     const [newListDialogOpen, setNewListDialogOpen] = useState(false);
-    const [newListName, setNewListName] = useState('');
-
-    const [newListDescription, setNewListDescription] = useState('');
     const [genres, setGenres] = useState([]);
-    const [selectedGenreIds, setSelectedGenreIds] = useState(new Set());
+
+    const handleListCreated = (newList) => {
+        setLists(prev => [...prev, newList]);
+    };
 
     const bookshelves = [
         {
@@ -71,10 +70,6 @@ const Library = () => {
         }
     ];
 
-    const handlePageChange = (event, newPage) => {
-        setSearchParams({page: newPage});
-    };
-
     const handleUpdateProgress = (book) => {
         setSelectedBook(book);
         setProgressType(book.progressType);
@@ -82,85 +77,23 @@ const Library = () => {
         setProgressDialogOpen(true);
     };
 
-    const handleSaveProgress = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            await axios.put(`http://localhost:8080/biblioteca/${selectedBook.id.bookId}/progreso`, null, {
-                params: {
-                    tipoProgreso: progressType,
-                    progreso: progressValue
-                },
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+    const handleProgressUpdated = (updatedBook) => {
+        const isFinished = updatedBook.progressType === 'paginas'
+            ? updatedBook.progress >= updatedBook.book.pageNumber
+            : updatedBook.progress >= 100;
 
-            const isFinished = progressType === 'paginas'
-                ? progressValue >= selectedBook.book.pageNumber
-                : progressValue >= 100;
-
-            if (isFinished) {
-                setCurrentlyReading(currentlyReading.filter(
-                    book => book.id.bookId !== selectedBook.id.bookId
-                ));
-            } else {
-                setCurrentlyReading(currentlyReading.map(book =>
-                    book.id.bookId === selectedBook.id.bookId
-                        ? {...book, progress: progressValue, progressType}
-                        : book
-                ));
-            }
-
-            setProgressDialogOpen(false);
-        } catch (error) {
-            console.error('Error updating progress:', error);
-        }
-    };
-
-    const handleGenreToggle = (genreId) => {
-        setSelectedGenreIds(prev => {
-            const newSet = new Set(prev);
-            if (newSet.has(genreId)) {
-                newSet.delete(genreId);
-            } else {
-                newSet.add(genreId);
-            }
-            return newSet;
-        });
-    };
-
-    const handleCreateList = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.post('http://localhost:8080/listas',
-                {
-                    name: newListName,
-                    description: newListDescription
-                },
-                {
-                    params: {
-                        genreIds: Array.from(selectedGenreIds).join(',')
-                    },
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                }
+        if (isFinished) {
+            setCurrentlyReading(prev =>
+                prev.filter(book => book.id.bookId !== updatedBook.id.bookId)
             );
-
-            const listsResponse = await axios.get('http://localhost:8080/listas', {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            setLists(listsResponse.data.content);
-
-            setNewListDialogOpen(false);
-            setNewListName('');
-            setNewListDescription('');
-            setSelectedGenreIds(new Set());
-        } catch (error) {
-            console.error('Error creating list:', error);
+        } else {
+            setCurrentlyReading(prev =>
+                prev.map(book =>
+                    book.id.bookId === updatedBook.id.bookId
+                        ? updatedBook
+                        : book
+                )
+            );
         }
     };
 
@@ -360,72 +293,12 @@ const Library = () => {
             </Paper>
 
             {/* Diálogo para actualizar progreso */}
-            <Dialog open={progressDialogOpen} onClose={() => setProgressDialogOpen(false)}>
-                <DialogTitle sx={{backgroundColor: '#432818', color: 'white'}}>
-                    Actualizar progreso
-                </DialogTitle>
-                <DialogContent sx={{p: 3}}>
-                    <Typography variant="h6" gutterBottom>
-                        {selectedBook?.book.title}
-                    </Typography>
-
-                    <RadioGroup
-                        value={progressType}
-                        onChange={(e) => setProgressType(e.target.value)}
-                        sx={{mb: 3}}
-                    >
-                        <FormControlLabel
-                            value="paginas"
-                            control={<Radio/>}
-                            label="Páginas leídas"
-                        />
-                        <FormControlLabel
-                            value="porcentaje"
-                            control={<Radio/>}
-                            label="Porcentaje completado"
-                        />
-                    </RadioGroup>
-
-                    <TextField
-                        fullWidth
-                        type="number"
-                        label={progressType === 'paginas' ? 'Páginas leídas' : 'Porcentaje completado'}
-                        value={progressValue === 0 ? '' : progressValue}
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            setProgressValue(value === '' ? 0 : parseInt(value) || 0);
-                        }}
-                        inputProps={{
-                            min: 0,
-                            max: progressType === 'paginas' ? selectedBook?.book.pageNumber : 100
-                        }}
-                    />
-
-                    {progressType === 'paginas' && selectedBook?.book.pageNumber && (
-                        <Typography variant="caption" display="block" sx={{mt: 1}}>
-                            Total de páginas: {selectedBook.book.pageNumber}
-                        </Typography>
-                    )}
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setProgressDialogOpen(false)}
-                            sx={{textTransform: 'none'}}
-                            color='#432818'>
-                        Cancelar
-                    </Button>
-                    <Button
-                        onClick={handleSaveProgress}
-                        variant="contained"
-                        sx={{
-                            backgroundColor: '#8B0000',
-                            '&:hover': {backgroundColor: '#6d0000'},
-                            textTransform: 'none'
-                        }}
-                    >
-                        Guardar
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <UpdateProgressDialog
+                open={progressDialogOpen}
+                onClose={() => setProgressDialogOpen(false)}
+                book={selectedBook}
+                onProgressUpdated={handleProgressUpdated}
+            />
 
             <Divider sx={{my: 4, borderColor: 'divider'}}/>
 
@@ -623,122 +496,12 @@ const Library = () => {
                 )}
 
                 {/* Diálogo para crear nueva lista */}
-                <Dialog
+                <NewListDialog
                     open={newListDialogOpen}
                     onClose={() => setNewListDialogOpen(false)}
-                    maxWidth="sm"
-                    fullWidth
-                >
-                    <DialogTitle sx={{
-                        backgroundColor: '#432818',
-                        color: 'white',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1
-                    }}>
-                        <LibraryBooksIcon/>
-                        Nueva lista de libros
-                    </DialogTitle>
-
-                    <DialogContent sx={{p: 3}}>
-                        <Box component="form" sx={{mt: 1}}>
-                            {/* Nombre */}
-                            <TextField
-                                autoFocus
-                                margin="normal"
-                                label="Nombre de la lista*"
-                                fullWidth
-                                value={newListName}
-                                onChange={(e) => setNewListName(e.target.value)}
-                                sx={{ mb: 2 }}
-                            />
-
-                            {/* Descripción */}
-                            <TextField
-                                margin="normal"
-                                label="Descripción (opcional)"
-                                fullWidth
-                                multiline
-                                rows={3}
-                                value={newListDescription}
-                                onChange={(e) => {
-                                    if (e.target.value.length <= 2000) {
-                                        setNewListDescription(e.target.value);
-                                    }
-                                }}
-                                inputProps={{
-                                    maxLength: 2000
-                                }}
-                                helperText={`${newListDescription.length}/2000 caracteres`}
-                                sx={{ mb: 3 }}
-                            />
-
-                            {/* Selección de géneros */}
-                            <Typography variant="subtitle2" sx={{mb: 1, color: '#432818'}}>
-                                Selecciona géneros (opcional):
-                            </Typography>
-
-                            <Box sx={{
-                                display: 'flex',
-                                flexWrap: 'wrap',
-                                gap: 1,
-                                mb: 2,
-                                maxHeight: '200px',
-                                overflowY: 'auto',
-                                p: 1
-                            }}>
-                                {genres.map((genre) => (
-                                    <Chip
-                                        key={genre.id}
-                                        label={genre.name}
-                                        clickable
-                                        variant={selectedGenreIds.has(genre.id) ? 'filled' : 'outlined'}
-                                        color={selectedGenreIds.has(genre.id) ? 'primary' : 'default'}
-                                        onClick={() => handleGenreToggle(genre.id)}
-                                        sx={{
-                                            borderRadius: '4px',
-                                            borderColor: selectedGenreIds.has(genre.id) ? '#432818' : '#ddd',
-                                            backgroundColor: selectedGenreIds.has(genre.id) ? '#CCC4B7' : 'transparent',
-                                            '&:hover': {
-                                                backgroundColor: selectedGenreIds.has(genre.id) ? '#E0DCD3' : 'black'
-                                            },
-                                            color: selectedGenreIds.has(genre.id) ? 'black' : 'inherit'
-                                        }}
-                                    />
-                                ))}
-                            </Box>
-                        </Box>
-                    </DialogContent>
-
-                    <DialogActions sx={{p: 2}}>
-                        <Button
-                            onClick={() => {
-                                setNewListDialogOpen(false);
-                                setSelectedGenreIds(new Set());
-                            }}
-                            sx={{
-                                textTransform: 'none',
-                                color: '#6c757d'
-                            }}
-                        >
-                            Cancelar
-                        </Button>
-                        <Button
-                            onClick={handleCreateList}
-                            variant="contained"
-                            disabled={!newListName.trim()}
-                            sx={{
-                                textTransform: 'none',
-                                backgroundColor: '#8B0000',
-                                '&:hover': {backgroundColor: '#6d0000'},
-                                borderRadius: '20px',
-                                px: 3
-                            }}
-                        >
-                            Crear lista
-                        </Button>
-                    </DialogActions>
-                </Dialog>
+                    onListCreated={handleListCreated}
+                    genres={genres}
+                />
             </Box>
         </Box>
     );

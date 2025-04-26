@@ -2,15 +2,13 @@ import {useState, useEffect} from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 import axios from 'axios';
 import {
-    Box, Typography, CircularProgress, Pagination,
-    Button, Dialog, DialogTitle, DialogContent, DialogActions,
-    TextField, Chip
+    Box, Typography, CircularProgress, Pagination, Button
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
-import ListedBook from '../components/ListedBook';
+import ListedBook from '../components/books/ListedBook.jsx';
 import GenreButton from "../components/GenreButton.jsx";
+import EditListDialog from '../components/dialogs/EditListDialog';
 
 const BookList = () => {
     const {idList} = useParams();
@@ -83,17 +81,16 @@ const BookList = () => {
         setEditDialogOpen(true);
     };
 
-    const handleUpdateList = async () => {
+    const handleUpdateList = async (updatedData) => {
         try {
             const token = localStorage.getItem('token');
-            await axios.put(`http://localhost:8080/listas/${idList}`,
-                {
-                    name: editName,
-                    description: editDescription
+            await axios.put(`http://localhost:8080/listas/${idList}`, {
+                    name: updatedData.name,
+                    description: updatedData.description
                 },
                 {
                     params: {
-                        genreIds: Array.from(selectedGenreIds).join(',')
+                        genreIds: updatedData.genreIds.join(',')
                     },
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -113,9 +110,9 @@ const BookList = () => {
             });
 
             setListDetails(response.data);
-            setEditDialogOpen(false);
         } catch (error) {
             console.error('Error updating list:', error);
+            throw error;
         }
     };
 
@@ -136,18 +133,6 @@ const BookList = () => {
     const handlePageChange = (event, value) => {
         setPage(value);
         window.scrollTo({top: 0, behavior: 'smooth'});
-    };
-
-    const handleGenreToggle = (genreId) => {
-        setSelectedGenreIds(prev => {
-            const newSet = new Set(prev);
-            if (newSet.has(genreId)) {
-                newSet.delete(genreId);
-            } else {
-                newSet.add(genreId);
-            }
-            return newSet;
-        });
     };
 
     const handleDeleteBook = async (bookId) => {
@@ -304,120 +289,14 @@ const BookList = () => {
             )}
 
             {/* Diálogo para editar lista */}
-            <Dialog
+            <EditListDialog
                 open={editDialogOpen}
                 onClose={() => setEditDialogOpen(false)}
-                maxWidth="sm"
-                fullWidth
-            >
-                <DialogTitle sx={{
-                    backgroundColor: '#432818',
-                    color: 'white',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1
-                }}>
-                    <LibraryBooksIcon/>
-                    Editar lista
-                </DialogTitle>
-
-                <DialogContent sx={{p: 3}}>
-                    <Box component="form" sx={{mt: 1}}>
-                        <TextField
-                            autoFocus
-                            margin="normal"
-                            label="Nombre de la lista*"
-                            fullWidth
-                            value={editName}
-                            onChange={(e) => setEditName(e.target.value)}
-                            sx={{mb: 2}}
-                        />
-
-                        <TextField
-                            margin="normal"
-                            label="Descripción"
-                            fullWidth
-                            multiline
-                            rows={3}
-                            value={editDescription}
-                            onChange={(e) => {
-                                if (e.target.value.length <= 2000) {
-                                    setEditDescription(e.target.value);
-                                }
-                            }}
-                            inputProps={{
-                                maxLength: 2000
-                            }}
-                            helperText={`${editDescription.length}/2000 caracteres`}
-                            sx={{mb: 3}}
-                        />
-
-                        <Typography variant="subtitle2" sx={{mb: 1, color: '#432818'}}>
-                            Géneros:
-                        </Typography>
-
-                        {loadingGenres ? (
-                            <CircularProgress size={24}/>
-                        ) : (
-                            <Box sx={{
-                                display: 'flex',
-                                flexWrap: 'wrap',
-                                gap: 1,
-                                mb: 2,
-                                maxHeight: '200px',
-                                overflowY: 'auto',
-                                p: 1
-                            }}>
-                                {genres.map((genre) => (
-                                    <Chip
-                                        key={genre.id}
-                                        label={genre.name}
-                                        clickable
-                                        variant={selectedGenreIds.has(genre.id) ? 'filled' : 'outlined'}
-                                        color={selectedGenreIds.has(genre.id) ? 'primary' : 'default'}
-                                        onClick={() => handleGenreToggle(genre.id)}
-                                        sx={{
-                                            borderRadius: '4px',
-                                            borderColor: selectedGenreIds.has(genre.id) ? '#432818' : '#ddd',
-                                            backgroundColor: selectedGenreIds.has(genre.id) ? '#CCC4B7' : 'transparent',
-                                            '&:hover': {
-                                                backgroundColor: selectedGenreIds.has(genre.id) ? '#E0DCD3' : 'black'
-                                            },
-                                            color: selectedGenreIds.has(genre.id) ? 'black' : 'inherit'
-                                        }}
-                                    />
-                                ))}
-                            </Box>
-                        )}
-                    </Box>
-                </DialogContent>
-
-                <DialogActions sx={{p: 2}}>
-                    <Button
-                        onClick={() => setEditDialogOpen(false)}
-                        sx={{
-                            textTransform: 'none',
-                            color: '#6c757d'
-                        }}
-                    >
-                        Cancelar
-                    </Button>
-                    <Button
-                        onClick={handleUpdateList}
-                        variant="contained"
-                        disabled={!editName.trim()}
-                        sx={{
-                            textTransform: 'none',
-                            backgroundColor: '#8B0000',
-                            '&:hover': {backgroundColor: '#6d0000'},
-                            borderRadius: '20px',
-                            px: 3
-                        }}
-                    >
-                        Guardar cambios
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                listDetails={listDetails}
+                genres={genres}
+                loadingGenres={loadingGenres}
+                onSave={handleUpdateList}
+            />
         </Box>
     );
 };

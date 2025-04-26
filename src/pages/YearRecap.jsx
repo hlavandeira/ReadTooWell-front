@@ -6,12 +6,10 @@ import {
     Typography,
     Avatar,
     Paper,
-    Chip,
-    LinearProgress,
     CircularProgress,
     Grid
 } from '@mui/material';
-import RatedBookCard from '../components/RatedBookCard.jsx';
+import RatedBookCard from '../components/books/RatedBookCard.jsx';
 import GenreButton from "../components/GenreButton.jsx";
 
 const YearRecap = () => {

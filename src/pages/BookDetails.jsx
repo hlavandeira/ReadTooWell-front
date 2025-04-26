@@ -3,12 +3,13 @@ import {useNavigate} from "react-router-dom";
 import {useState, useEffect} from 'react';
 import axios from 'axios';
 import {
-    Box, Typography, Button, CardMedia, CircularProgress, Rating, Paper, Chip,
-    Grid, Divider, TextField, Dialog, DialogTitle, DialogContent, DialogActions,
-    FormControl, RadioGroup, FormControlLabel, Radio
+    Box, Typography, Button, CardMedia, CircularProgress, Rating, Paper, Divider, Grid
 } from '@mui/material';
-import SmallBookCard from '../components/SmallBookCard';
+import SmallBookCard from '../components/books/SmallBookCard.jsx';
 import GenreButton from '../components/GenreButton';
+import EditReviewDialog from '../components/dialogs/EditReviewDialog';
+import UpdateReadingStatusDialog from '../components/dialogs/UpdateReadingStatusDialog';
+import AddToListDialog from '../components/dialogs/AddToListDialog';
 
 const BookDetails = () => {
     const {id} = useParams();
@@ -27,7 +28,6 @@ const BookDetails = () => {
 
     const [lists, setLists] = useState([]);
     const [addToListDialogOpen, setAddToListDialogOpen] = useState(false);
-    const [selectedListId, setSelectedListId] = useState(null);
 
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString('es-ES', {
@@ -61,24 +61,29 @@ const BookDetails = () => {
         }
     };
 
-    const handleSaveStatus = async () => {
+    const handleSaveStatus = async (newStatus, bookId) => {
         try {
             const token = localStorage.getItem('token');
 
-            await axios.put(`http://localhost:8080/biblioteca/${id}/estado?estado=${selectedStatus}`, null, {
-                headers: {
-                    Authorization: `Bearer ${token}`
+            const response = await axios.put(
+                `http://localhost:8080/biblioteca/${bookId}/estado?estado=${newStatus}`,
+                null,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
                 }
-            });
+            );
 
             setDetails(prev => ({
                 ...prev,
-                readingStatus: selectedStatus
+                readingStatus: newStatus
             }));
 
-            setModalOpen(false);
+            return response.data;
         } catch (error) {
-            console.error("Error al actualizar el estado de lectura: ", error);
+            console.error("Error al actualizar el estado de lectura:", error);
+            throw error;
         }
     };
 
@@ -86,7 +91,7 @@ const BookDetails = () => {
         try {
             const token = localStorage.getItem('token');
 
-            const response = await axios.put(
+            await axios.put(
                 `http://localhost:8080/biblioteca/${id}/escribir-reseña`,
                 null,
                 {
@@ -131,11 +136,11 @@ const BookDetails = () => {
         }
     };
 
-    const handleAddToList = async () => {
+    const handleAddToList = async (listId, bookId) => {
         try {
             const token = localStorage.getItem('token');
             await axios.post(
-                `http://localhost:8080/listas/${selectedListId}/añadir-libro/${id}`,
+                `http://localhost:8080/listas/${listId}/añadir-libro/${bookId}`,
                 {},
                 {
                     headers: {
@@ -144,17 +149,18 @@ const BookDetails = () => {
                 }
             );
 
-            const updatedListsResponse = await axios.get(`http://localhost:8080/listas/${id}/otras-listas`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
+            const updatedListsResponse = await axios.get(
+                `http://localhost:8080/listas/${bookId}/otras-listas`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
                 }
-            });
+            );
             setLists(updatedListsResponse.data.content);
-
-            setAddToListDialogOpen(false);
-            setSelectedListId(null);
         } catch (error) {
             console.error('Error adding book to list:', error);
+            throw error;
         }
     };
 
@@ -368,112 +374,13 @@ const BookDetails = () => {
                         </Button>
 
                         {/* Diálogo para el cambio de estado de lectura */}
-                        <Dialog
+                        <UpdateReadingStatusDialog
                             open={modalOpen}
                             onClose={() => setModalOpen(false)}
-                            PaperProps={{
-                                sx: {
-                                    borderRadius: '12px',
-                                    minWidth: '350px',
-                                    background: '#f5f5f5'
-                                }
-                            }}
-                        >
-                            <DialogTitle
-                                sx={{
-                                    backgroundColor: '#432818',
-                                    color: 'white',
-                                    fontWeight: 'bold',
-                                    padding: '16px 24px'
-                                }}
-                            >
-                                Cambiar estado de lectura
-                            </DialogTitle>
-
-                            <DialogContent sx={{padding: '40px 24px 16px', pt: 10}}>
-                                <FormControl component="fieldset" fullWidth>
-                                    <RadioGroup
-                                        value={selectedStatus}
-                                        onChange={(e) => setSelectedStatus(parseInt(e.target.value))}
-                                        sx={{gap: '8px', pt: '10px'}}
-                                    >
-                                        {[
-                                            {value: 0, label: 'Pendiente', color: '#6c757d'},
-                                            {value: 1, label: 'Leyendo', color: '#4C88A8'},
-                                            {value: 2, label: 'Leído', color: '#1C945C'},
-                                            {value: 3, label: 'Pausado', color: '#DEA807'},
-                                            {value: 4, label: 'Abandonado', color: '#CC4D3D'}
-                                        ].map((item) => (
-                                            <FormControlLabel
-                                                key={item.value}
-                                                value={item.value}
-                                                control={
-                                                    <Radio
-                                                        sx={{
-                                                            color: item.color,
-                                                            '&.Mui-checked': {color: item.color}
-                                                        }}
-                                                    />
-                                                }
-                                                label={
-                                                    <Typography
-                                                        variant="body1"
-                                                        sx={{
-                                                            fontWeight: 500,
-                                                            color: selectedStatus === item.value ? item.color : 'inherit'
-                                                        }}
-                                                    >
-                                                        {item.label}
-                                                    </Typography>
-                                                }
-                                                sx={{
-                                                    margin: 0,
-                                                    padding: '8px 12px',
-                                                    pb: '3px',
-                                                    borderRadius: '8px',
-                                                    backgroundColor: selectedStatus === item.value ? `${item.color}10` : 'transparent',
-                                                    '&:hover': {
-                                                        backgroundColor: `${item.color}15`
-                                                    }
-                                                }}
-                                            />
-                                        ))}
-                                    </RadioGroup>
-                                </FormControl>
-                            </DialogContent>
-
-                            <DialogActions sx={{padding: '16px 24px', pt: '2px'}}>
-                                <Button
-                                    onClick={() => setModalOpen(false)}
-                                    sx={{
-                                        textTransform: 'none',
-                                        fontWeight: '500',
-                                        color: '#6c757d',
-                                        '&:hover': {
-                                            backgroundColor: '#f0f0f0'
-                                        }
-                                    }}
-                                >
-                                    Cancelar
-                                </Button>
-                                <Button
-                                    onClick={handleSaveStatus}
-                                    variant="contained"
-                                    sx={{
-                                        textTransform: 'none',
-                                        fontWeight: '500',
-                                        backgroundColor: '#432818',
-                                        borderRadius: '8px',
-                                        padding: '8px 16px',
-                                        '&:hover': {
-                                            backgroundColor: '#5a3a23'
-                                        }
-                                    }}
-                                >
-                                    Guardar
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
+                            currentStatus={details.readingStatus}
+                            onSave={handleSaveStatus}
+                            bookId={id}
+                        />
                     </Box>
                 </Grid>
 
@@ -671,108 +578,14 @@ const BookDetails = () => {
                         </Box>
 
                         {/* Diálogo para añadir a lista */}
-                        <Dialog
+                        <AddToListDialog
                             open={addToListDialogOpen}
                             onClose={() => setAddToListDialogOpen(false)}
-                            PaperProps={{
-                                sx: {
-                                    borderRadius: '12px',
-                                    minWidth: '350px'
-                                }
-                            }}
-                        >
-                            <DialogTitle sx={{
-                                backgroundColor: '#432818',
-                                color: 'white',
-                                fontWeight: 'bold',
-                                padding: '16px 24px'
-                            }}>
-                                Añadir a lista
-                            </DialogTitle>
-
-                            <DialogContent sx={{padding: '24px', mt: 3}}>
-                                {lists.length === 0 ? (
-                                    <Typography variant="body1" textAlign="center" sx={{mt: 2}}>
-                                        No tienes ninguna lista creada
-                                    </Typography>
-                                ) : (
-                                    <Box sx={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        gap: 1
-                                    }}>
-                                        {lists.map((list) => (
-                                            <Button
-                                                key={list.id}
-                                                variant={selectedListId === list.id ? 'contained' : 'outlined'}
-                                                onClick={() => setSelectedListId(list.id)}
-                                                sx={{
-                                                    textTransform: 'none',
-                                                    justifyContent: 'flex-start',
-                                                    backgroundColor: selectedListId === list.id ? '#43281820' : 'transparent',
-                                                    borderColor: '#432818',
-                                                    color: 'text.primary',
-                                                    '&:hover': {
-                                                        backgroundColor: '#43281810'
-                                                    }
-                                                }}
-                                            >
-                                                {list.name}
-                                                {list.genres?.length > 0 && (
-                                                    <Box sx={{ml: 'auto', display: 'flex', gap: 0.5}}>
-                                                        {list.genres.slice(0, 2).map(genre => (
-                                                            <Chip
-                                                                key={genre.id}
-                                                                label={genre.name}
-                                                                size="small"
-                                                                sx={{
-                                                                    fontSize: '0.6rem',
-                                                                    height: '20px'
-                                                                }}
-                                                            />
-                                                        ))}
-                                                        {list.genres.length > 2 && (
-                                                            <Chip
-                                                                label={`+${list.genres.length - 2}`}
-                                                                size="small"
-                                                                sx={{
-                                                                    fontSize: '0.6rem',
-                                                                    height: '20px'
-                                                                }}
-                                                            />
-                                                        )}
-                                                    </Box>
-                                                )}
-                                            </Button>
-                                        ))}
-                                    </Box>
-                                )}
-                            </DialogContent>
-
-                            <DialogActions sx={{padding: '16px 24px'}}>
-                                <Button
-                                    onClick={() => setAddToListDialogOpen(false)}
-                                    sx={{
-                                        textTransform: 'none',
-                                        color: '#6c757d'
-                                    }}
-                                >
-                                    Cancelar
-                                </Button>
-                                <Button
-                                    onClick={handleAddToList}
-                                    variant="contained"
-                                    disabled={!selectedListId || lists.length === 0}
-                                    sx={{
-                                        textTransform: 'none',
-                                        backgroundColor: '#432818',
-                                        '&:hover': {backgroundColor: '#5a3a23'}
-                                    }}
-                                >
-                                    Añadir
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
+                            lists={lists}
+                            bookId={id}
+                            onAddToList={handleAddToList}
+                            onSuccess={() => {}}
+                        />
                     </Box>
                 </Grid>
             </Grid>
@@ -859,49 +672,15 @@ const BookDetails = () => {
                     )}
 
                     {/* Diálogo para editar reseña */}
-                    <Dialog open={reviewDialogOpen} onClose={() => setReviewDialogOpen(false)}>
-                        <DialogTitle sx={{
-                            backgroundColor: '#432818',
-                            color: 'white',
-                            fontWeight: 'bold'
-                        }}>
-                            {userReview.trim() === '' ? 'Añadir reseña' : 'Editar reseña'}
-                        </DialogTitle>
-                        <DialogContent sx={{p: 3, pb: 1}}>
-                            <TextField
-                                fullWidth
-                                multiline
-                                rows={6}
-                                value={reviewText}
-                                onChange={(e) => setReviewText(e.target.value)}
-                                placeholder="Escribe tu reseña sobre este libro..."
-                                variant="outlined"
-                                sx={{minWidth: '400px', pt: 2}}
-                            />
-                        </DialogContent>
-                        <DialogActions sx={{p: 2, pt: 0.5}}>
-                            <Button
-                                onClick={() => setReviewDialogOpen(false)}
-                                sx={{color: 'text.secondary', textTransform: 'none'}}
-                            >
-                                Cancelar
-                            </Button>
-                            <Button
-                                onClick={() => {
-                                    handleSaveReview(reviewText);
-                                    setReviewDialogOpen(false);
-                                }}
-                                variant="contained"
-                                sx={{
-                                    backgroundColor: '#432818',
-                                    '&:hover': {backgroundColor: '#5a3a23'},
-                                    textTransform: 'none'
-                                }}
-                            >
-                                Guardar
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
+                    <EditReviewDialog
+                        open={reviewDialogOpen}
+                        onClose={() => setReviewDialogOpen(false)}
+                        initialReview={userReview}
+                        onSave={(review) => {
+                            handleSaveReview(review);
+                            setUserReview(review);
+                        }}
+                    />
                 </Box>
 
                 {details.otherUsersReviews?.length > 0 && (

@@ -7,17 +7,10 @@ import {
     Tab,
     CircularProgress,
     Paper,
-    Button,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    RadioGroup,
-    FormControlLabel,
-    Radio,
-    TextField
+    Button
 } from '@mui/material';
 import GoalCard from '../components/GoalCard';
+import AddGoalDialog from '../components/dialogs/AddGoalDialog';
 import AddIcon from "@mui/icons-material/Add";
 
 const Goal = () => {
@@ -26,40 +19,13 @@ const Goal = () => {
     const [completedGoals, setCompletedGoals] = useState([]);
     const [loading, setLoading] = useState(true);
     const [goalDialogOpen, setGoalDialogOpen] = useState(false);
-    const [goalType, setGoalType] = useState('libros');
-    const [goalDuration, setGoalDuration] = useState('mes');
-    const [newAmount, setNewAmount] = useState('');
 
     const handleTabChange = (event, newValue) => {
         setActiveTab(newValue);
     };
 
-    const handleCreateGoal = async () => {
-        try {
-            const token = localStorage.getItem('token');
-
-            const goalData = {
-                type: goalType,
-                duration: goalDuration,
-                amount: parseInt(newAmount)
-            };
-
-            const response = await axios.post('http://localhost:8080/objetivos', goalData, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            setInProgressGoals(prev => [...prev, response.data]);
-
-            setGoalDialogOpen(false);
-            setGoalType('libros');
-            setGoalDuration('mes');
-            setNewAmount('');
-        } catch (error) {
-            console.error('Error creating goal:', error);
-        }
+    const handleGoalCreated = (newGoal) => {
+        setInProgressGoals(prev => [...prev, newGoal]);
     };
 
     useEffect(() => {
@@ -122,90 +88,11 @@ const Goal = () => {
             </Box>
 
             {/* Diálogo para crear objetivo */}
-            <Dialog open={goalDialogOpen} onClose={() => setGoalDialogOpen(false)}>
-                <DialogTitle sx={{
-                    backgroundColor: '#432818',
-                    color: 'white',
-                    fontWeight: 'bold'
-                }}>
-                    Nuevo objetivo de lectura
-                </DialogTitle>
-
-                <DialogContent sx={{ p: 3 }}>
-                    <Typography variant="subtitle1" gutterBottom>
-                        Período del objetivo:
-                    </Typography>
-                    <RadioGroup
-                        value={goalDuration}
-                        onChange={(e) => setGoalDuration(e.target.value)}
-                        sx={{ mb: 3 }}
-                    >
-                        <FormControlLabel
-                            value="Mensual"
-                            control={<Radio />}
-                            label="Objetivo mensual"
-                        />
-                        <FormControlLabel
-                            value="Anual"
-                            control={<Radio />}
-                            label="Objetivo anual"
-                        />
-                    </RadioGroup>
-
-                    <Typography variant="subtitle1" gutterBottom>
-                        Tipo de objetivo:
-                    </Typography>
-                    <RadioGroup
-                        value={goalType}
-                        onChange={(e) => setGoalType(e.target.value)}
-                        sx={{ mb: 3 }}
-                    >
-                        <FormControlLabel
-                            value="Libros"
-                            control={<Radio />}
-                            label="Número de libros"
-                        />
-                        <FormControlLabel
-                            value="Páginas"
-                            control={<Radio />}
-                            label="Número de páginas"
-                        />
-                    </RadioGroup>
-
-                    <TextField
-                        fullWidth
-                        label={`${goalType === 'libros' ? 'Libros' : 'Páginas'} a leer`}
-                        type="number"
-                        value={newAmount}
-                        onChange={(e) => setNewAmount(e.target.value)}
-                        inputProps={{ min: 1 }}
-                    />
-                </DialogContent>
-
-                <DialogActions sx={{ p: 2 }}>
-                    <Button
-                        onClick={() => setGoalDialogOpen(false)}
-                        sx={{
-                            textTransform: 'none',
-                            color: '#6c757d'
-                        }}
-                    >
-                        Cancelar
-                    </Button>
-                    <Button
-                        onClick={handleCreateGoal}
-                        variant="contained"
-                        disabled={!newAmount || isNaN(newAmount) || parseInt(newAmount) <= 0}
-                        sx={{
-                            textTransform: 'none',
-                            backgroundColor: '#432818',
-                            '&:hover': { backgroundColor: '#5a3a23' }
-                        }}
-                    >
-                        Crear objetivo
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <AddGoalDialog
+                open={goalDialogOpen}
+                onClose={() => setGoalDialogOpen(false)}
+                onGoalCreated={handleGoalCreated}
+            />
 
             {/* Panel con las pestañas para objetivos en curso/terminados */}
             <Paper elevation={3} sx={{ borderRadius: 2, overflow: 'hidden' }}>

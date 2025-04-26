@@ -15,6 +15,7 @@ import Bookshelf from "./pages/Bookshelf.jsx";
 import BookList from "./pages/BookList.jsx";
 import Goal from "./pages/Goal.jsx";
 import YearRecap from "./pages/YearRecap.jsx";
+import Profile from "./pages/Profile.jsx";
 
 function App() {
     return (
@@ -126,6 +127,15 @@ function App() {
                             <>
                                 <AppBar/>
                                 <YearRecap/>
+                            </>
+                        </RequireAuth>
+                    }/>
+
+                    <Route path="/perfil/:id" element={
+                        <RequireAuth>
+                            <>
+                                <AppBar/>
+                                <Profile/>
                             </>
                         </RequireAuth>
                     }/>

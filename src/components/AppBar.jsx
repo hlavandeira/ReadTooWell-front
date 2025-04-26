@@ -22,7 +22,7 @@ import {
 } from '@mui/icons-material';
 
 export default function DynamicAppBar() {
-    const {role, logout, profilePic} = useAuth();
+    const {role, logout, profilePic, id} = useAuth();
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
 
@@ -196,7 +196,7 @@ export default function DynamicAppBar() {
                             onClose={handleClose}
                         >
                             <MenuItem onClick={() => {
-                                navigate('/perfil');
+                                navigate(`/perfil/${id}`);
                                 handleClose();
                             }}>
                                 <AccountCircleIcon sx={{mr: 1}}/>

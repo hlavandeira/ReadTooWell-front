@@ -5,7 +5,7 @@ import {
     Box,
     Pagination
 } from "@mui/material";
-import BookCard from "./BookCard";
+import BookCard from "./books/BookCard.jsx";
 
 const BookGrid = ({titulo, libros = [], page, totalPages, onPageChange}) => {
     return (
