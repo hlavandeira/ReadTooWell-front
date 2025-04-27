@@ -5,7 +5,7 @@ import {useAuth} from '../context/AuthContext.jsx';
 import {useState} from 'react';
 
 const Home = () => {
-    const {role, token, name} = useAuth();
+    const {token, name} = useAuth();
     const theme = useTheme();
     const navigate = useNavigate();
 
@@ -31,9 +31,9 @@ const Home = () => {
             color: '#876C40'
         },
         {
-            label: 'Explorar novedades',
-            icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743863885/readtoowell/iconos/Buscar_sinfondo_blanco_xbjtvs.png",
-            path: '/catalogo',
+            label: 'Conectar',
+            icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1745747085/readtoowell/iconos/Social_sinfondo_blanco_piz4io.png",
+            path: '/buscar/usuarios',
             color: '#2E5266'
         }
     ];

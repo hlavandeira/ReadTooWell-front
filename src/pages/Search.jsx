@@ -34,7 +34,7 @@ const SearchPage = () => {
 
     const [genres, setGenres] = useState([]);
 
-    const itemsPerPage = 10;
+    const itemsPerPage = 9;
     const currentPage = parseInt(searchParams.get('page')) || 1;
 
     const searchBooks = async () => {

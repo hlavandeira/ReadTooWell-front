@@ -1,4 +1,4 @@
-import {Card, CardMedia, CardContent, Typography, Button, Box, Grid, Divider} from '@mui/material';
+import {Card, CardMedia, CardContent, Typography, Button, Box} from '@mui/material';
 import {useNavigate} from 'react-router-dom';
 
 const ShelvedBookCard = ({book, onDelete, onFormatClick}) => {

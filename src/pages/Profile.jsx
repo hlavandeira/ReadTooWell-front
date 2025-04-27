@@ -13,8 +13,10 @@ import {
 } from '@mui/material';
 import GenreButton from '../components/GenreButton';
 import BookCard from '../components/books/BookCard.jsx';
+import SmallBookCard from '../components/books/SmallBookCard.jsx';
 import EditIcon from '@mui/icons-material/Edit';
-import {Cloudinary} from '@cloudinary/url-gen';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import EditProfileDialog from '../components/dialogs/EditProfileDialog';
 import {useAuth} from '../context/AuthContext.jsx';
 
@@ -32,7 +34,10 @@ const Profile = () => {
         biography: '',
         profilePic: ''
     });
-    const {updateProfileImage} = useAuth();
+    const {updateProfileImage, id: currentUserId} = useAuth();
+    const [isFollowing, setIsFollowing] = useState(false);
+    const [authorBooks, setAuthorBooks] = useState([]);
+    const [booksLoading, setBooksLoading] = useState(false);
 
     useEffect(() => {
         const fetchProfileData = async () => {
@@ -54,6 +59,15 @@ const Profile = () => {
                             headers: {Authorization: `Bearer ${token}`}
                         })
                     ]);
+
+                if (profileRes.data.role === 2) { // Si el usuario es administrador, no dejar ver perfil
+                    navigate('/');
+                }
+
+                if (currentUserId) {
+                    const isUserFollowing = followersRes.data.some(follower => follower.id === parseInt(currentUserId));
+                    setIsFollowing(isUserFollowing);
+                }
 
                 setProfile(profileRes.data);
                 setFollowers(followersRes.data);
@@ -115,6 +129,70 @@ const Profile = () => {
         }
     };
 
+    const handleFollowToggle = async () => {
+        try {
+            if (!currentUserId) {
+                navigate('/login');
+                return;
+            }
+            const token = localStorage.getItem('token');
+
+            if (isFollowing) {
+                // Dejar de seguir
+                await axios.delete(`http://localhost:8080/usuarios/dejar-seguir/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                setIsFollowing(false);
+                setFollowers(prev => prev.filter(follower => follower.id !== parseInt(currentUserId)));
+            } else {
+                // Seguir
+                await axios.post(`http://localhost:8080/usuarios/seguir/${id}`, {}, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                setIsFollowing(true);
+                setFollowers(prev => [...prev, { id: parseInt(currentUserId) }]);
+            }
+        } catch (error) {
+            console.error('Error al seguir/dejar de seguir:', error);
+            if (error.response?.status === 401) {
+                navigate('/login');
+            }
+        }
+    };
+
+    useEffect(() => {
+        const fetchAuthorBooks = async () => {
+            if (profile?.role !== 1) {
+                return;
+            }
+
+            const token = localStorage.getItem('token');
+
+            try {
+                setBooksLoading(true);
+                const response = await axios.get('http://localhost:8080/libros/libros-autor', {
+                    params: {
+                        authorName: profile.profileName,
+                        page: 0,
+                        size: 5
+                    },
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setAuthorBooks(response.data.content);
+            } catch (error) {
+                console.error('Error fetching author books:', error);
+            } finally {
+                setBooksLoading(false);
+            }
+        };
+
+        if (profile?.role === 1) {
+            fetchAuthorBooks();
+        }
+    }, [profile]);
+
     if (loading) {
         return (
             <Box display="flex" justifyContent="center" mt={4}>
@@ -128,7 +206,7 @@ const Profile = () => {
     }
 
     return (
-        <Box sx={{maxWidth: 800, mx: 'auto', p: 3}}>
+        <Box sx={{maxWidth: 1200, mx: 'auto', p: 3}}>
             {/* Datos del usuario */}
             <Box sx={{textAlign: 'center', mb: 4}}>
                 <Avatar
@@ -156,14 +234,14 @@ const Profile = () => {
                     <Typography
                         variant="h6"
                         sx={{cursor: 'pointer', '&:hover': {textDecoration: 'underline'}}}
-                        onClick={() => navigate(`/usuarios/${id}/seguidos`)}
+                        onClick={() => navigate(`/perfil/${id}/seguidos`)}
                     >
                         {following.length} seguidos
                     </Typography>
                     <Typography
                         variant="h6"
                         sx={{cursor: 'pointer', '&:hover': {textDecoration: 'underline'}}}
-                        onClick={() => navigate(`/usuarios/${id}/seguidores`)}
+                        onClick={() => navigate(`/perfil/${id}/seguidores`)}
                     >
                         {followers.length} seguidores
                     </Typography>
@@ -174,7 +252,7 @@ const Profile = () => {
                     <Paper elevation={0} sx={{
                         p: 3,
                         backgroundColor: 'background.paper',
-                        maxWidth: 400,
+                        maxWidth: 800,
                         mx: 'auto',
                         mb: 0.5,
                         textAlign: 'center',
@@ -186,20 +264,36 @@ const Profile = () => {
                     </Paper>
                 )}
 
-                {/* Botón de edición */}
-                {profile.id === parseInt(localStorage.getItem('id')) && (
+                {/* Botón de edición o seguir/seguir */}
+                {currentUserId && parseInt(currentUserId) === parseInt(id) ? (
                     <Button
                         variant="contained"
-                        startIcon={<EditIcon/>}
+                        startIcon={<EditIcon />}
                         onClick={handleEditClick}
                         sx={{
                             mt: 2,
                             backgroundColor: '#432818',
-                            '&:hover': {backgroundColor: '#5a3a23'},
+                            '&:hover': { backgroundColor: '#5a3a23' },
                             textTransform: 'none'
                         }}
                     >
                         Editar perfil
+                    </Button>
+                ) : (
+                    <Button
+                        variant="contained"
+                        startIcon={isFollowing ? <PersonRemoveIcon /> : <PersonAddIcon />}
+                        onClick={handleFollowToggle}
+                        sx={{
+                            mt: 2,
+                            backgroundColor: isFollowing ? '#8B0000' : '#432818',
+                            '&:hover': {
+                                backgroundColor: isFollowing ? '#6d0000' : '#5a3a23'
+                            },
+                            textTransform: 'none'
+                        }}
+                    >
+                        {isFollowing ? 'Dejar de seguir' : 'Seguir'}
                     </Button>
                 )}
             </Box>
@@ -211,6 +305,73 @@ const Profile = () => {
                 profile={profile}
                 onSave={handleSaveChanges}
             />
+
+            {/* Si es autor, mostrar sus libros */}
+            {profile?.role === 1 && (
+                <Box sx={{ mt: 6 }}>
+                    <Typography variant="h4" sx={{
+                        mb: 3,
+                        fontWeight: 'bold',
+                        textAlign: 'center'
+                    }}>
+                        {parseInt(currentUserId) === parseInt(id)
+                            ? 'Mis libros'
+                            : `Libros escritos por ${profile.profileName}`}
+                    </Typography>
+
+                    {/* Algunos libros del autor */}
+                    {booksLoading ? (
+                        <Box display="flex" justifyContent="center">
+                            <CircularProgress />
+                        </Box>
+                    ) : authorBooks.length > 0 ? (
+                        <Grid container spacing={3} justifyContent="center">
+                            {authorBooks.map(book => (
+                                <Grid item key={book.id}>
+                                    <SmallBookCard libro={book} />
+                                </Grid>
+                            ))}
+                        </Grid>
+                    ) : (
+                        <Paper elevation={0} sx={{
+                            p: 3,
+                            textAlign: 'center',
+                            backgroundColor: 'background.paper'
+                        }}>
+                            <Typography variant="body1" color="text.secondary">
+                                {parseInt(currentUserId) === parseInt(id)
+                                    ? 'Aún no has publicado ningún libro'
+                                    : 'Este autor no ha publicado libros aún'}
+                            </Typography>
+                        </Paper>
+                    )}
+
+                    {/* Botón para ver todos los libros del autor */}
+                    {authorBooks.length > 0 && (
+                        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+                            <Button
+                                variant="outlined"
+                                onClick={() => navigate(`/autor`, {
+                                    state: {
+                                        authorName: profile.profileName
+                                    }
+                                })}
+                                sx={{
+                                    textTransform: 'none',
+                                    color: '#432818',
+                                    borderColor: '#432818',
+                                    '&:hover': {
+                                        backgroundColor: 'rgba(67, 40, 24, 0.04)',
+                                        borderColor: '#5a3a23'
+                                    }
+                                }}
+                            >
+                                Ver todos los libros
+                            </Button>
+                        </Box>
+                    )}
+                </Box>
+            )}
 
             <Divider sx={{my: 4, borderColor: 'divider'}}/>
 

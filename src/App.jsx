@@ -16,6 +16,8 @@ import BookList from "./pages/BookList.jsx";
 import Goal from "./pages/Goal.jsx";
 import YearRecap from "./pages/YearRecap.jsx";
 import Profile from "./pages/Profile.jsx";
+import SearchUsers from "./pages/SearchUsers.jsx";
+import UsersList from "./pages/UsersList.jsx";
 
 function App() {
     return (
@@ -138,6 +140,29 @@ function App() {
                                 <Profile/>
                             </>
                         </RequireAuth>
+                    }/>
+
+                    <Route path="/buscar/usuarios" element={
+                        <RequireAuth>
+                            <>
+                                <AppBar/>
+                                <SearchUsers/>
+                            </>
+                        </RequireAuth>
+                    }/>
+
+                    <Route path="/perfil/:id/seguidores" element={
+                        <>
+                            <AppBar/>
+                            <UsersList type="seguidores"/>
+                        </>
+                    }/>
+
+                    <Route path="/perfil/:id/seguidos" element={
+                        <>
+                            <AppBar/>
+                            <UsersList type="seguidos"/>
+                        </>
                     }/>
 
                 </Routes>
