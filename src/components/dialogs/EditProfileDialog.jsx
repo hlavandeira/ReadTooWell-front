@@ -14,8 +14,6 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 
-const MAX_BIOGRAPHY_LENGTH = 2000;
-
 const EditProfileDialog = ({open, onClose, profile, onSave}) => {
     const [editForm, setEditForm] = useState({
         profileName: profile.profileName,
@@ -42,8 +40,8 @@ const EditProfileDialog = ({open, onClose, profile, onSave}) => {
             newErrors.profileName = 'El nombre no puede estar vacío';
         }
 
-        if (editForm.biography.length > MAX_BIOGRAPHY_LENGTH) {
-            newErrors.biography = `La biografía no puede exceder ${MAX_BIOGRAPHY_LENGTH} caracteres`;
+        if (editForm.biography.length > 2000) {
+            newErrors.biography = `La biografía no puede exceder 2000 caracteres`;
         }
 
         setErrors(newErrors);
@@ -192,14 +190,14 @@ const EditProfileDialog = ({open, onClose, profile, onSave}) => {
                     rows={4}
                     error={!!errors.biography}
                     helperText={errors.biography}
-                    inputProps={{maxLength: MAX_BIOGRAPHY_LENGTH}}
+                    inputProps={{maxLength: 2000}}
                 />
                 <Typography
                     variant="caption"
-                    color={editForm.biography.length > MAX_BIOGRAPHY_LENGTH ? 'error' : 'textSecondary'}
+                    color={editForm.biography.length > 2000 ? 'error' : 'textSecondary'}
                     sx={{display: 'block', textAlign: 'right'}}
                 >
-                    {editForm.biography.length}/{MAX_BIOGRAPHY_LENGTH}
+                    {editForm.biography.length}/{2000}
                 </Typography>
             </DialogContent>
             <DialogActions sx={{p: 2}}>

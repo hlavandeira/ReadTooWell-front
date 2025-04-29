@@ -11,6 +11,7 @@ import {
     Grid,
     Button
 } from '@mui/material';
+import {useAuth} from '../context/AuthContext.jsx';
 import GenreButton from '../components/GenreButton';
 import BookCard from '../components/books/BookCard.jsx';
 import SmallBookCard from '../components/books/SmallBookCard.jsx';
@@ -18,7 +19,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import EditProfileDialog from '../components/dialogs/EditProfileDialog';
-import {useAuth} from '../context/AuthContext.jsx';
+import FavoriteGenresDialog from '../components/dialogs/FavoriteGenresDialog';
+import FavoriteBooksDialog from '../components/dialogs/FavoriteBooksDialog';
 
 const Profile = () => {
     const {id} = useParams();
@@ -28,6 +30,7 @@ const Profile = () => {
     const [following, setFollowing] = useState([]);
     const [favorites, setFavorites] = useState(null);
     const [loading, setLoading] = useState(true);
+
     const [editDialogOpen, setEditDialogOpen] = useState(false);
     const [editForm, setEditForm] = useState({
         profileName: '',
@@ -35,9 +38,14 @@ const Profile = () => {
         profilePic: ''
     });
     const {updateProfileImage, id: currentUserId} = useAuth();
+
     const [isFollowing, setIsFollowing] = useState(false);
+
     const [authorBooks, setAuthorBooks] = useState([]);
     const [booksLoading, setBooksLoading] = useState(false);
+
+    const [favoriteGenresDialogOpen, setFavoriteGenresDialogOpen] = useState(false);
+    const [favoriteBooksDialogOpen, setFavoriteBooksDialogOpen] = useState(false);
 
     useEffect(() => {
         const fetchProfileData = async () => {
@@ -140,7 +148,7 @@ const Profile = () => {
             if (isFollowing) {
                 // Dejar de seguir
                 await axios.delete(`http://localhost:8080/usuarios/dejar-seguir/${id}`, {
-                    headers: { Authorization: `Bearer ${token}` }
+                    headers: {Authorization: `Bearer ${token}`}
                 });
 
                 setIsFollowing(false);
@@ -148,11 +156,11 @@ const Profile = () => {
             } else {
                 // Seguir
                 await axios.post(`http://localhost:8080/usuarios/seguir/${id}`, {}, {
-                    headers: { Authorization: `Bearer ${token}` }
+                    headers: {Authorization: `Bearer ${token}`}
                 });
 
                 setIsFollowing(true);
-                setFollowers(prev => [...prev, { id: parseInt(currentUserId) }]);
+                setFollowers(prev => [...prev, {id: parseInt(currentUserId)}]);
             }
         } catch (error) {
             console.error('Error al seguir/dejar de seguir:', error);
@@ -178,7 +186,7 @@ const Profile = () => {
                         page: 0,
                         size: 5
                     },
-                    headers: { Authorization: `Bearer ${token}` }
+                    headers: {Authorization: `Bearer ${token}`}
                 });
                 setAuthorBooks(response.data.content);
             } catch (error) {
@@ -192,6 +200,48 @@ const Profile = () => {
             fetchAuthorBooks();
         }
     }, [profile]);
+
+    const handleFavoriteGenresDialogClose = (updated) => {
+        setFavoriteGenresDialogOpen(false);
+        if (updated) {
+            const fetchFavorites = async () => {
+                try {
+                    const token = localStorage.getItem('token');
+
+                    const favoritesRes = await axios.get(`http://localhost:8080/usuarios/${id}/favoritos`, {
+                        headers: {Authorization: `Bearer ${token}`}
+                    });
+
+                    setFavorites(favoritesRes.data);
+                } catch (error) {
+                    console.error('Error fetching favorites:', error);
+                }
+            };
+
+            fetchFavorites();
+        }
+    };
+
+    const handleFavoriteBooksDialogClose = (updated) => {
+        setFavoriteBooksDialogOpen(false);
+        if (updated) {
+            const fetchFavorites = async () => {
+                try {
+                    const token = localStorage.getItem('token');
+
+                    const favoritesRes = await axios.get(`http://localhost:8080/usuarios/${id}/favoritos`, {
+                        headers: {Authorization: `Bearer ${token}`}
+                    });
+
+                    setFavorites(favoritesRes.data);
+                } catch (error) {
+                    console.error('Error fetching favorites:', error);
+                }
+            };
+
+            fetchFavorites();
+        }
+    };
 
     if (loading) {
         return (
@@ -268,12 +318,12 @@ const Profile = () => {
                 {currentUserId && parseInt(currentUserId) === parseInt(id) ? (
                     <Button
                         variant="contained"
-                        startIcon={<EditIcon />}
+                        startIcon={<EditIcon/>}
                         onClick={handleEditClick}
                         sx={{
                             mt: 2,
                             backgroundColor: '#432818',
-                            '&:hover': { backgroundColor: '#5a3a23' },
+                            '&:hover': {backgroundColor: '#5a3a23'},
                             textTransform: 'none'
                         }}
                     >
@@ -282,7 +332,7 @@ const Profile = () => {
                 ) : (
                     <Button
                         variant="contained"
-                        startIcon={isFollowing ? <PersonRemoveIcon /> : <PersonAddIcon />}
+                        startIcon={isFollowing ? <PersonRemoveIcon/> : <PersonAddIcon/>}
                         onClick={handleFollowToggle}
                         sx={{
                             mt: 2,
@@ -308,7 +358,7 @@ const Profile = () => {
 
             {/* Si es autor, mostrar sus libros */}
             {profile?.role === 1 && (
-                <Box sx={{ mt: 6 }}>
+                <Box sx={{mt: 6}}>
                     <Typography variant="h4" sx={{
                         mb: 3,
                         fontWeight: 'bold',
@@ -322,13 +372,13 @@ const Profile = () => {
                     {/* Algunos libros del autor */}
                     {booksLoading ? (
                         <Box display="flex" justifyContent="center">
-                            <CircularProgress />
+                            <CircularProgress/>
                         </Box>
                     ) : authorBooks.length > 0 ? (
                         <Grid container spacing={3} justifyContent="center">
                             {authorBooks.map(book => (
                                 <Grid item key={book.id}>
-                                    <SmallBookCard libro={book} />
+                                    <SmallBookCard libro={book}/>
                                 </Grid>
                             ))}
                         </Grid>
@@ -348,7 +398,7 @@ const Profile = () => {
 
                     {/* Botón para ver todos los libros del autor */}
                     {authorBooks.length > 0 && (
-                        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+                        <Box sx={{display: 'flex', justifyContent: 'center', mt: 3}}>
                             <Button
                                 variant="outlined"
                                 onClick={() => navigate(`/autor`, {
@@ -377,16 +427,19 @@ const Profile = () => {
 
             {/* Géneros favoritos */}
             <Box sx={{mb: 6}}>
-                <Typography variant="h4" sx={{mb: 3, fontWeight: 'bold', textAlign: 'center'}}>
-                    Géneros favoritos
-                </Typography>
+                <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2}}>
+                    <Typography variant="h4" sx={{mb: 3, fontWeight: 'bold', textAlign: 'center'}}>
+                        Géneros favoritos
+                    </Typography>
+                </Box>
 
                 {favorites?.favoriteGenres?.length > 0 ? (
                     <Box sx={{
                         display: 'flex',
                         flexWrap: 'wrap',
                         justifyContent: 'center',
-                        gap: 1.5
+                        gap: 1.5,
+                        mb: 2
                     }}>
                         {favorites.favoriteGenres.map((genre) => (
                             <GenreButton key={genre.id} genre={genre}/>
@@ -397,7 +450,40 @@ const Profile = () => {
                         No hay géneros favoritos
                     </Typography>
                 )}
+
+                {parseInt(currentUserId) === parseInt(id) && (
+                    <Box sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        width: '100%',
+                        mt: 3
+                    }}>
+                        <Button
+                            variant="outlined"
+                            onClick={() => setFavoriteGenresDialogOpen(true)}
+                            sx={{
+                                height: '36px',
+                                textTransform: 'none',
+                                color: '#432818',
+                                borderColor: '#432818',
+                                '&:hover': {
+                                    backgroundColor: 'rgba(67, 40, 24, 0.04)',
+                                    borderColor: '#5a3a23'
+                                }
+                            }}
+                        >
+                            Editar géneros
+                        </Button>
+                    </Box>
+                )}
             </Box>
+
+            {/* Diálogo de géneros favoritos */}
+            <FavoriteGenresDialog
+                open={favoriteGenresDialogOpen}
+                onClose={handleFavoriteGenresDialogClose}
+                currentFavoriteGenres={favorites?.favoriteGenres || []}
+            />
 
             <Divider sx={{my: 4, borderColor: 'divider'}}/>
 
@@ -420,7 +506,40 @@ const Profile = () => {
                         No hay libros favoritos
                     </Typography>
                 )}
+
+                {parseInt(currentUserId) === parseInt(id) && (
+                    <Box sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        width: '100%',
+                        mt: 3
+                    }}>
+                        <Button
+                            variant="outlined"
+                            onClick={() => setFavoriteBooksDialogOpen(true)}
+                            sx={{
+                                height: '36px',
+                                textTransform: 'none',
+                                color: '#432818',
+                                borderColor: '#432818',
+                                '&:hover': {
+                                    backgroundColor: 'rgba(67, 40, 24, 0.04)',
+                                    borderColor: '#5a3a23'
+                                }
+                            }}
+                        >
+                            Editar libros
+                        </Button>
+                    </Box>
+                )}
             </Box>
+
+            {/* Diálogo de libros favoritos */}
+            <FavoriteBooksDialog
+                open={favoriteBooksDialogOpen}
+                onClose={handleFavoriteBooksDialogClose}
+                currentFavoriteBooks={favorites?.favoriteBooks || []}
+            />
         </Box>
     );
 };

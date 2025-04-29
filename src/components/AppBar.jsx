@@ -22,7 +22,7 @@ import {
 } from '@mui/icons-material';
 
 export default function DynamicAppBar() {
-    const {role, logout, profilePic, id} = useAuth();
+    const {role, logout, profilePic, id, name} = useAuth();
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
 
@@ -139,7 +139,11 @@ export default function DynamicAppBar() {
                         {role === 1 && (
                             <>
                                 <Button
-                                    onClick={() => navigate('/libros-autor')}
+                                    onClick={() => navigate(`/autor`, {
+                                        state: {
+                                            authorName: name
+                                        }
+                                    })}
                                     sx={{color: 'white', textTransform: 'none', mr: 2}}
                                     startIcon={<LibrarianIcon/>}
                                 >

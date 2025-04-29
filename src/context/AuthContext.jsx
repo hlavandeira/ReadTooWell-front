@@ -68,6 +68,9 @@ export const AuthProvider = ({children}) => {
         };
 
         validateToken();
+
+        const interval = setInterval(validateToken, 10 * 60 * 1000); // Cada 10 minutos valida el token
+        return () => clearInterval(interval);
     }, [authState.token]);
 
     return (
