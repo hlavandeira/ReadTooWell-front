@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import {
     Dialog,
     DialogTitle,
@@ -43,10 +43,12 @@ const AddToListDialog = ({open, onClose, lists, onAddToList, bookId, onSuccess})
                 setError(null);
                 onClose();
             }}
-            PaperProps={{
-                sx: {
-                    borderRadius: '12px',
-                    minWidth: '350px'
+            slotProps={{
+                paper: {
+                    sx: {
+                        borderRadius: '12px',
+                        minWidth: '350px'
+                    }
                 }
             }}
         >
@@ -59,15 +61,15 @@ const AddToListDialog = ({open, onClose, lists, onAddToList, bookId, onSuccess})
                 Añadir a lista
             </DialogTitle>
 
-            <DialogContent sx={{ padding: '24px', mt: 3 }}>
+            <DialogContent sx={{padding: '24px', mt: 3}}>
                 {error && (
-                    <Alert severity="error" sx={{ mb: 2 }}>
+                    <Alert severity="error" sx={{mb: 2}}>
                         {error}
                     </Alert>
                 )}
 
                 {lists.length === 0 ? (
-                    <Typography variant="body1" textAlign="center" sx={{ mt: 2 }}>
+                    <Typography variant="body1" textAlign="center" sx={{mt: 2}}>
                         No tienes ninguna lista creada
                     </Typography>
                 ) : (
@@ -95,7 +97,7 @@ const AddToListDialog = ({open, onClose, lists, onAddToList, bookId, onSuccess})
                             >
                                 {list.name}
                                 {list.genres?.length > 0 && (
-                                    <Box sx={{ ml: 'auto', display: 'flex', gap: 0.5 }}>
+                                    <Box sx={{ml: 'auto', display: 'flex', gap: 0.5}}>
                                         {list.genres.slice(0, 2).map(genre => (
                                             <Chip
                                                 key={genre.id}
@@ -125,7 +127,7 @@ const AddToListDialog = ({open, onClose, lists, onAddToList, bookId, onSuccess})
                 )}
             </DialogContent>
 
-            <DialogActions sx={{ padding: '16px 24px' }}>
+            <DialogActions sx={{padding: '16px 24px'}}>
                 <Button
                     onClick={() => {
                         setSelectedListId(null);
@@ -147,12 +149,12 @@ const AddToListDialog = ({open, onClose, lists, onAddToList, bookId, onSuccess})
                     sx={{
                         textTransform: 'none',
                         backgroundColor: '#432818',
-                        '&:hover': { backgroundColor: '#5a3a23' },
+                        '&:hover': {backgroundColor: '#5a3a23'},
                         position: 'relative'
                     }}
                 >
                     {loading ? (
-                        <CircularProgress size={24} sx={{ color: 'white' }} />
+                        <CircularProgress size={24} sx={{color: 'white'}}/>
                     ) : (
                         'Añadir'
                     )}

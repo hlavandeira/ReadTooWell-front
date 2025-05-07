@@ -1,8 +1,11 @@
-import { Paper, Box, Typography, Chip, LinearProgress, IconButton, Stack } from '@mui/material';
+import {Paper, Box, Typography, Chip, LinearProgress, IconButton, Stack} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
+import {useAuth} from '../context/AuthContext.jsx';
 
-const GoalCard = ({ goal, onDelete }) => {
+const GoalCard = ({goal, onDelete}) => {
+    const {token} = useAuth();
+
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString('es-ES', {
             day: 'numeric',
@@ -19,7 +22,7 @@ const GoalCard = ({ goal, onDelete }) => {
         if (!goal || !goal.type || !goal.duration || !goal.dateStart) return '';
 
         const startDate = new Date(goal.dateStart);
-        const month = startDate.toLocaleString('es-ES', { month: 'long' });
+        const month = startDate.toLocaleString('es-ES', {month: 'long'});
         const year = startDate.getFullYear();
         const typeLower = goal.type.toLowerCase();
         const durationLower = goal.duration.toLowerCase();
@@ -44,9 +47,8 @@ const GoalCard = ({ goal, onDelete }) => {
 
     const handleDelete = async () => {
         try {
-            const token = localStorage.getItem('token');
             await axios.delete(`http://localhost:8080/objetivos/${goal.id}`, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: {Authorization: `Bearer ${token}`}
             });
             onDelete(goal.id);
         } catch (error) {
@@ -65,11 +67,11 @@ const GoalCard = ({ goal, onDelete }) => {
                 borderRadius: 2,
                 borderLeft: `4px solid ${getGoalColor(goal.type)}`,
                 opacity: isCompleted ? 0.8 : 1,
-                '&:hover': { opacity: 1 }
+                '&:hover': {opacity: 1}
             }}
         >
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            <Box sx={{display: 'flex', justifyContent: 'space-between', mb: 1}}>
+                <Typography variant="h6" sx={{fontWeight: 'bold'}}>
                     {createGoalTitle(goal)}
                 </Typography>
                 {isCompleted ? (
@@ -93,11 +95,11 @@ const GoalCard = ({ goal, onDelete }) => {
                 )}
             </Box>
 
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>
                 {formatDate(goal.dateStart)} - {formatDate(goal.dateFinish)}
             </Typography>
 
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+            <Box sx={{display: 'flex', alignItems: 'center', gap: 2, mb: 1}}>
                 <LinearProgress
                     variant="determinate"
                     value={progress}
@@ -112,7 +114,7 @@ const GoalCard = ({ goal, onDelete }) => {
                         }
                     }}
                 />
-                <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                <Typography variant="body2" sx={{fontWeight: 'medium'}}>
                     {progress.toFixed(1)}%
                 </Typography>
             </Box>
@@ -143,7 +145,7 @@ const GoalCard = ({ goal, onDelete }) => {
                             ml: 1
                         }}
                     >
-                        <DeleteIcon fontSize="small" />
+                        <DeleteIcon fontSize="small"/>
                     </IconButton>
                 )}
             </Stack>

@@ -3,9 +3,11 @@ import {useParams, useLocation} from 'react-router-dom';
 import axios from "axios";
 import {Box, CircularProgress, Typography} from "@mui/material";
 import {useSearchParams} from 'react-router-dom';
+import {useAuth} from '../context/AuthContext.jsx';
 import BookGrid from '../components/BookGrid.jsx';
 
 const BooksByGenre = () => {
+    const {token} = useAuth();
     const [libros, setLibros] = useState([]);
     const [loading, setLoading] = useState(true);
     const [totalPages, setTotalPages] = useState(1);
@@ -21,7 +23,6 @@ const BooksByGenre = () => {
     useEffect(() => {
         const fetchLibros = async () => {
             try {
-                const token = localStorage.getItem('token');
                 setLoading(true);
                 const response = await axios.get(`http://localhost:8080/libros/buscar-genero`, {
                     params: {
@@ -52,7 +53,7 @@ const BooksByGenre = () => {
     if (loading) {
         return (
             <Box display="flex" justifyContent="center" mt={4}>
-                <CircularProgress/>
+                <CircularProgress sx={{color: '#8B0000'}}/>
             </Box>
         );
     }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import axios from 'axios';
 import {
     Dialog,
@@ -13,8 +13,10 @@ import {
     Button,
     Typography
 } from '@mui/material';
+import {useAuth} from '../../context/AuthContext.jsx';
 
-const AddGoalDialog = ({ open, onClose, onGoalCreated }) => {
+const AddGoalDialog = ({open, onClose, onGoalCreated}) => {
+    const {token} = useAuth();
     const [goalType, setGoalType] = useState('Libros');
     const [goalDuration, setGoalDuration] = useState('Mensual');
     const [newAmount, setNewAmount] = useState('');
@@ -23,7 +25,6 @@ const AddGoalDialog = ({ open, onClose, onGoalCreated }) => {
 
     const handleCreateGoal = async () => {
         try {
-            const token = localStorage.getItem('token');
             setError('');
             setLoading(true);
 
@@ -78,9 +79,9 @@ const AddGoalDialog = ({ open, onClose, onGoalCreated }) => {
                 Nuevo objetivo de lectura
             </DialogTitle>
 
-            <DialogContent sx={{ p: 3, mt: 1.5 }}>
+            <DialogContent sx={{p: 3, mt: 1.5}}>
                 {error && (
-                    <Alert severity="error" sx={{ mb: 2, mt: 1 }}>
+                    <Alert severity="error" sx={{mb: 2, mt: 1}}>
                         {error}
                     </Alert>
                 )}
@@ -94,16 +95,16 @@ const AddGoalDialog = ({ open, onClose, onGoalCreated }) => {
                         setGoalDuration(e.target.value);
                         setError('');
                     }}
-                    sx={{ mb: 3 }}
+                    sx={{mb: 3}}
                 >
                     <FormControlLabel
                         value="Mensual"
-                        control={<Radio />}
+                        control={<Radio/>}
                         label="Objetivo mensual"
                     />
                     <FormControlLabel
                         value="Anual"
-                        control={<Radio />}
+                        control={<Radio/>}
                         label="Objetivo anual"
                     />
                 </RadioGroup>
@@ -117,16 +118,16 @@ const AddGoalDialog = ({ open, onClose, onGoalCreated }) => {
                         setGoalType(e.target.value);
                         setError('');
                     }}
-                    sx={{ mb: 3 }}
+                    sx={{mb: 3}}
                 >
                     <FormControlLabel
                         value="Libros"
-                        control={<Radio />}
+                        control={<Radio/>}
                         label="Número de libros"
                     />
                     <FormControlLabel
                         value="Páginas"
-                        control={<Radio />}
+                        control={<Radio/>}
                         label="Número de páginas"
                     />
                 </RadioGroup>
@@ -143,12 +144,12 @@ const AddGoalDialog = ({ open, onClose, onGoalCreated }) => {
                             setError('');
                         }
                     }}
-                    inputProps={{ min: 1 }}
+                    inputProps={{min: 1}}
                     error={!!error && !error.includes('exist')}
                 />
             </DialogContent>
 
-            <DialogActions sx={{ p: 2 }}>
+            <DialogActions sx={{p: 2}}>
                 <Button
                     onClick={resetDialog}
                     disabled={loading}
@@ -165,7 +166,7 @@ const AddGoalDialog = ({ open, onClose, onGoalCreated }) => {
                     sx={{
                         textTransform: 'none',
                         backgroundColor: '#432818',
-                        '&:hover': { backgroundColor: '#5a3a23' }
+                        '&:hover': {backgroundColor: '#5a3a23'}
                     }}
                 >
                     Crear objetivo

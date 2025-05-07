@@ -11,8 +11,10 @@ import {
     CircularProgress
 } from '@mui/material';
 import axios from 'axios';
+import {useAuth} from '../../context/AuthContext.jsx';
 
 const FavoriteGenresDialog = ({open, onClose, currentFavoriteGenres}) => {
+    const {token} = useAuth();
     const [genres, setGenres] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedGenreIds, setSelectedGenreIds] = useState(new Set());
@@ -21,7 +23,6 @@ const FavoriteGenresDialog = ({open, onClose, currentFavoriteGenres}) => {
     useEffect(() => {
         const fetchGenres = async () => {
             try {
-                const token = localStorage.getItem('token');
                 const response = await axios.get('http://localhost:8080/libros/generos', {
                     headers: {Authorization: `Bearer ${token}`}
                 });
@@ -58,7 +59,6 @@ const FavoriteGenresDialog = ({open, onClose, currentFavoriteGenres}) => {
     const handleSave = async () => {
         try {
             setIsSubmitting(true);
-            const token = localStorage.getItem('token');
 
             await axios.put(
                 'http://localhost:8080/usuarios/generos-favoritos',
@@ -89,7 +89,7 @@ const FavoriteGenresDialog = ({open, onClose, currentFavoriteGenres}) => {
 
                 {loading ? (
                     <Box display="flex" justifyContent="center">
-                        <CircularProgress/>
+                        <CircularProgress sx={{color: '#8B0000'}}/>
                     </Box>
                 ) : (
                     <Box sx={{

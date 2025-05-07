@@ -246,7 +246,7 @@ const Profile = () => {
     if (loading) {
         return (
             <Box display="flex" justifyContent="center" mt={4}>
-                <CircularProgress/>
+                <CircularProgress sx={{color: '#8B0000'}}/>
             </Box>
         );
     }
@@ -372,7 +372,7 @@ const Profile = () => {
                     {/* Algunos libros del autor */}
                     {booksLoading ? (
                         <Box display="flex" justifyContent="center">
-                            <CircularProgress/>
+                            <CircularProgress sx={{color: '#8B0000'}}/>
                         </Box>
                     ) : authorBooks.length > 0 ? (
                         <Grid container spacing={3} justifyContent="center">

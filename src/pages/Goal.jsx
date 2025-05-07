@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
 import axios from 'axios';
+import {useAuth} from '../context/AuthContext.jsx';
 import {
     Box,
     Typography,
@@ -14,6 +15,7 @@ import AddGoalDialog from '../components/dialogs/AddGoalDialog';
 import AddIcon from "@mui/icons-material/Add";
 
 const Goal = () => {
+    const {token} = useAuth();
     const [activeTab, setActiveTab] = useState(0);
     const [inProgressGoals, setInProgressGoals] = useState([]);
     const [completedGoals, setCompletedGoals] = useState([]);
@@ -31,14 +33,12 @@ const Goal = () => {
     useEffect(() => {
         const fetchGoals = async () => {
             try {
-                const token = localStorage.getItem('token');
-
                 const [inProgressRes, completedRes] = await Promise.all([
                     axios.get('http://localhost:8080/objetivos/en-curso', {
-                        headers: { Authorization: `Bearer ${token}` }
+                        headers: {Authorization: `Bearer ${token}`}
                     }),
                     axios.get('http://localhost:8080/objetivos/terminados', {
-                        headers: { Authorization: `Bearer ${token}` }
+                        headers: {Authorization: `Bearer ${token}`}
                     })
                 ]);
 
@@ -55,7 +55,7 @@ const Goal = () => {
     }, []);
 
     return (
-        <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
+        <Box sx={{maxWidth: 800, mx: 'auto', p: 3}}>
             <Typography variant="h3" component="h1" sx={{
                 mb: 2,
                 fontWeight: 'bold',
@@ -95,7 +95,7 @@ const Goal = () => {
             />
 
             {/* Panel con las pestañas para objetivos en curso/terminados */}
-            <Paper elevation={3} sx={{ borderRadius: 2, overflow: 'hidden' }}>
+            <Paper elevation={3} sx={{borderRadius: 2, overflow: 'hidden'}}>
                 <Tabs
                     value={activeTab}
                     onChange={handleTabChange}
@@ -114,7 +114,7 @@ const Goal = () => {
                             fontWeight: 'medium',
                             textTransform: 'none',
                             fontSize: '1rem',
-                            '&.Mui-selected': { color: '#432818' }
+                            '&.Mui-selected': {color: '#432818'}
                         }}
                     />
                     <Tab
@@ -123,26 +123,26 @@ const Goal = () => {
                             fontWeight: 'medium',
                             textTransform: 'none',
                             fontSize: '1rem',
-                            '&.Mui-selected': { color: '#432818' }
+                            '&.Mui-selected': {color: '#432818'}
                         }}
                     />
                 </Tabs>
 
-                <Box sx={{ p: 3 }}>
+                <Box sx={{p: 3}}>
                     {loading ? (
                         <Box display="flex" justifyContent="center" py={4}>
-                            <CircularProgress />
+                            <CircularProgress sx={{color: '#8B0000'}}/>
                         </Box>
                     ) : (
                         <>
                             {activeTab === 0 && (
                                 <Box>
                                     {inProgressGoals.length === 0 ? (
-                                        <Typography variant="body1" textAlign="center" sx={{ py: 4 }}>
+                                        <Typography variant="body1" textAlign="center" sx={{py: 4}}>
                                             No tienes objetivos en curso actualmente
                                         </Typography>
                                     ) : (
-                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                                        <Box sx={{display: 'flex', flexDirection: 'column', gap: 3}}>
                                             {inProgressGoals.map((goal) => (
                                                 <GoalCard
                                                     key={goal.id}
@@ -160,13 +160,13 @@ const Goal = () => {
                             {activeTab === 1 && (
                                 <Box>
                                     {completedGoals.length === 0 ? (
-                                        <Typography variant="body1" textAlign="center" sx={{ py: 4 }}>
+                                        <Typography variant="body1" textAlign="center" sx={{py: 4}}>
                                             No has completado ningún objetivo todavía
                                         </Typography>
                                     ) : (
-                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                                        <Box sx={{display: 'flex', flexDirection: 'column', gap: 3}}>
                                             {completedGoals.map((goal) => (
-                                                <GoalCard key={goal.id} goal={goal} />
+                                                <GoalCard key={goal.id} goal={goal}/>
                                             ))}
                                         </Box>
                                     )}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import axios from 'axios';
 import {
     Dialog,
@@ -12,13 +12,10 @@ import {
     Chip
 } from '@mui/material';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import {useAuth} from '../../context/AuthContext.jsx';
 
-const NewListDialog = ({
-                           open,
-                           onClose,
-                           onListCreated,
-                           genres = []
-                       }) => {
+const NewListDialog = ({open, onClose, onListCreated, genres = []}) => {
+    const {token} = useAuth();
     const [newListName, setNewListName] = useState('');
     const [newListDescription, setNewListDescription] = useState('');
     const [selectedGenreIds, setSelectedGenreIds] = useState(new Set());
@@ -39,7 +36,6 @@ const NewListDialog = ({
     const handleCreateList = async () => {
         try {
             setIsSubmitting(true);
-            const token = localStorage.getItem('token');
 
             const response = await axios.post('http://localhost:8080/listas',
                 {
@@ -87,12 +83,12 @@ const NewListDialog = ({
                 alignItems: 'center',
                 gap: 1
             }}>
-                <LibraryBooksIcon />
+                <LibraryBooksIcon/>
                 Nueva lista de libros
             </DialogTitle>
 
-            <DialogContent sx={{ p: 3 }}>
-                <Box component="form" sx={{ mt: 1 }}>
+            <DialogContent sx={{p: 3}}>
+                <Box component="form" sx={{mt: 1}}>
                     {/* Nombre */}
                     <TextField
                         autoFocus
@@ -101,7 +97,7 @@ const NewListDialog = ({
                         fullWidth
                         value={newListName}
                         onChange={(e) => setNewListName(e.target.value)}
-                        sx={{ mb: 2 }}
+                        sx={{mb: 2}}
                     />
 
                     {/* Descripción */}
@@ -121,11 +117,11 @@ const NewListDialog = ({
                             maxLength: 2000
                         }}
                         helperText={`${newListDescription.length}/2000 caracteres`}
-                        sx={{ mb: 3 }}
+                        sx={{mb: 3}}
                     />
 
                     {/* Selección de géneros */}
-                    <Typography variant="subtitle2" sx={{ mb: 1, color: '#432818' }}>
+                    <Typography variant="subtitle2" sx={{mb: 1, color: '#432818'}}>
                         Selecciona géneros (opcional):
                     </Typography>
 
@@ -161,7 +157,7 @@ const NewListDialog = ({
                 </Box>
             </DialogContent>
 
-            <DialogActions sx={{ p: 2 }}>
+            <DialogActions sx={{p: 2}}>
                 <Button
                     onClick={resetDialog}
                     disabled={isSubmitting}
@@ -178,7 +174,7 @@ const NewListDialog = ({
                     sx={{
                         textTransform: 'none',
                         backgroundColor: '#8B0000',
-                        '&:hover': { backgroundColor: '#6d0000' },
+                        '&:hover': {backgroundColor: '#6d0000'},
                         borderRadius: '20px',
                         px: 3
                     }}

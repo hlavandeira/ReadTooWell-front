@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react';
 import {useSearchParams, useNavigate} from 'react-router-dom';
 import axios from 'axios';
+import {useAuth} from '../context/AuthContext.jsx';
 import {
     Box, Typography, CircularProgress, Paper, Card, CardMedia, CardContent, LinearProgress, Button,
     Grid, Divider, Chip
@@ -10,6 +11,7 @@ import NewListDialog from '../components/dialogs/NewListDialog';
 import UpdateProgressDialog from '../components/dialogs/UpdateProgressDialog';
 
 const Library = () => {
+    const {token} = useAuth();
     const navigate = useNavigate();
 
     const [isInitialLoading, setIsInitialLoading] = useState(false);
@@ -100,7 +102,7 @@ const Library = () => {
     if (isInitialLoading) {
         return (
             <Box display="flex" justifyContent="center" mt={4}>
-                <CircularProgress/>
+                <CircularProgress sx={{color: '#8B0000'}}/>
             </Box>
         );
     }
@@ -108,8 +110,6 @@ const Library = () => {
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
-                const token = localStorage.getItem('token');
-
                 const [readingRes, listsRes, genresRes] = await Promise.all([
                     axios.get('http://localhost:8080/biblioteca', {
                         params: {page: page - 1, size: itemsPerPage, status: 1},
@@ -405,7 +405,7 @@ const Library = () => {
                 {/* Listas */}
                 {isInitialLoading ? (
                     <Box display="flex" justifyContent="center">
-                        <CircularProgress size={24}/>
+                        <CircularProgress size={24} sx={{color: '#8B0000'}}/>
                     </Box>
                 ) : (
                     <Grid container spacing={3} sx={{mt: 1, justifyContent: 'center'}}>

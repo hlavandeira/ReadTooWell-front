@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext.jsx';
 import {
@@ -20,11 +20,35 @@ import {
     AdminPanelSettings as AdminIcon,
     LibraryBooks as LibrarianIcon
 } from '@mui/icons-material';
+import axios from "axios";
 
 export default function DynamicAppBar() {
-    const {role, logout, profilePic, id, name} = useAuth();
+    const {role, logout, profilePic, id, name, token} = useAuth();
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
+
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        if (!token) {
+            return;
+        }
+
+        const verifyAdmin = async () => {
+            try {
+                const response = await axios.get('http://localhost:8080/usuarios/verificar-admin', {
+                    headers: {Authorization: `Bearer ${token}`}
+                });
+
+                setIsAdmin(response.data);
+            } catch (error) {
+                console.error('Error verificando rol:', error);
+                setIsAdmin(false);
+            }
+        };
+
+        verifyAdmin();
+    }, [token]);
 
     const handleMenu = (event) => setAnchorEl(event.currentTarget);
     const handleClose = () => setAnchorEl(null);
@@ -153,7 +177,7 @@ export default function DynamicAppBar() {
                         )}
 
                         {/* Opciones para admin (rol 2) */}
-                        {role === 2 && (
+                        {isAdmin && (
                             <>
                                 <Button
                                     onClick={() => navigate('/admin/sugerencias')}
@@ -163,7 +187,7 @@ export default function DynamicAppBar() {
                                     Sugerencias
                                 </Button>
                                 <Button
-                                    onClick={() => navigate('/admin/solicitudes-autor')}
+                                    onClick={() => navigate('/admin/verificaciones')}
                                     sx={{color: 'white', textTransform: 'none'}}
                                     startIcon={<AdminIcon/>}
                                 >
@@ -199,13 +223,17 @@ export default function DynamicAppBar() {
                             open={Boolean(anchorEl)}
                             onClose={handleClose}
                         >
-                            <MenuItem onClick={() => {
-                                navigate(`/perfil/${id}`);
-                                handleClose();
-                            }}>
-                                <AccountCircleIcon sx={{mr: 1}}/>
-                                Mi perfil
-                            </MenuItem>
+                            {!isAdmin && (
+                                <>
+                                    <MenuItem onClick={() => {
+                                        navigate(`/perfil/${id}`);
+                                        handleClose();
+                                    }}>
+                                        <AccountCircleIcon sx={{mr: 1}}/>
+                                        Mi perfil
+                                    </MenuItem>
+                                </>
+                            )}
                             <MenuItem onClick={handleLogout}>
                                 <LoginIcon sx={{
                                     mr: 1,

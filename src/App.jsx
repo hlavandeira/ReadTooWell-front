@@ -18,6 +18,8 @@ import YearRecap from "./pages/YearRecap.jsx";
 import Profile from "./pages/Profile.jsx";
 import SearchUsers from "./pages/SearchUsers.jsx";
 import UsersList from "./pages/UsersList.jsx";
+import RequestList from "./pages/RequestList.jsx";
+import SuggestionList from "./pages/SuggestionList.jsx";
 
 function App() {
     return (
@@ -162,6 +164,20 @@ function App() {
                         <>
                             <AppBar/>
                             <UsersList type="seguidos"/>
+                        </>
+                    }/>
+
+                    <Route path="/admin/verificaciones" element={
+                        <>
+                            <AppBar/>
+                            <RequestList/>
+                        </>
+                    }/>
+
+                    <Route path="/admin/sugerencias" element={
+                        <>
+                            <AppBar/>
+                            <SuggestionList/>
                         </>
                     }/>
 

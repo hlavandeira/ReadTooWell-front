@@ -12,8 +12,10 @@ import {
     Typography,
     Button
 } from '@mui/material';
+import {useAuth} from '../../context/AuthContext.jsx';
 
 const UpdateProgressDialog = ({open, onClose, book, onProgressUpdated}) => {
+    const {token} = useAuth();
     const [progressType, setProgressType] = useState(book?.progressType || 'paginas');
     const [progressValue, setProgressValue] = useState(book?.progress || 0);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -28,7 +30,6 @@ const UpdateProgressDialog = ({open, onClose, book, onProgressUpdated}) => {
     const handleSaveProgress = async () => {
         try {
             setIsSubmitting(true);
-            const token = localStorage.getItem('token');
 
             await axios.put(`http://localhost:8080/biblioteca/${book.id.bookId}/progreso`, null, {
                 params: {

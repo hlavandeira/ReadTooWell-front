@@ -1,6 +1,7 @@
 import {Navigate, useParams} from 'react-router-dom';
 import {useNavigate} from "react-router-dom";
 import {useState, useEffect} from 'react';
+import {useAuth} from '../context/AuthContext.jsx';
 import axios from 'axios';
 import {
     Box, Typography, Button, CardMedia, CircularProgress, Rating, Paper, Divider, Grid
@@ -12,6 +13,7 @@ import UpdateReadingStatusDialog from '../components/dialogs/UpdateReadingStatus
 import AddToListDialog from '../components/dialogs/AddToListDialog';
 
 const BookDetails = () => {
+    const {token} = useAuth();
     const {id} = useParams();
     const navigate = useNavigate();
     const [details, setDetails] = useState(null);
@@ -39,8 +41,6 @@ const BookDetails = () => {
 
     const handleSaveToLibrary = async () => {
         try {
-            const token = localStorage.getItem('token');
-
             const response = await axios.post(
                 `http://localhost:8080/biblioteca/${id}`,
                 {},
@@ -63,8 +63,6 @@ const BookDetails = () => {
 
     const handleSaveStatus = async (newStatus, bookId) => {
         try {
-            const token = localStorage.getItem('token');
-
             const response = await axios.put(
                 `http://localhost:8080/biblioteca/${bookId}/estado?estado=${newStatus}`,
                 null,
@@ -89,8 +87,6 @@ const BookDetails = () => {
 
     const handleSaveReview = async (reviewText) => {
         try {
-            const token = localStorage.getItem('token');
-
             await axios.put(
                 `http://localhost:8080/biblioteca/${id}/escribir-reseña`,
                 null,
@@ -113,8 +109,6 @@ const BookDetails = () => {
 
     const handleSaveRating = async (newValue) => {
         try {
-            const token = localStorage.getItem('token');
-
             const response = await axios.put(
                 `http://localhost:8080/biblioteca/${details.book.id}/calificar`,
                 null,
@@ -138,7 +132,6 @@ const BookDetails = () => {
 
     const handleAddToList = async (listId, bookId) => {
         try {
-            const token = localStorage.getItem('token');
             await axios.post(
                 `http://localhost:8080/listas/${listId}/añadir-libro/${bookId}`,
                 {},
@@ -167,7 +160,6 @@ const BookDetails = () => {
     useEffect(() => {
         const fetchBookDetails = async () => {
             try {
-                const token = localStorage.getItem('token');
                 const response = await axios.get(`http://localhost:8080/libros/${id}/detalles`, {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -202,7 +194,6 @@ const BookDetails = () => {
     useEffect(() => {
         const fetchUserLists = async () => {
             try {
-                const token = localStorage.getItem('token');
                 const response = await axios.get(`http://localhost:8080/listas/${id}/otras-listas`, {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -401,7 +392,7 @@ const BookDetails = () => {
                         }}>
                             {details.book.genres?.length > 0 ? (
                                 details.book.genres.map((genre) => (
-                                    <GenreButton key={genre.id} genre={genre} />
+                                    <GenreButton key={genre.id} genre={genre}/>
                                 ))
                             ) : (
                                 <Typography variant="body2" color="text.secondary">
@@ -584,7 +575,8 @@ const BookDetails = () => {
                             lists={lists}
                             bookId={id}
                             onAddToList={handleAddToList}
-                            onSuccess={() => {}}
+                            onSuccess={() => {
+                            }}
                         />
                     </Box>
                 </Grid>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
 import {
     Dialog,
     DialogTitle,
@@ -14,20 +14,14 @@ import {
 } from '@mui/material';
 
 const statusOptions = [
-    { value: 0, label: 'Pendiente', color: '#6c757d' },
-    { value: 1, label: 'Leyendo', color: '#4C88A8' },
-    { value: 2, label: 'Leído', color: '#1C945C' },
-    { value: 3, label: 'Pausado', color: '#DEA807' },
-    { value: 4, label: 'Abandonado', color: '#CC4D3D' }
+    {value: 0, label: 'Pendiente', color: '#6c757d'},
+    {value: 1, label: 'Leyendo', color: '#4C88A8'},
+    {value: 2, label: 'Leído', color: '#1C945C'},
+    {value: 3, label: 'Pausado', color: '#DEA807'},
+    {value: 4, label: 'Abandonado', color: '#CC4D3D'}
 ];
 
-const UpdateReadingStatusDialog = ({
-                                       open,
-                                       onClose,
-                                       currentStatus,
-                                       onSave,
-                                       bookId
-                                   }) => {
+const UpdateReadingStatusDialog = ({open, onClose, currentStatus, onSave, bookId}) => {
     const [selectedStatus, setSelectedStatus] = useState(currentStatus);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -55,11 +49,13 @@ const UpdateReadingStatusDialog = ({
         <Dialog
             open={open}
             onClose={onClose}
-            PaperProps={{
-                sx: {
-                    borderRadius: '12px',
-                    minWidth: '350px',
-                    background: '#f5f5f5'
+            slotProps={{
+                paper: {
+                    sx: {
+                        borderRadius: '12px',
+                        minWidth: '350px',
+                        background: '#f5f5f5'
+                    }
                 }
             }}
         >
@@ -73,17 +69,17 @@ const UpdateReadingStatusDialog = ({
             </DialogTitle>
 
             {error && (
-                <Alert severity="error" sx={{ m: 2 }}>
+                <Alert severity="error" sx={{m: 2}}>
                     {error}
                 </Alert>
             )}
 
-            <DialogContent sx={{ padding: '40px 24px 16px', pt: 10 }}>
+            <DialogContent sx={{padding: '40px 24px 16px', pt: 10}}>
                 <FormControl component="fieldset" fullWidth>
                     <RadioGroup
                         value={selectedStatus}
                         onChange={(e) => setSelectedStatus(parseInt(e.target.value))}
-                        sx={{ gap: '8px', pt: '10px' }}
+                        sx={{gap: '8px', pt: '10px'}}
                     >
                         {statusOptions.map((option) => (
                             <FormControlLabel
@@ -93,7 +89,7 @@ const UpdateReadingStatusDialog = ({
                                     <Radio
                                         sx={{
                                             color: option.color,
-                                            '&.Mui-checked': { color: option.color }
+                                            '&.Mui-checked': {color: option.color}
                                         }}
                                     />
                                 }
@@ -124,7 +120,7 @@ const UpdateReadingStatusDialog = ({
                 </FormControl>
             </DialogContent>
 
-            <DialogActions sx={{ padding: '16px 24px', pt: '2px' }}>
+            <DialogActions sx={{padding: '16px 24px', pt: '2px'}}>
                 <Button
                     onClick={onClose}
                     disabled={loading}
@@ -156,7 +152,7 @@ const UpdateReadingStatusDialog = ({
                     }}
                 >
                     {loading ? (
-                        <CircularProgress size={24} sx={{ color: 'white' }} />
+                        <CircularProgress size={24} sx={{color: 'white'}}/>
                     ) : (
                         'Guardar'
                     )}

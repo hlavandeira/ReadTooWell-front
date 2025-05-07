@@ -34,13 +34,14 @@ const SearchPage = () => {
 
     const [genres, setGenres] = useState([]);
 
-    const itemsPerPage = 9;
+    const itemsPerPage = 10;
     const currentPage = parseInt(searchParams.get('page')) || 1;
 
     const searchBooks = async () => {
         setIsLoading(true);
         try {
             const token = localStorage.getItem('token');
+
             const params = {
                 searchString: searchInput,
                 minPages: filters.minPages,

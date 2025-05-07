@@ -46,7 +46,7 @@ const YearRecap = () => {
     if (loading) {
         return (
             <Box display="flex" justifyContent="center" mt={4}>
-                <CircularProgress/>
+                <CircularProgress sx={{color: '#8B0000'}}/>
             </Box>
         );
     }
@@ -95,24 +95,24 @@ const YearRecap = () => {
             </Box>
 
             {/* Estadísticas principales */}
-            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Grid container spacing={5} sx={{ mb: 4, maxWidth: '600px', justifyContent: 'center' }}>
+            <Box sx={{display: 'flex', justifyContent: 'center'}}>
+                <Grid container spacing={5} sx={{mb: 4, maxWidth: '600px', justifyContent: 'center'}}>
                     <Grid item>
-                        <Paper elevation={3} sx={{ p: 3, minWidth: 200, borderRadius: 2, textAlign: 'center' }}>
-                            <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
+                        <Paper elevation={3} sx={{p: 3, minWidth: 200, borderRadius: 2, textAlign: 'center'}}>
+                            <Typography variant="h5" sx={{mb: 2, fontWeight: 'bold'}}>
                                 Libros leídos:
                             </Typography>
-                            <Typography variant="h2" sx={{ color: '#8B0000', fontWeight: 'bold' }}>
+                            <Typography variant="h2" sx={{color: '#8B0000', fontWeight: 'bold'}}>
                                 {yearRecap.totalBooksRead}
                             </Typography>
                         </Paper>
                     </Grid>
                     <Grid item>
-                        <Paper elevation={3} sx={{ p: 3, minWidth: 200, borderRadius: 2, textAlign: 'center' }}>
-                            <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
+                        <Paper elevation={3} sx={{p: 3, minWidth: 200, borderRadius: 2, textAlign: 'center'}}>
+                            <Typography variant="h5" sx={{mb: 2, fontWeight: 'bold'}}>
                                 Páginas leídas:
                             </Typography>
-                            <Typography variant="h2" sx={{ color: '#8B0000', fontWeight: 'bold' }}>
+                            <Typography variant="h2" sx={{color: '#8B0000', fontWeight: 'bold'}}>
                                 {yearRecap.totalPagesRead.toLocaleString()}
                             </Typography>
                         </Paper>
@@ -123,13 +123,13 @@ const YearRecap = () => {
 
             {/* Objetivos completados */}
             {yearRecap.annualGoals.length > 0 && (
-                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
-                    <Box sx={{ width: '80%' }}>
-                        <Typography variant="h5" component="h2" sx={{ mb: 3, fontWeight: 'bold', textAlign: "center" }}>
+                <Box sx={{display: 'flex', justifyContent: 'center', mb: 4}}>
+                    <Box sx={{width: '80%'}}>
+                        <Typography variant="h5" component="h2" sx={{mb: 3, fontWeight: 'bold', textAlign: "center"}}>
                             Tus objetivos de lectura completados este año
                         </Typography>
 
-                        <Grid container spacing={3} sx={{ justifyContent: 'center' }}>
+                        <Grid container spacing={3} sx={{justifyContent: 'center'}}>
                             {yearRecap.annualGoals.map((goal) => (
                                 <Grid key={goal.id}>
                                     <Paper elevation={3} sx={{
@@ -142,9 +142,9 @@ const YearRecap = () => {
                                         flexDirection: 'column',
                                         backgroundColor: goal.duration === 'Anual' ? '#F5EBE4' : 'white'
                                     }}>
-                                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                                        <Typography variant="h6" sx={{fontWeight: 'bold'}}>
                                             Objetivo de {goal.duration === 'Mensual'
-                                            ? new Date(goal.dateStart).toLocaleString('es-ES', { month: 'long' })
+                                            ? new Date(goal.dateStart).toLocaleString('es-ES', {month: 'long'})
                                             : new Date(goal.dateStart).getFullYear()}
                                         </Typography>
 
@@ -158,7 +158,7 @@ const YearRecap = () => {
                                             }}>
                                                 {goal.currentAmount}/{goal.amount}
                                             </Typography>
-                                            <Typography variant="h6" sx={{ mt: 1 }}>
+                                            <Typography variant="h6" sx={{mt: 1}}>
                                                 {goal.type.toLowerCase()}
                                             </Typography>
                                         </Box>
@@ -173,13 +173,13 @@ const YearRecap = () => {
             {/* Géneros más leídos */}
             <Box sx={{display: 'flex', justifyContent: 'center'}}>
                 <Paper elevation={3} sx={{p: 3, mb: 4, borderRadius: 2, width: '80%'}}>
-                    <Typography variant="h5" component="h2" sx={{ mb: 3, fontWeight: 'bold', textAlign: "center" }}>
+                    <Typography variant="h5" component="h2" sx={{mb: 3, fontWeight: 'bold', textAlign: "center"}}>
                         Géneros que más has leído
                     </Typography>
                     <Box sx={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 1}}>
                         {yearRecap.mostReadGenres?.length > 0 ? (
                             yearRecap.mostReadGenres.map((genre) => (
-                                <GenreButton key={genre.id} genre={genre} />
+                                <GenreButton key={genre.id} genre={genre}/>
                             ))
                         ) : (
                             <Typography variant="body2" color="text.secondary">
@@ -192,8 +192,8 @@ const YearRecap = () => {
 
             {/* Libros mejor valorados */}
             <Box sx={{display: 'flex', justifyContent: 'center'}}>
-                <Paper elevation={3} sx={{ p: 3, borderRadius: 2, width: '80%' }}>
-                    <Typography variant="h5" component="h2" sx={{ mb: 3, fontWeight: 'bold', textAlign: "center" }}>
+                <Paper elevation={3} sx={{p: 3, borderRadius: 2, width: '80%'}}>
+                    <Typography variant="h5" component="h2" sx={{mb: 3, fontWeight: 'bold', textAlign: "center"}}>
                         Los libros que más te han gustado
                     </Typography>
                     <Grid
@@ -206,7 +206,7 @@ const YearRecap = () => {
                     >
                         {yearRecap.topRatedBooks.map((book) => (
                             <Grid item key={book.id}>
-                                <RatedBookCard libro={book} />
+                                <RatedBookCard libro={book}/>
                             </Grid>
                         ))}
                     </Grid>

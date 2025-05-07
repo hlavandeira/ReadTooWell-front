@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
 import {
     Dialog,
     DialogTitle,
@@ -69,12 +69,12 @@ const EditListDialog = ({open, onClose, listDetails, genres, loadingGenres, onSa
                 alignItems: 'center',
                 gap: 1
             }}>
-                <LibraryBooksIcon />
+                <LibraryBooksIcon/>
                 Editar lista
             </DialogTitle>
 
-            <DialogContent sx={{ p: 3 }}>
-                <Box component="form" sx={{ mt: 1 }}>
+            <DialogContent sx={{p: 3}}>
+                <Box component="form" sx={{mt: 1}}>
                     <TextField
                         autoFocus
                         margin="normal"
@@ -82,7 +82,7 @@ const EditListDialog = ({open, onClose, listDetails, genres, loadingGenres, onSa
                         fullWidth
                         value={editName}
                         onChange={(e) => setEditName(e.target.value)}
-                        sx={{ mb: 2 }}
+                        sx={{mb: 2}}
                     />
 
                     <TextField
@@ -101,15 +101,15 @@ const EditListDialog = ({open, onClose, listDetails, genres, loadingGenres, onSa
                             maxLength: 2000
                         }}
                         helperText={`${editDescription.length}/2000 caracteres`}
-                        sx={{ mb: 3 }}
+                        sx={{mb: 3}}
                     />
 
-                    <Typography variant="subtitle2" sx={{ mb: 1, color: '#432818' }}>
+                    <Typography variant="subtitle2" sx={{mb: 1, color: '#432818'}}>
                         Géneros:
                     </Typography>
 
                     {loadingGenres ? (
-                        <CircularProgress size={24} />
+                        <CircularProgress size={24} sx={{color: '#8B0000'}}/>
                     ) : (
                         <Box sx={{
                             display: 'flex',
@@ -144,7 +144,7 @@ const EditListDialog = ({open, onClose, listDetails, genres, loadingGenres, onSa
                 </Box>
             </DialogContent>
 
-            <DialogActions sx={{ p: 2 }}>
+            <DialogActions sx={{p: 2}}>
                 <Button
                     onClick={onClose}
                     disabled={isSubmitting}
@@ -162,14 +162,14 @@ const EditListDialog = ({open, onClose, listDetails, genres, loadingGenres, onSa
                     sx={{
                         textTransform: 'none',
                         backgroundColor: '#8B0000',
-                        '&:hover': { backgroundColor: '#6d0000' },
+                        '&:hover': {backgroundColor: '#6d0000'},
                         borderRadius: '20px',
                         px: 3,
                         position: 'relative'
                     }}
                 >
                     {isSubmitting ? (
-                        <CircularProgress size={24} sx={{ color: 'white' }} />
+                        <CircularProgress size={24} sx={{color: 'white'}}/>
                     ) : (
                         'Guardar cambios'
                     )}

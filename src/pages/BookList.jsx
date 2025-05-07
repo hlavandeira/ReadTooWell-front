@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
+import {useAuth} from '../context/AuthContext.jsx';
 import axios from 'axios';
 import {
     Box, Typography, CircularProgress, Pagination, Button
@@ -11,6 +12,7 @@ import GenreButton from "../components/GenreButton.jsx";
 import EditListDialog from '../components/dialogs/EditListDialog';
 
 const BookList = () => {
+    const {token} = useAuth();
     const {idList} = useParams();
     const navigate = useNavigate();
     const [page, setPage] = useState(1);
@@ -30,7 +32,6 @@ const BookList = () => {
     useEffect(() => {
         const fetchListDetails = async () => {
             try {
-                const token = localStorage.getItem('token');
                 const response = await axios.get(`http://localhost:8080/listas/${idList}`, {
                     params: {
                         page: page - 1,
@@ -57,7 +58,6 @@ const BookList = () => {
         const fetchGenres = async () => {
             try {
                 setLoadingGenres(true);
-                const token = localStorage.getItem('token');
                 const response = await axios.get('http://localhost:8080/libros/generos', {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -83,7 +83,6 @@ const BookList = () => {
 
     const handleUpdateList = async (updatedData) => {
         try {
-            const token = localStorage.getItem('token');
             await axios.put(`http://localhost:8080/listas/${idList}`, {
                     name: updatedData.name,
                     description: updatedData.description
@@ -118,7 +117,6 @@ const BookList = () => {
 
     const handleDeleteList = async () => {
         try {
-            const token = localStorage.getItem('token');
             await axios.delete(`http://localhost:8080/listas/${idList}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -137,7 +135,6 @@ const BookList = () => {
 
     const handleDeleteBook = async (bookId) => {
         try {
-            const token = localStorage.getItem('token');
             await axios.delete(`http://localhost:8080/listas/${idList}/eliminar-libro/${bookId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -164,7 +161,7 @@ const BookList = () => {
     if (loading) {
         return (
             <Box display="flex" justifyContent="center" mt={4}>
-                <CircularProgress/>
+                <CircularProgress sx={{color: '#8B0000'}}/>
             </Box>
         );
     }
@@ -242,7 +239,7 @@ const BookList = () => {
 
                 <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 1}}>
                     {listDetails.genres.map((genre) => (
-                        <GenreButton key={genre.id} genre={genre} />
+                        <GenreButton key={genre.id} genre={genre}/>
                     ))}
                 </Box>
             </Box>

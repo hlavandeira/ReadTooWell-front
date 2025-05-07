@@ -11,28 +11,22 @@ import {
 } from '@mui/material';
 import {useState} from 'react';
 import axios from 'axios';
+import {useAuth} from '../../context/AuthContext.jsx';
 
-const BookFormatsDialog = ({
-                               open,
-                               onClose,
-                               bookId,
-                               selectedFormats,
-                               setSelectedFormats,
-                               onSave
-                           }) => {
+const BookFormatsDialog = ({open, onClose, bookId, selectedFormats, setSelectedFormats, onSave}) => {
+    const {token} = useAuth();
     const [loadingFormats, setLoadingFormats] = useState(false);
     const [error, setError] = useState(null);
 
     const handleFormatChange = async (idFormat, isChecked) => {
         try {
             setLoadingFormats(true);
-            const token = localStorage.getItem('token');
 
             if (isChecked) {
                 const response = await axios.post(
                     `http://localhost:8080/biblioteca/${bookId}/formatos/${idFormat}`,
                     {},
-                    { headers: { Authorization: `Bearer ${token}` } }
+                    {headers: {Authorization: `Bearer ${token}`}}
                 );
                 if (response.data && Array.isArray(response.data)) {
                     setSelectedFormats(response.data.map(format => format.id));
@@ -40,7 +34,7 @@ const BookFormatsDialog = ({
             } else {
                 const response = await axios.delete(
                     `http://localhost:8080/biblioteca/${bookId}/formatos/${idFormat}`,
-                    { headers: { Authorization: `Bearer ${token}` } }
+                    {headers: {Authorization: `Bearer ${token}`}}
                 );
                 if (response.data && Array.isArray(response.data)) {
                     setSelectedFormats(response.data.map(format => format.id));
@@ -58,11 +52,13 @@ const BookFormatsDialog = ({
         <Dialog
             open={open}
             onClose={onClose}
-            PaperProps={{
-                sx: {
-                    borderRadius: '12px',
-                    minWidth: '350px',
-                    background: '#f5f5f5'
+            slotProps={{
+                paper: {
+                    sx: {
+                        borderRadius: '12px',
+                        minWidth: '350px',
+                        background: '#f5f5f5'
+                    }
                 }
             }}
         >
@@ -77,7 +73,7 @@ const BookFormatsDialog = ({
 
             <DialogContent sx={{padding: '40px 24px 16px', pt: 10}}>
                 {error && (
-                    <Typography color="error" sx={{ mb: 2 }}>
+                    <Typography color="error" sx={{mb: 2}}>
                         {error}
                     </Typography>
                 )}
@@ -117,6 +113,7 @@ const BookFormatsDialog = ({
                                 margin: 0,
                                 padding: '8px 12px',
                                 pb: '3px',
+                                mt: 1,
                                 borderRadius: '8px',
                                 backgroundColor: selectedFormats.includes(item.idFormat) ? '#43281810' : 'transparent',
                                 '&:hover': {

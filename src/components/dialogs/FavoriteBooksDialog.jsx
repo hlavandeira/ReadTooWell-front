@@ -14,8 +14,10 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import SmallShelvedBookCard from '../books/SmallShelvedBookCard';
+import {useAuth} from '../../context/AuthContext.jsx';
 
 const FavoriteBooksDialog = ({open, onClose, currentFavoriteBooks}) => {
+    const {token} = useAuth();
     const [libraryBooks, setLibraryBooks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedBookIds, setSelectedBookIds] = useState(new Set());
@@ -34,7 +36,7 @@ const FavoriteBooksDialog = ({open, onClose, currentFavoriteBooks}) => {
         const fetchLibraryBooks = async () => {
             try {
                 setLoading(true);
-                const token = localStorage.getItem('token');
+
                 const response = await axios.get('http://localhost:8080/biblioteca/todos', {
                     params: {page, size: 10},
                     headers: {Authorization: `Bearer ${token}`}
@@ -73,7 +75,6 @@ const FavoriteBooksDialog = ({open, onClose, currentFavoriteBooks}) => {
     const handleSave = async () => {
         try {
             setIsSubmitting(true);
-            const token = localStorage.getItem('token');
 
             await axios.put(
                 'http://localhost:8080/usuarios/libros-favoritos',
@@ -104,7 +105,7 @@ const FavoriteBooksDialog = ({open, onClose, currentFavoriteBooks}) => {
 
                 {loading ? (
                     <Box display="flex" justifyContent="center" sx={{my: 4}}>
-                        <CircularProgress/>
+                        <CircularProgress sx={{color: '#8B0000'}}/>
                     </Box>
                 ) : libraryBooks.length > 0 ? (
                     <>

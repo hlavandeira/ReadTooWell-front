@@ -1,14 +1,6 @@
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import {
-    Box,
-    TextField,
-    InputAdornment,
-    CircularProgress,
-    Grid,
-    Pagination,
-    Typography
-} from '@mui/material';
+import {useEffect, useState} from 'react';
+import {useSearchParams} from 'react-router-dom';
+import {Box, CircularProgress, Grid, InputAdornment, Pagination, TextField, Typography} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import axios from "axios";
 import UserCard from '../components/UserCard';
@@ -34,7 +26,7 @@ const SearchUsersPage = () => {
             };
 
             setSearchParams({
-                ...(searchInput && { searchString: searchInput }),
+                ...(searchInput && {searchString: searchInput}),
                 page: currentPage
             });
 
@@ -63,7 +55,7 @@ const SearchUsersPage = () => {
     const handleSearchSubmit = (e) => {
         e.preventDefault();
         setSearchParams({
-            ...(searchInput && { searchString: searchInput }),
+            ...(searchInput && {searchString: searchInput}),
             page: 1
         });
     };
@@ -77,7 +69,7 @@ const SearchUsersPage = () => {
     };
 
     return (
-        <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 1400, mx: 'auto' }}>
+        <Box sx={{p: {xs: 2, md: 3}, maxWidth: 1400, mx: 'auto'}}>
             {/* Barra de búsqueda */}
             <Box
                 component="form"
@@ -97,7 +89,7 @@ const SearchUsersPage = () => {
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
-                                <SearchIcon color="action" />
+                                <SearchIcon color="action"/>
                             </InputAdornment>
                         )
                     }}
@@ -115,8 +107,8 @@ const SearchUsersPage = () => {
 
             {/* Resultados */}
             {isLoading ? (
-                <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
-                    <CircularProgress size={60} sx={{ color: '#8B0000' }} />
+                <Box sx={{display: 'flex', justifyContent: 'center', py: 10}}>
+                    <CircularProgress size={60} sx={{color: '#8B0000'}}/>
                 </Box>
             ) : users.length > 0 ? (
                 <>
@@ -130,14 +122,14 @@ const SearchUsersPage = () => {
                     >
                         {users.map((user) => (
                             <Grid item key={user.id}>
-                                <UserCard user={user} />
+                                <UserCard user={user}/>
                             </Grid>
                         ))}
                     </Grid>
 
                     {/* Paginación */}
                     {totalPages > 1 && (
-                        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                        <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
                             <Pagination
                                 count={totalPages}
                                 page={currentPage}
@@ -164,7 +156,7 @@ const SearchUsersPage = () => {
                     minHeight: '300px',
                     textAlign: 'center'
                 }}>
-                    <Typography variant="h5" sx={{ color: '#432818' }}>
+                    <Typography variant="h5" sx={{color: '#432818'}}>
                         {searchInput ? 'No se encontraron usuarios' : 'Ingresa un término de búsqueda'}
                     </Typography>
                 </Box>

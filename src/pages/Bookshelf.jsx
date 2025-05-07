@@ -3,11 +3,13 @@ import {
 } from '@mui/material';
 import {useParams} from "react-router-dom";
 import {useState, useEffect} from "react";
+import {useAuth} from '../context/AuthContext.jsx';
 import axios from 'axios';
 import ShelvedBookCard from '../components/books/ShelvedBookCard.jsx';
 import BookFormatsDialog from '../components/dialogs/BookFormatsDialog.jsx';
 
 const Bookshelf = () => {
+    const {token} = useAuth();
     const {status} = useParams();
 
     const [loading, setLoading] = useState(true);
@@ -33,8 +35,6 @@ const Bookshelf = () => {
 
     const handleDeleteBook = async (bookId) => {
         try {
-            const token = localStorage.getItem('token');
-
             await axios.delete(`http://localhost:8080/biblioteca/${bookId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -56,8 +56,8 @@ const Bookshelf = () => {
 
     const fetchBookFormats = async (bookId) => {
         try {
-            const token = localStorage.getItem('token');
             setLoadingFormats(true);
+
             const response = await axios.get(`http://localhost:8080/biblioteca/${bookId}/formatos`, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -84,7 +84,6 @@ const Bookshelf = () => {
     useEffect(() => {
         const fetchBooks = async () => {
             try {
-                const token = localStorage.getItem('token');
                 setLoading(true);
 
                 const response = await axios.get('http://localhost:8080/biblioteca', {
@@ -142,7 +141,7 @@ const Bookshelf = () => {
 
             {loading ? (
                 <Box display="flex" justifyContent="center">
-                    <CircularProgress/>
+                    <CircularProgress sx={{color: '#8B0000'}}/>
                 </Box>
             ) : books.length === 0 ? (
                 <Typography variant="body1" textAlign="center" sx={{mt: 2}}>
