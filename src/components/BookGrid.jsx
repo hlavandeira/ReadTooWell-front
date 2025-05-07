@@ -16,12 +16,10 @@ const BookGrid = ({titulo, libros = [], page, totalPages, onPageChange}) => {
                 gutterBottom
                 align="center"
                 sx={{
-                    fontFamily: '"Domine", serif',
-                    fontOpticalSizing: 'auto',
                     fontWeight: 600,
                     fontStyle: 'normal',
-                    letterSpacing: '1px',
-                    color: '#432818'
+                    color: '#432818',
+                    mb: 4
                 }}
             >
                 {titulo}

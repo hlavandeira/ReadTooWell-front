@@ -67,25 +67,25 @@ const Home = () => {
             label: 'Gestionar libros',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743863885/readtoowell/iconos/Biblioteca_sinfondo_blanco_dw69k5.png",
             path: '/admin/libros',
-            color: '#876C40'
+            color: '#432818'
         },
         {
             label: 'Gestionar usuarios',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1745747085/readtoowell/iconos/Social_sinfondo_blanco_piz4io.png",
             path: '/admin/usuarios',
-            color: '#2E5266'
+            color: '#8B0000'
         },
         {
             label: 'Gestionar sugerencias',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743863885/readtoowell/iconos/Recom_sinfondo_blanco_avcur7.png",
             path: '/admin/sugerencias',
-            color: '#8B0000'
+            color: '#876C40'
         },
         {
             label: 'Gestionar verificaciones',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1746030780/readtoowell/iconos/Verif_sinfondo_blanco_ulrhkk.png",
             path: '/admin/verificaciones',
-            color: '#432818'
+            color: '#2E5266'
         }
     ];
 
@@ -136,8 +136,6 @@ const Home = () => {
                             sx={{
                                 px: 4,
                                 py: 1.5,
-                                borderRadius: '8px',
-                                borderColor: '#432818',
                                 backgroundColor: '#432818',
                                 '&:hover': {backgroundColor: '#AC8446'}
                             }}
@@ -145,15 +143,13 @@ const Home = () => {
                             Comenzar
                         </Button>
                         <Button
-                            variant="outlined"
+                            variant="contained"
                             size="large"
                             onClick={() => navigate('/inicio-sesion')}
                             sx={{
                                 px: 4,
                                 py: 1.5,
                                 color: 'white',
-                                borderRadius: '8px',
-                                borderColor: '#432818',
                                 backgroundColor: '#432818',
                                 '&:hover': {backgroundColor: '#AC8446'}
                             }}
@@ -187,7 +183,7 @@ const Home = () => {
                         fontSize: {xs: '2rem', sm: '2.5rem'}
                     }}
                 >
-                    {isAdmin ? 'Bienvenido a la página de administrador' : `Hola, ${name}`}
+                    {isAdmin ? 'Bienvenido a la página de administrador' : `¡Hola, ${name}!`}
                 </Typography>
 
                 {/* Barra de búsqueda */}

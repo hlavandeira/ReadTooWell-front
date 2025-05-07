@@ -10,7 +10,7 @@ import {
     Menu,
     MenuItem,
     Typography,
-    Avatar
+    Avatar, Divider
 } from '@mui/material';
 import {
     Login as LoginIcon,
@@ -223,17 +223,16 @@ export default function DynamicAppBar() {
                             open={Boolean(anchorEl)}
                             onClose={handleClose}
                         >
-                            {!isAdmin && (
-                                <>
-                                    <MenuItem onClick={() => {
-                                        navigate(`/perfil/${id}`);
-                                        handleClose();
-                                    }}>
-                                        <AccountCircleIcon sx={{mr: 1}}/>
-                                        Mi perfil
-                                    </MenuItem>
-                                </>
-                            )}
+                            {!isAdmin && ([
+                                <MenuItem key="perfil" onClick={() => {
+                                    navigate(`/perfil/${id}`);
+                                    handleClose();
+                                }}>
+                                    <AccountCircleIcon sx={{mr: 1}}/>
+                                    Mi perfil
+                                </MenuItem>,
+                                <Divider key="divider" sx={{my: 2, mx: 'auto', borderColor: 'divider', width: '80%'}}/>
+                            ])}
                             <MenuItem onClick={handleLogout}>
                                 <LoginIcon sx={{
                                     mr: 1,

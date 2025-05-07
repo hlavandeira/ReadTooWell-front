@@ -20,6 +20,10 @@ import SearchUsers from "./pages/SearchUsers.jsx";
 import UsersList from "./pages/UsersList.jsx";
 import RequestList from "./pages/RequestList.jsx";
 import SuggestionList from "./pages/SuggestionList.jsx";
+import AuthorRequest from "./pages/AuthorRequest.jsx";
+import DeletedBooksList from "./pages/DeletedBooksList.jsx";
+import Suggestion from "./pages/Suggestion.jsx";
+import Authors from "./pages/Authors.jsx";
 
 function App() {
     return (
@@ -178,6 +182,34 @@ function App() {
                         <>
                             <AppBar/>
                             <SuggestionList/>
+                        </>
+                    }/>
+
+                    <Route path="/solicitud-autor" element={
+                        <>
+                            <AppBar/>
+                            <AuthorRequest/>
+                        </>
+                    }/>
+
+                    <Route path="/libros/eliminados" element={
+                        <>
+                            <AppBar/>
+                            <DeletedBooksList/>
+                        </>
+                    }/>
+
+                    <Route path="/libros/sugerencia" element={
+                        <>
+                            <AppBar/>
+                            <Suggestion/>
+                        </>
+                    }/>
+
+                    <Route path="/autores" element={
+                        <>
+                            <AppBar/>
+                            <Authors/>
                         </>
                     }/>
 
