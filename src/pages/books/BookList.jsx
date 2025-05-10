@@ -1,15 +1,15 @@
 import {useState, useEffect} from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
-import {useAuth} from '../context/AuthContext.jsx';
+import {useAuth} from '../../context/AuthContext.jsx';
 import axios from 'axios';
 import {
     Box, Typography, CircularProgress, Pagination, Button
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import ListedBook from '../components/books/ListedBook.jsx';
-import GenreButton from "../components/GenreButton.jsx";
-import EditListDialog from '../components/dialogs/EditListDialog';
+import ListedBook from '../../components/books/ListedBook.jsx';
+import GenreButton from "../../components/GenreButton.jsx";
+import EditListDialog from '../../components/dialogs/EditListDialog.jsx';
 
 const BookList = () => {
     const {token} = useAuth();

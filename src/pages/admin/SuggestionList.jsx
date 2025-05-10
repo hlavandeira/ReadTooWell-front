@@ -1,22 +1,22 @@
 import {useEffect, useState} from 'react';
-import {useAuth} from '../context/AuthContext';
+import {useAuth} from '../../context/AuthContext.jsx';
 import {Box, CircularProgress, List, Pagination, Paper, Tab, Tabs, Typography} from '@mui/material';
 import axios from 'axios';
-import RequestCard from '../components/RequestCard';
+import SuggestionCard from '../../components/SuggestionCard.jsx';
 
-const RequestList = () => {
+const SuggestionList = () => {
     const {token} = useAuth();
-    const [requests, setRequests] = useState([]);
+    const [suggestions, setSuggestions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [activeTab, setActiveTab] = useState(0);
 
-    const fetchRequests = async () => {
+    const fetchSuggestions = async () => {
         try {
             setLoading(true);
 
-            const response = await axios.get('http://localhost:8080/solicitud-autor/estado', {
+            const response = await axios.get('http://localhost:8080/sugerencias/estado', {
                 params: {
                     page,
                     size: 10,
@@ -25,23 +25,25 @@ const RequestList = () => {
                 headers: {Authorization: `Bearer ${token}`}
             });
 
-            setRequests(response.data.content);
+            setSuggestions(response.data.content);
             setTotalPages(response.data.totalPages);
         } catch (error) {
-            console.error('Error fetching requests:', error);
+            console.error('Error fetching suggestions:', error);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchRequests();
+        fetchSuggestions();
     }, [page, activeTab]);
 
-    const handleStatusChange = async (requestId, newStatus) => {
+    const handleStatusChange = async (suggestionId, newStatus) => {
         try {
+            const token = localStorage.getItem('token');
+
             await axios.put(
-                `http://localhost:8080/solicitud-autor/${requestId}`, {},
+                `http://localhost:8080/sugerencias/${suggestionId}`, {},
                 {
                     params: {
                         newStatus: newStatus
@@ -51,10 +53,9 @@ const RequestList = () => {
             );
 
             setPage(0);
-
-            fetchRequests();
+            fetchSuggestions();
         } catch (error) {
-            console.error('Error updating request status:', error);
+            console.error('Error updating suggestion status:', error);
         }
     };
 
@@ -70,6 +71,8 @@ const RequestList = () => {
             case 1:
                 return 'aceptadas';
             case 2:
+                return 'añadidas';
+            case 3:
                 return 'rechazadas';
             default:
                 return '';
@@ -84,10 +87,9 @@ const RequestList = () => {
                 color: '#432818',
                 textAlign: 'center'
             }}>
-                Solicitudes de verificación de autores
+                Sugerencias de libros
             </Typography>
 
-            {/* Pestañas según el estado de las solicitudes */}
             <Paper elevation={4} sx={{borderRadius: 2, overflow: 'hidden'}}>
                 <Tabs
                     value={activeTab}
@@ -120,6 +122,15 @@ const RequestList = () => {
                         }}
                     />
                     <Tab
+                        label="Añadidas"
+                        sx={{
+                            fontWeight: 'medium',
+                            textTransform: 'none',
+                            fontSize: '1rem',
+                            '&.Mui-selected': {color: '#432818'}
+                        }}
+                    />
+                    <Tab
                         label="Rechazadas"
                         sx={{
                             fontWeight: 'medium',
@@ -133,19 +144,19 @@ const RequestList = () => {
                 <Box sx={{p: 3}}>
                     {loading ? (
                         <Box display="flex" justifyContent="center" sx={{my: 4}}>
-                            <CircularProgress size={60} sx={{color: '#8B0000'}}/>
+                            <CircularProgress size={60} sx={{color: '#432818'}}/>
                         </Box>
-                    ) : requests.length === 0 ? (
+                    ) : suggestions.length === 0 ? (
                         <Typography variant="body1" sx={{textAlign: 'center', my: 4}}>
-                            No hay solicitudes {getStatusLabel()}
+                            No hay sugerencias {getStatusLabel()}
                         </Typography>
                     ) : (
                         <>
                             <List sx={{width: '100%'}}>
-                                {requests.map((request) => (
-                                    <RequestCard
-                                        key={request.id}
-                                        request={request}
+                                {suggestions.map((suggestion) => (
+                                    <SuggestionCard
+                                        key={suggestion.id}
+                                        suggestion={suggestion}
                                         activeTab={activeTab}
                                         onStatusChange={handleStatusChange}
                                     />
@@ -158,7 +169,15 @@ const RequestList = () => {
                                         count={totalPages}
                                         page={page + 1}
                                         onChange={(event, value) => setPage(value - 1)}
-                                        color="primary"
+                                        sx={{
+                                            '& .MuiPaginationItem-root': {
+                                                color: '#432818',
+                                            },
+                                            '& .Mui-selected': {
+                                                backgroundColor: '#432818 !important',
+                                                color: '#fff !important'
+                                            }
+                                        }}
                                     />
                                 </Box>
                             )}
@@ -170,4 +189,4 @@ const RequestList = () => {
     );
 };
 
-export default RequestList;
+export default SuggestionList;

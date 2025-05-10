@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react';
 import {useSearchParams} from 'react-router-dom';
+import {useAuth} from "../../context/AuthContext.jsx";
 import {
     Box,
     TextField,
@@ -13,11 +14,12 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import BookGrid from '../components/BookGrid';
-import GenreButton from '../components/GenreButton';
+import BookGrid from '../../components/books/BookGrid.jsx';
+import GenreButton from '../../components/GenreButton.jsx';
 import axios from "axios";
 
 const SearchPage = () => {
+    const {token} = useAuth();
     const [searchParams, setSearchParams] = useSearchParams();
     const [searchInput, setSearchInput] = useState(searchParams.get('searchString') || '');
     const [filters, setFilters] = useState({
@@ -37,11 +39,11 @@ const SearchPage = () => {
     const itemsPerPage = 10;
     const currentPage = parseInt(searchParams.get('page')) || 1;
 
+    const [isAdmin, setIsAdmin] = useState(false);
+
     const searchBooks = async () => {
         setIsLoading(true);
         try {
-            const token = localStorage.getItem('token');
-
             const params = {
                 searchString: searchInput,
                 minPages: filters.minPages,
@@ -118,7 +120,6 @@ const SearchPage = () => {
     useEffect(() => {
         const fetchGenres = async () => {
             try {
-                const token = localStorage.getItem('token');
                 const response = await axios.get('http://localhost:8080/libros/generos', {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -135,6 +136,26 @@ const SearchPage = () => {
 
         fetchGenres();
     }, []);
+
+    useEffect(() => {
+        if (!token) {
+            return;
+        }
+        const verifyAdmin = async () => {
+            try {
+                const response = await axios.get('http://localhost:8080/usuarios/verificar-admin', {
+                    headers: {Authorization: `Bearer ${token}`}
+                });
+
+                setIsAdmin(response.data);
+            } catch (error) {
+                console.error('Error verificando rol:', error);
+                setIsAdmin(false);
+            }
+        };
+
+        verifyAdmin();
+    }, [token]);
 
     return (
         <Box sx={{p: {xs: 2, md: 3}, maxWidth: 1400, mx: 'auto'}}>
@@ -341,6 +362,10 @@ const SearchPage = () => {
                     page={currentPage}
                     totalPages={totalPages}
                     onPageChange={handlePageChange}
+                    isAdmin={isAdmin}
+                    onBookDelete={(deletedBookId) => {
+                        setBooks(books.filter(book => book.id !== deletedBookId));
+                    }}
                 />
             ) : (
                 <Box sx={{
@@ -358,8 +383,8 @@ const SearchPage = () => {
 
             <Divider sx={{my: 4, borderColor: 'divider'}}/>
 
-            <Box sx={{ my: 6 }}>
-                <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
+            <Box sx={{my: 6}}>
+                <Paper elevation={3} sx={{p: 4, borderRadius: 3}}>
                     <Typography
                         variant="h4"
                         component="h2"
@@ -382,7 +407,7 @@ const SearchPage = () => {
                     }}>
                         {genres.length > 0 ? (
                             genres.map((genre) => (
-                                <GenreButton key={genre.id} genre={genre} />
+                                <GenreButton key={genre.id} genre={genre}/>
                             ))
                         ) : (
                             <Typography variant="body1" color="text.secondary">

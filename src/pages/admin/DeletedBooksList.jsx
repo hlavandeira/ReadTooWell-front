@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 import axios from 'axios';
+import {useAuth} from "../../context/AuthContext.jsx";
 import {
     Box,
     Typography,
@@ -9,9 +10,10 @@ import {
     Pagination,
     Button
 } from '@mui/material';
-import BookCard from '../components/books/BookCard';
+import BookCard from '../../components/books/BookCard.jsx';
 
 const DeletedBooksList = () => {
+    const {token} = useAuth();
     const [books, setBooks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(0);
@@ -20,10 +22,11 @@ const DeletedBooksList = () => {
     const [success, setSuccess] = useState(false);
     const navigate = useNavigate();
 
+    const [isAdmin, setIsAdmin] = useState(false);
+
     const fetchDeletedBooks = async () => {
         try {
             setLoading(true);
-            const token = localStorage.getItem('token');
 
             const response = await axios.get('http://localhost:8080/libros/desactivados', {
                 params: {
@@ -57,7 +60,6 @@ const DeletedBooksList = () => {
 
     const handleRestoreBook = async (bookId) => {
         try {
-            const token = localStorage.getItem('token');
             await axios.put(
                 `http://localhost:8080/libros/reactivar/${bookId}`, {}, {
                     headers: {Authorization: `Bearer ${token}`}
@@ -75,6 +77,26 @@ const DeletedBooksList = () => {
             setSuccess(false);
         }
     };
+
+    useEffect(() => {
+        if (!token) {
+            return;
+        }
+        const verifyAdmin = async () => {
+            try {
+                const response = await axios.get('http://localhost:8080/usuarios/verificar-admin', {
+                    headers: {Authorization: `Bearer ${token}`}
+                });
+
+                setIsAdmin(response.data);
+            } catch (error) {
+                console.error('Error verificando rol:', error);
+                setIsAdmin(false);
+            }
+        };
+
+        verifyAdmin();
+    }, [token]);
 
     return (
         <Box sx={{maxWidth: 1200, mx: 'auto', p: 3}}>
@@ -134,7 +156,7 @@ const DeletedBooksList = () => {
                     <Grid container spacing={3}>
                         {books.map((book) => (
                             <Grid key={book.id}>
-                                <BookCard libro={book}/>
+                                <BookCard libro={book} isAdmin={isAdmin} showDeleteButton={false}/>
                                 <Box sx={{display: 'flex', justifyContent: 'center', mt: 2}}>
                                     <Button
                                         variant="contained"

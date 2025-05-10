@@ -1,10 +1,10 @@
 import {useEffect, useState} from "react";
-import {useAuth} from "../context/AuthContext.jsx";
+import {useAuth} from "../../context/AuthContext.jsx";
 import axios from "axios";
 import {Box, Button, CircularProgress, Typography, Paper} from "@mui/material";
 import {useSearchParams} from 'react-router-dom';
 import {useNavigate} from 'react-router-dom';
-import BookGrid from '../components/BookGrid.jsx';
+import BookGrid from '../../components/books/BookGrid.jsx';
 
 const Catalog = () => {
     const {token, role} = useAuth();
@@ -19,25 +19,25 @@ const Catalog = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const page = parseInt(searchParams.get('page')) || 1;
 
-    useEffect(() => {
-        const fetchLibros = async () => {
-            try {
-                setLoading(true);
-                const response = await axios.get("http://localhost:8080/libros", {
-                    params: {
-                        page: page - 1,
-                        size: itemsPerPage
-                    }
-                });
-                setLibros(response.data.content);
-                setTotalPages(response.data.totalPages || 1);
-            } catch (error) {
-                console.error("Error cargando los libros:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+    const fetchLibros = async () => {
+        try {
+            setLoading(true);
+            const response = await axios.get("http://localhost:8080/libros", {
+                params: {
+                    page: page - 1,
+                    size: itemsPerPage
+                }
+            });
+            setLibros(response.data.content);
+            setTotalPages(response.data.totalPages || 1);
+        } catch (error) {
+            console.error("Error cargando los libros:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         fetchLibros();
     }, [page]);
 
@@ -89,11 +89,16 @@ const Catalog = () => {
                 page={page}
                 totalPages={totalPages}
                 onPageChange={handlePageChange}
+                isAdmin={isAdmin}
+                onBookDelete={(deletedBookId) => {
+                    setLibros(libros.filter(book => book.id !== deletedBookId));
+                    fetchLibros();
+                }}
             />
 
             {/* Botón para ver libros desactivados (solo admin) */}
             {isAdmin && (
-                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
+                <Box sx={{display: 'flex', justifyContent: 'center', mb: 4}}>
                     <Button
                         variant="contained"
                         onClick={() => navigate("/libros/eliminados")}
@@ -101,9 +106,9 @@ const Catalog = () => {
                             height: '36px',
                             textTransform: 'none',
                             color: 'white',
-                            backgroundColor: '#8B0000',
+                            backgroundColor: '#432818',
                             '&:hover': {
-                                backgroundColor: '#983030'
+                                backgroundColor: '#5a3a23'
                             }
                         }}
                     >
@@ -112,7 +117,7 @@ const Catalog = () => {
                 </Box>
             )}
 
-            {/* Sección para enviar sugerencias */}
+            {/* Sección para enviar sugerencias (solos usuarios y autores) */}
             {(role === 0 || role === 1) && (
                 <Paper elevation={3} sx={{
                     p: 3,
@@ -133,9 +138,10 @@ const Catalog = () => {
                         textAlign: 'center',
                         color: 'text.secondary'
                     }}>
-                        ¡Ayúdanos a mejorar nuestro catálogo! Puedes sugerir libros que te gustaría ver en nuestra plataforma.
+                        ¡Ayúdanos a mejorar nuestro catálogo! Puedes sugerir libros que te gustaría ver en nuestra
+                        plataforma.
                     </Typography>
-                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <Box sx={{display: 'flex', justifyContent: 'center'}}>
                         <Button
                             variant="contained"
                             onClick={() => navigate("/libros/sugerencia")}

@@ -52,13 +52,13 @@ const EditProfileDialog = ({open, onClose, profile, onSave}) => {
         const file = e.target.files[0];
         if (!file) return;
 
-        const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        const validTypes = ['image/jpeg', 'image/png'];
         const maxSize = 5 * 1024 * 1024; // Tamaño máximo: 5MB
 
         if (!validTypes.includes(file.type)) {
             setErrors(prev => ({
                 ...prev,
-                profilePic: 'Solo se permiten imágenes JPEG, PNG o GIF'
+                profilePic: 'Solo se permiten imágenes JPEG o PNG'
             }));
             return;
         }

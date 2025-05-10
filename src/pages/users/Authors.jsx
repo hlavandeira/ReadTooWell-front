@@ -2,8 +2,8 @@ import {useEffect, useState} from 'react';
 import {useSearchParams} from 'react-router-dom';
 import {Box, CircularProgress, Grid, Typography, Pagination} from '@mui/material';
 import axios from 'axios';
-import AuthorCard from '../components/AuthorCard';
-import {useAuth} from "../context/AuthContext.jsx";
+import AuthorCard from '../../components/AuthorCard.jsx';
+import {useAuth} from "../../context/AuthContext.jsx";
 
 const Authors = () => {
     const {token} = useAuth();

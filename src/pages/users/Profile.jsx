@@ -11,16 +11,16 @@ import {
     Grid,
     Button
 } from '@mui/material';
-import {useAuth} from '../context/AuthContext.jsx';
-import GenreButton from '../components/GenreButton';
-import BookCard from '../components/books/BookCard.jsx';
-import SmallBookCard from '../components/books/SmallBookCard.jsx';
+import {useAuth} from '../../context/AuthContext.jsx';
+import GenreButton from '../../components/GenreButton.jsx';
+import BookCard from '../../components/books/BookCard.jsx';
+import SmallBookCard from '../../components/books/SmallBookCard.jsx';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
-import EditProfileDialog from '../components/dialogs/EditProfileDialog';
-import FavoriteGenresDialog from '../components/dialogs/FavoriteGenresDialog';
-import FavoriteBooksDialog from '../components/dialogs/FavoriteBooksDialog';
+import EditProfileDialog from '../../components/dialogs/EditProfileDialog.jsx';
+import FavoriteGenresDialog from '../../components/dialogs/FavoriteGenresDialog.jsx';
+import FavoriteBooksDialog from '../../components/dialogs/FavoriteBooksDialog.jsx';
 
 const Profile = () => {
     const {id} = useParams();

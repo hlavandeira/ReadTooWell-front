@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import {Link} from 'react-router-dom';
 import ErrorIcon from '@mui/icons-material/Error';
-import {useAuth} from "../context/AuthContext.jsx";
+import {useAuth} from "../../context/AuthContext.jsx";
 
 const Register = () => {
     const navigate = useNavigate();

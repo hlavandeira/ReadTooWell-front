@@ -66,14 +66,8 @@ const Home = () => {
         {
             label: 'Gestionar libros',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743863885/readtoowell/iconos/Biblioteca_sinfondo_blanco_dw69k5.png",
-            path: '/admin/libros',
+            path: '/catalogo',
             color: '#432818'
-        },
-        {
-            label: 'Gestionar usuarios',
-            icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1745747085/readtoowell/iconos/Social_sinfondo_blanco_piz4io.png",
-            path: '/admin/usuarios',
-            color: '#8B0000'
         },
         {
             label: 'Gestionar sugerencias',

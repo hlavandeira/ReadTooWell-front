@@ -7,8 +7,8 @@ import {
     Grid, Divider, Chip
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import NewListDialog from '../components/dialogs/NewListDialog';
-import UpdateProgressDialog from '../components/dialogs/UpdateProgressDialog';
+import NewListDialog from '../components/dialogs/NewListDialog.jsx';
+import UpdateProgressDialog from '../components/dialogs/UpdateProgressDialog.jsx';
 
 const Library = () => {
     const {token} = useAuth();

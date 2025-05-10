@@ -7,8 +7,8 @@ import {
     CircularProgress,
     Paper
 } from '@mui/material';
-import LongUserCard from '../components/LongUserCard';
-import {useAuth} from '../context/AuthContext';
+import LongUserCard from '../../components/LongUserCard.jsx';
+import {useAuth} from '../../context/AuthContext.jsx';
 
 const UsersList = ({type}) => {
     const {id} = useParams();

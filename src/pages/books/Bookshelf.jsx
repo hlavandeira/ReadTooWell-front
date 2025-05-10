@@ -3,10 +3,10 @@ import {
 } from '@mui/material';
 import {useParams} from "react-router-dom";
 import {useState, useEffect} from "react";
-import {useAuth} from '../context/AuthContext.jsx';
+import {useAuth} from '../../context/AuthContext.jsx';
 import axios from 'axios';
-import ShelvedBookCard from '../components/books/ShelvedBookCard.jsx';
-import BookFormatsDialog from '../components/dialogs/BookFormatsDialog.jsx';
+import ShelvedBookCard from '../../components/books/ShelvedBookCard.jsx';
+import BookFormatsDialog from '../../components/dialogs/BookFormatsDialog.jsx';
 
 const Bookshelf = () => {
     const {token} = useAuth();

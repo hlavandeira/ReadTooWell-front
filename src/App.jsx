@@ -1,29 +1,45 @@
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import {AuthProvider} from './context/AuthContext.jsx';
-import Catalog from "./pages/Catalog.jsx";
-import AppBar from "./components/AppBar.jsx";
-import Login from "./pages/Login.jsx";
-import Register from "./pages/Register.jsx";
-import Home from "./pages/Home.jsx";
-import BookDetails from "./pages/BookDetails.jsx";
+import {Box} from "@mui/material";
 import RequireAuth from "./context/RequireAuth";
-import Search from "./pages/Search.jsx";
-import BooksByGenre from "./pages/BooksByGenre.jsx";
-import BooksByAuthor from "./pages/BooksByAuthor.jsx";
+import RequireAdmin from "./context/RequireAdmin";
+import AppBar from "./components/AppBar.jsx";
+import Footer from "./components/Footer.jsx";
+import Catalog from "./pages/books/Catalog.jsx";
+import Login from "./pages/users/Login.jsx";
+import Register from "./pages/users/Register.jsx";
+import Home from "./pages/Home.jsx";
+import BookDetails from "./pages/books/BookDetails.jsx";
+import Search from "./pages/books/Search.jsx";
+import BooksByGenre from "./pages/books/BooksByGenre.jsx";
+import BooksByAuthor from "./pages/books/BooksByAuthor.jsx";
 import Library from "./pages/Library.jsx";
-import Bookshelf from "./pages/Bookshelf.jsx";
-import BookList from "./pages/BookList.jsx";
+import Bookshelf from "./pages/books/Bookshelf.jsx";
+import BookList from "./pages/books/BookList.jsx";
 import Goal from "./pages/Goal.jsx";
 import YearRecap from "./pages/YearRecap.jsx";
-import Profile from "./pages/Profile.jsx";
-import SearchUsers from "./pages/SearchUsers.jsx";
-import UsersList from "./pages/UsersList.jsx";
-import RequestList from "./pages/RequestList.jsx";
-import SuggestionList from "./pages/SuggestionList.jsx";
-import AuthorRequest from "./pages/AuthorRequest.jsx";
-import DeletedBooksList from "./pages/DeletedBooksList.jsx";
-import Suggestion from "./pages/Suggestion.jsx";
-import Authors from "./pages/Authors.jsx";
+import Profile from "./pages/users/Profile.jsx";
+import SearchUsers from "./pages/users/SearchUsers.jsx";
+import UsersList from "./pages/users/UsersList.jsx";
+import RequestList from "./pages/admin/RequestList.jsx";
+import SuggestionList from "./pages/admin/SuggestionList.jsx";
+import AuthorRequest from "./pages/users/AuthorRequest.jsx";
+import DeletedBooksList from "./pages/admin/DeletedBooksList.jsx";
+import Suggestion from "./pages/books/Suggestion.jsx";
+import Authors from "./pages/users/Authors.jsx";
+import AdminBookDetails from "./pages/admin/AdminBookDetails.jsx";
+import EditBook from "./pages/admin/EditBook.jsx";
+import AddBook from "./pages/admin/AddBook.jsx";
+
+const MainLayout = ({children}) => (
+    <Box sx={{display: 'flex', flexDirection: 'column', minHeight: '100vh'}}>
+        <AppBar/>
+        <Box component="main" sx={{flex: 1}}>
+            {children}
+        </Box>
+        <Footer/>
+    </Box>
+);
 
 function App() {
     return (
@@ -31,186 +47,206 @@ function App() {
             <Router>
                 <Routes>
                     <Route path="/" element={
-                        <>
-                            <AppBar/>
+                        <MainLayout>
                             <Home/>
-                        </>
+                        </MainLayout>
                     }/>
 
                     <Route path="/catalogo" element={
-                        <>
-                            <AppBar/>
+                        <MainLayout>
                             <Catalog/>
-                        </>
+                        </MainLayout>
                     }/>
 
                     <Route path="/inicio-sesion" element={
-                        <>
-                            <AppBar/>
+                        <MainLayout>
                             <Login/>
-                        </>
+                        </MainLayout>
                     }/>
 
                     <Route path="/registro" element={
-                        <>
-                            <AppBar/>
+                        <MainLayout>
                             <Register/>
-                        </>
+                        </MainLayout>
                     }/>
 
                     <Route path="/detalles/:id" element={
-                        <RequireAuth>
-                            <>
-                                <AppBar/>
+                        <MainLayout>
+                            <RequireAuth>
                                 <BookDetails/>
-                            </>
-                        </RequireAuth>
+                            </RequireAuth>
+                        </MainLayout>
                     }/>
 
                     <Route path="/genero/:idGenero" element={
-                        <RequireAuth>
-                            <>
-                                <AppBar/>
+                        <MainLayout>
+                            <RequireAuth>
                                 <BooksByGenre/>
-                            </>
-                        </RequireAuth>
+                            </RequireAuth>
+                        </MainLayout>
                     }/>
 
                     <Route path="/buscar" element={
-                        <RequireAuth>
-                            <>
-                                <AppBar/>
+                        <MainLayout>
+                            <RequireAuth>
                                 <Search/>
-                            </>
-                        </RequireAuth>
+                            </RequireAuth>
+                        </MainLayout>
                     }/>
 
                     <Route path="/autor" element={
-                        <RequireAuth>
-                            <>
-                                <AppBar/>
+                        <MainLayout>
+                            <RequireAuth>
                                 <BooksByAuthor/>
-                            </>
-                        </RequireAuth>
+                            </RequireAuth>
+                        </MainLayout>
                     }/>
 
                     <Route path="/biblioteca" element={
-                        <RequireAuth>
-                            <>
-                                <AppBar/>
+                        <MainLayout>
+                            <RequireAuth>
                                 <Library/>
-                            </>
-                        </RequireAuth>
+                            </RequireAuth>
+                        </MainLayout>
                     }/>
 
                     <Route path="/biblioteca/:status" element={
-                        <RequireAuth>
-                            <>
-                                <AppBar/>
+                        <MainLayout>
+                            <RequireAuth>
                                 <Bookshelf/>
-                            </>
-                        </RequireAuth>
+                            </RequireAuth>
+                        </MainLayout>
                     }/>
 
                     <Route path="/listas/:idList" element={
-                        <RequireAuth>
-                            <>
-                                <AppBar/>
+                        <MainLayout>
+                            <RequireAuth>
                                 <BookList/>
-                            </>
-                        </RequireAuth>
+                            </RequireAuth>
+                        </MainLayout>
                     }/>
 
                     <Route path="/objetivos-lectura" element={
-                        <RequireAuth>
-                            <>
-                                <AppBar/>
+                        <MainLayout>
+                            <RequireAuth>
                                 <Goal/>
-                            </>
-                        </RequireAuth>
+                            </RequireAuth>
+                        </MainLayout>
                     }/>
 
                     <Route path="/resumen" element={
-                        <RequireAuth>
-                            <>
-                                <AppBar/>
+                        <MainLayout>
+                            <RequireAuth>
                                 <YearRecap/>
-                            </>
-                        </RequireAuth>
+                            </RequireAuth>
+                        </MainLayout>
                     }/>
 
                     <Route path="/perfil/:id" element={
-                        <RequireAuth>
-                            <>
-                                <AppBar/>
+                        <MainLayout>
+                            <RequireAuth>
                                 <Profile/>
-                            </>
-                        </RequireAuth>
+                            </RequireAuth>
+                        </MainLayout>
                     }/>
 
                     <Route path="/buscar/usuarios" element={
-                        <RequireAuth>
-                            <>
-                                <AppBar/>
+                        <MainLayout>
+                            <RequireAuth>
                                 <SearchUsers/>
-                            </>
-                        </RequireAuth>
+                            </RequireAuth>
+                        </MainLayout>
                     }/>
 
                     <Route path="/perfil/:id/seguidores" element={
-                        <>
-                            <AppBar/>
-                            <UsersList type="seguidores"/>
-                        </>
+                        <MainLayout>
+                            <RequireAuth>
+                                <UsersList type="seguidores"/>
+                            </RequireAuth>
+                        </MainLayout>
                     }/>
 
                     <Route path="/perfil/:id/seguidos" element={
-                        <>
-                            <AppBar/>
-                            <UsersList type="seguidos"/>
-                        </>
-                    }/>
-
-                    <Route path="/admin/verificaciones" element={
-                        <>
-                            <AppBar/>
-                            <RequestList/>
-                        </>
-                    }/>
-
-                    <Route path="/admin/sugerencias" element={
-                        <>
-                            <AppBar/>
-                            <SuggestionList/>
-                        </>
+                        <MainLayout>
+                            <RequireAuth>
+                                <UsersList type="seguidos"/>
+                            </RequireAuth>
+                        </MainLayout>
                     }/>
 
                     <Route path="/solicitud-autor" element={
-                        <>
-                            <AppBar/>
-                            <AuthorRequest/>
-                        </>
-                    }/>
-
-                    <Route path="/libros/eliminados" element={
-                        <>
-                            <AppBar/>
-                            <DeletedBooksList/>
-                        </>
+                        <MainLayout>
+                            <RequireAuth>
+                                <AuthorRequest/>
+                            </RequireAuth>
+                        </MainLayout>
                     }/>
 
                     <Route path="/libros/sugerencia" element={
-                        <>
-                            <AppBar/>
-                            <Suggestion/>
-                        </>
+                        <MainLayout>
+                            <RequireAuth>
+                                <Suggestion/>
+                            </RequireAuth>
+                        </MainLayout>
                     }/>
 
                     <Route path="/autores" element={
-                        <>
-                            <AppBar/>
-                            <Authors/>
-                        </>
+                        <MainLayout>
+                            <RequireAuth>
+                                <Authors/>
+                            </RequireAuth>
+                        </MainLayout>
+                    }/>
+
+
+                    {/* Páginas de Administrador */}
+
+                    <Route path="/admin/verificaciones" element={
+                        <MainLayout>
+                            <RequireAdmin>
+                                <RequestList/>
+                            </RequireAdmin>
+                        </MainLayout>
+                    }/>
+
+                    <Route path="/admin/sugerencias" element={
+                        <MainLayout>
+                            <RequireAdmin>
+                                <SuggestionList/>
+                            </RequireAdmin>
+                        </MainLayout>
+                    }/>
+
+                    <Route path="/libros/eliminados" element={
+                        <MainLayout>
+                            <RequireAdmin>
+                                <DeletedBooksList/>
+                            </RequireAdmin>
+                        </MainLayout>
+                    }/>
+
+                    <Route path="/admin/detalles/:id" element={
+                        <MainLayout>
+                            <RequireAdmin>
+                                <AdminBookDetails/>
+                            </RequireAdmin>
+                        </MainLayout>
+                    }/>
+
+                    <Route path="/admin/:id/editar" element={
+                        <MainLayout>
+                            <RequireAdmin>
+                                <EditBook/>
+                            </RequireAdmin>
+                        </MainLayout>
+                    }/>
+
+                    <Route path="/admin/añadir-libro" element={
+                        <MainLayout>
+                            <RequireAdmin>
+                                <AddBook/>
+                            </RequireAdmin>
+                        </MainLayout>
                     }/>
 
                 </Routes>

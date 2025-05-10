@@ -1,16 +1,16 @@
 import {Navigate, useParams} from 'react-router-dom';
 import {useNavigate} from "react-router-dom";
 import {useState, useEffect} from 'react';
-import {useAuth} from '../context/AuthContext.jsx';
+import {useAuth} from '../../context/AuthContext.jsx';
 import axios from 'axios';
 import {
     Box, Typography, Button, CardMedia, CircularProgress, Rating, Paper, Divider, Grid
 } from '@mui/material';
-import SmallBookCard from '../components/books/SmallBookCard.jsx';
-import GenreButton from '../components/GenreButton';
-import EditReviewDialog from '../components/dialogs/EditReviewDialog';
-import UpdateReadingStatusDialog from '../components/dialogs/UpdateReadingStatusDialog';
-import AddToListDialog from '../components/dialogs/AddToListDialog';
+import SmallBookCard from '../../components/books/SmallBookCard.jsx';
+import GenreButton from '../../components/GenreButton.jsx';
+import EditReviewDialog from '../../components/dialogs/EditReviewDialog.jsx';
+import UpdateReadingStatusDialog from '../../components/dialogs/UpdateReadingStatusDialog.jsx';
+import AddToListDialog from '../../components/dialogs/AddToListDialog.jsx';
 
 const BookDetails = () => {
     const {token} = useAuth();

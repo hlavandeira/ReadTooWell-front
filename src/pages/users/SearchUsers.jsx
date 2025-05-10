@@ -1,11 +1,11 @@
 import {useEffect, useState} from 'react';
 import {useSearchParams, useNavigate} from 'react-router-dom';
-import {useAuth} from "../context/AuthContext.jsx";
+import {useAuth} from "../../context/AuthContext.jsx";
 import {Box, CircularProgress, Grid, InputAdornment, Pagination, TextField, Typography, Button} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import axios from "axios";
-import UserCard from '../components/UserCard';
-import AuthorCard from '../components/AuthorCard';
+import UserCard from '../../components/UserCard.jsx';
+import AuthorCard from '../../components/AuthorCard.jsx';
 
 const SearchUsers = () => {
     const {token} = useAuth();
@@ -190,7 +190,7 @@ const SearchUsers = () => {
 
             {/* Sección de autores */}
             {authors.length > 0 && (
-                <Box sx={{ mt: 6 }}>
+                <Box sx={{mt: 6}}>
                     <Typography variant="h4" sx={{
                         mb: 3,
                         fontWeight: 'bold',
@@ -201,20 +201,20 @@ const SearchUsers = () => {
                     </Typography>
 
                     {isLoadingAuthors ? (
-                        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-                            <CircularProgress size={40} sx={{ color: '#8B0000' }} />
+                        <Box sx={{display: 'flex', justifyContent: 'center', py: 4}}>
+                            <CircularProgress size={40} sx={{color: '#8B0000'}}/>
                         </Box>
                     ) : (
                         <>
                             <Grid container spacing={3} justifyContent="center">
                                 {authors.map((author) => (
                                     <Grid key={author.id}>
-                                        <AuthorCard user={author} />
+                                        <AuthorCard user={author}/>
                                     </Grid>
                                 ))}
                             </Grid>
 
-                            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                            <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
                                 <Button
                                     variant="contained"
                                     onClick={() => navigate('/autores')}
@@ -223,7 +223,7 @@ const SearchUsers = () => {
                                         px: 4,
                                         textTransform: 'none',
                                         backgroundColor: '#432818',
-                                        '&:hover': { backgroundColor: '#5a3a23' },
+                                        '&:hover': {backgroundColor: '#5a3a23'},
                                         borderRadius: 2
                                     }}
                                 >

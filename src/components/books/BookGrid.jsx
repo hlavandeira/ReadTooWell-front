@@ -5,9 +5,9 @@ import {
     Box,
     Pagination
 } from "@mui/material";
-import BookCard from "./books/BookCard.jsx";
+import BookCard from "./BookCard.jsx";
 
-const BookGrid = ({titulo, libros = [], page, totalPages, onPageChange}) => {
+const BookGrid = ({titulo, libros = [], page, totalPages, onPageChange, isAdmin = false, onBookDelete}) => {
     return (
         <Container maxWidth="lg" sx={{py: 4}}>
             <Typography
@@ -36,7 +36,11 @@ const BookGrid = ({titulo, libros = [], page, totalPages, onPageChange}) => {
                 >
                     {libros.map((libro) => (
                         <Grid key={libro.id}>
-                            <BookCard libro={libro}/>
+                            <BookCard
+                                libro={libro}
+                                isAdmin={isAdmin}
+                                onDelete={onBookDelete}
+                            />
                         </Grid>
                     ))}
                 </Grid>

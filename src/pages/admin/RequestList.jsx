@@ -1,22 +1,22 @@
 import {useEffect, useState} from 'react';
-import {useAuth} from '../context/AuthContext';
+import {useAuth} from '../../context/AuthContext.jsx';
 import {Box, CircularProgress, List, Pagination, Paper, Tab, Tabs, Typography} from '@mui/material';
 import axios from 'axios';
-import SuggestionCard from '../components/SuggestionCard';
+import RequestCard from '../../components/RequestCard.jsx';
 
-const SuggestionList = () => {
+const RequestList = () => {
     const {token} = useAuth();
-    const [suggestions, setSuggestions] = useState([]);
+    const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [activeTab, setActiveTab] = useState(0);
 
-    const fetchSuggestions = async () => {
+    const fetchRequests = async () => {
         try {
             setLoading(true);
 
-            const response = await axios.get('http://localhost:8080/sugerencias/estado', {
+            const response = await axios.get('http://localhost:8080/solicitud-autor/estado', {
                 params: {
                     page,
                     size: 10,
@@ -25,25 +25,23 @@ const SuggestionList = () => {
                 headers: {Authorization: `Bearer ${token}`}
             });
 
-            setSuggestions(response.data.content);
+            setRequests(response.data.content);
             setTotalPages(response.data.totalPages);
         } catch (error) {
-            console.error('Error fetching suggestions:', error);
+            console.error('Error fetching requests:', error);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchSuggestions();
+        fetchRequests();
     }, [page, activeTab]);
 
-    const handleStatusChange = async (suggestionId, newStatus) => {
+    const handleStatusChange = async (requestId, newStatus) => {
         try {
-            const token = localStorage.getItem('token');
-
             await axios.put(
-                `http://localhost:8080/sugerencias/${suggestionId}`, {},
+                `http://localhost:8080/solicitud-autor/${requestId}`, {},
                 {
                     params: {
                         newStatus: newStatus
@@ -53,9 +51,10 @@ const SuggestionList = () => {
             );
 
             setPage(0);
-            fetchSuggestions();
+
+            fetchRequests();
         } catch (error) {
-            console.error('Error updating suggestion status:', error);
+            console.error('Error updating request status:', error);
         }
     };
 
@@ -85,9 +84,10 @@ const SuggestionList = () => {
                 color: '#432818',
                 textAlign: 'center'
             }}>
-                Sugerencias de libros
+                Solicitudes de verificación de autores
             </Typography>
 
+            {/* Pestañas según el estado de las solicitudes */}
             <Paper elevation={4} sx={{borderRadius: 2, overflow: 'hidden'}}>
                 <Tabs
                     value={activeTab}
@@ -133,19 +133,19 @@ const SuggestionList = () => {
                 <Box sx={{p: 3}}>
                     {loading ? (
                         <Box display="flex" justifyContent="center" sx={{my: 4}}>
-                            <CircularProgress size={60} sx={{color: '#432818'}}/>
+                            <CircularProgress size={60} sx={{color: '#8B0000'}}/>
                         </Box>
-                    ) : suggestions.length === 0 ? (
+                    ) : requests.length === 0 ? (
                         <Typography variant="body1" sx={{textAlign: 'center', my: 4}}>
-                            No hay sugerencias {getStatusLabel()}
+                            No hay solicitudes {getStatusLabel()}
                         </Typography>
                     ) : (
                         <>
                             <List sx={{width: '100%'}}>
-                                {suggestions.map((suggestion) => (
-                                    <SuggestionCard
-                                        key={suggestion.id}
-                                        suggestion={suggestion}
+                                {requests.map((request) => (
+                                    <RequestCard
+                                        key={request.id}
+                                        request={request}
                                         activeTab={activeTab}
                                         onStatusChange={handleStatusChange}
                                     />
@@ -158,15 +158,7 @@ const SuggestionList = () => {
                                         count={totalPages}
                                         page={page + 1}
                                         onChange={(event, value) => setPage(value - 1)}
-                                        sx={{
-                                            '& .MuiPaginationItem-root': {
-                                                color: '#432818',
-                                            },
-                                            '& .Mui-selected': {
-                                                backgroundColor: '#432818 !important',
-                                                color: '#fff !important'
-                                            }
-                                        }}
+                                        color="primary"
                                     />
                                 </Box>
                             )}
@@ -178,4 +170,4 @@ const SuggestionList = () => {
     );
 };
 
-export default SuggestionList;
+export default RequestList;
