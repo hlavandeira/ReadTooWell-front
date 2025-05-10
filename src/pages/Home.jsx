@@ -1,15 +1,39 @@
-import {Box, Typography, Button, useTheme, TextField, InputAdornment, Grid, Paper} from '@mui/material';
+import {Box, Typography, Button, useTheme, TextField, InputAdornment} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import {useNavigate, useSearchParams} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext.jsx';
-import { useState } from 'react';
+import {useState, useEffect} from 'react';
+import axios from "axios";
 
 const Home = () => {
-    const {role, token, name} = useAuth();
+    const {token, name} = useAuth();
     const theme = useTheme();
     const navigate = useNavigate();
 
     const [searchInput, setSearchInput] = useState('');
+
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        if (!token) {
+            return;
+        }
+
+        const verifyAdmin = async () => {
+            try {
+                const response = await axios.get('http://localhost:8080/usuarios/verificar-admin', {
+                    headers: {Authorization: `Bearer ${token}`}
+                });
+
+                setIsAdmin(response.data);
+            } catch (error) {
+                console.error('Error verificando rol:', error);
+                setIsAdmin(false);
+            }
+        };
+
+        verifyAdmin();
+    }, [token]);
 
     const actionsUser = [
         {
@@ -21,7 +45,7 @@ const Home = () => {
         {
             label: 'Objetivos',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743864520/readtoowell/iconos/v1olxvdjhbpfagohyv7c.png",
-            path: '/objetivos',
+            path: '/objetivos-lectura',
             color: '#8B0000'
         },
         {
@@ -31,12 +55,35 @@ const Home = () => {
             color: '#876C40'
         },
         {
-            label: 'Explorar novedades',
-            icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743863885/readtoowell/iconos/Buscar_sinfondo_blanco_xbjtvs.png",
-            path: '/catalogo',
+            label: 'Conectar',
+            icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1745747085/readtoowell/iconos/Social_sinfondo_blanco_piz4io.png",
+            path: '/buscar/usuarios',
             color: '#2E5266'
         }
     ];
+
+    const actionsAdmin = [
+        {
+            label: 'Gestionar libros',
+            icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743863885/readtoowell/iconos/Biblioteca_sinfondo_blanco_dw69k5.png",
+            path: '/catalogo',
+            color: '#432818'
+        },
+        {
+            label: 'Gestionar sugerencias',
+            icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743863885/readtoowell/iconos/Recom_sinfondo_blanco_avcur7.png",
+            path: '/admin/sugerencias',
+            color: '#876C40'
+        },
+        {
+            label: 'Gestionar verificaciones',
+            icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1746030780/readtoowell/iconos/Verif_sinfondo_blanco_ulrhkk.png",
+            path: '/admin/verificaciones',
+            color: '#2E5266'
+        }
+    ];
+
+    const actionsToShow = isAdmin ? actionsAdmin : actionsUser;
 
     // Página para usuarios NO autenticados
     if (!token) {
@@ -83,25 +130,22 @@ const Home = () => {
                             sx={{
                                 px: 4,
                                 py: 1.5,
-                                borderRadius: '8px',
                                 backgroundColor: '#432818',
-                                '&:hover': {backgroundColor: '#BB9457'}
+                                '&:hover': {backgroundColor: '#AC8446'}
                             }}
                         >
                             Comenzar
                         </Button>
                         <Button
-                            variant="outlined"
+                            variant="contained"
                             size="large"
                             onClick={() => navigate('/inicio-sesion')}
                             sx={{
                                 px: 4,
                                 py: 1.5,
-                                borderRadius: '8px',
-                                borderWidth: '2px',
                                 color: 'white',
-                                borderColor: '#432818',
-                                '&:hover': {borderColor: '#BB9457'}
+                                backgroundColor: '#432818',
+                                '&:hover': {backgroundColor: '#AC8446'}
                             }}
                         >
                             Iniciar sesión
@@ -119,7 +163,6 @@ const Home = () => {
             maxWidth: '1200px',
             mx: 'auto'
         }}>
-            {/* Barra de búsqueda */}
             <Box sx={{
                 mb: 4,
                 textAlign: 'center'
@@ -134,7 +177,7 @@ const Home = () => {
                         fontSize: {xs: '2rem', sm: '2.5rem'}
                     }}
                 >
-                    ¡Hola, {name}!
+                    {isAdmin ? 'Bienvenido a la página de administrador' : `¡Hola, ${name}!`}
                 </Typography>
 
                 {/* Barra de búsqueda */}
@@ -174,7 +217,7 @@ const Home = () => {
                 gap: 3,
                 justifyContent: 'center'
             }}>
-                {actionsUser.map((action) => (
+                {actionsToShow.map((action) => (
                     <Box key={action.label} sx={{
                         width: {xs: '100%', sm: 'calc(50% - 12px)'},
                         maxWidth: '400px',
@@ -197,11 +240,13 @@ const Home = () => {
                                 textTransform: 'none'
                             }}
                         >
-                            <Box
-                                component="img"
-                                src={action.icon}
-                                sx={{width: 90, height: 90}}
-                            />
+                            {action.icon && (
+                                <Box
+                                    component="img"
+                                    src={action.icon}
+                                    sx={{width: 90, height: 90}}
+                                />
+                            )}
                             {action.label}
                         </Button>
                     </Box>

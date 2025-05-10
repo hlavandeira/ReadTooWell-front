@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
-import { useParams, useLocation } from 'react-router-dom';
+import {useEffect, useState} from "react";
+import {useLocation} from 'react-router-dom';
 import axios from "axios";
-import { Box, CircularProgress, Typography } from "@mui/material";
-import { useSearchParams } from 'react-router-dom';
-import BookGrid from '../components/BookGrid.jsx';
+import {Box, CircularProgress, Typography} from "@mui/material";
+import {useSearchParams} from 'react-router-dom';
+import {useAuth} from '../../context/AuthContext.jsx';
+import BookGrid from '../../components/books/BookGrid.jsx';
 
 const BooksByAuthor = () => {
+    const {token} = useAuth();
     const [libros, setLibros] = useState([]);
     const [loading, setLoading] = useState(true);
     const [totalPages, setTotalPages] = useState(1);
@@ -14,13 +16,12 @@ const BooksByAuthor = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const page = parseInt(searchParams.get('page')) || 1;
 
-    const { state } = useLocation();
+    const {state} = useLocation();
     const nombreAutor = state?.authorName || 'Autor';
 
     useEffect(() => {
         const fetchLibros = async () => {
             try {
-                const token = localStorage.getItem('token');
                 setLoading(true);
                 const response = await axios.get(`http://localhost:8080/libros/libros-autor`, {
                     params: {
@@ -45,13 +46,13 @@ const BooksByAuthor = () => {
     }, [page]);
 
     const handlePageChange = (event, newPage) => {
-        setSearchParams({ page: newPage });
+        setSearchParams({page: newPage});
     };
 
     if (loading) {
         return (
             <Box display="flex" justifyContent="center" mt={4}>
-                <CircularProgress />
+                <CircularProgress sx={{color: '#8B0000'}}/>
             </Box>
         );
     }

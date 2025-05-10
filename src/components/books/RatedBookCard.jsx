@@ -1,15 +1,15 @@
 import React from 'react';
-import {Card, CardMedia, CardContent, Typography, Box} from '@mui/material';
+import {Card, CardMedia, CardContent, Typography, Box, Rating} from '@mui/material';
 import {useNavigate} from 'react-router-dom';
 
-const BookCard = ({libro}) => {
+const RatedBookCard = ({libro}) => {
     const navigate = useNavigate();
 
     return (
         <Box onClick={() => navigate(`/detalles/${libro.id}`)} sx={{cursor: 'pointer'}}>
             <Card
                 sx={{
-                    width: 200,
+                    width: 160,
                     height: "100%",
                     display: "flex",
                     flexDirection: "column",
@@ -22,7 +22,7 @@ const BookCard = ({libro}) => {
             >
                 <Box sx={{
                     width: "100%",
-                    height: 300,
+                    height: 250,
                     overflow: "hidden",
                     display: "flex",
                     alignItems: "center",
@@ -50,9 +50,10 @@ const BookCard = ({libro}) => {
                     justifyContent: "space-between",
                     p: 0.75
                 }}>
+                    {/* Título y autor */}
                     <Typography
                         gutterBottom
-                        variant="h5"
+                        variant="h6"
                         component="h2"
                         sx={{
                             textAlign: "center",
@@ -62,7 +63,7 @@ const BookCard = ({libro}) => {
                             overflow: "hidden",
                             minHeight: "3em",
                             lineHeight: "1.5em",
-                            fontSize: "1.05rem"
+                            fontSize: "0.9rem"
                         }}
                     >
                         {libro.title}
@@ -81,10 +82,29 @@ const BookCard = ({libro}) => {
                     >
                         {libro.author}
                     </Typography>
+
+                    {/* Puntuación */}
+                    <Box sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        mt: 1
+                    }}>
+                        <Rating
+                            value={libro.rating}
+                            size="small"
+                            readOnly
+                            precision={0.5}
+                            sx={{
+                                '& .MuiRating-iconFilled': {
+                                    color: '#FFD700',
+                                }
+                            }}
+                        />
+                    </Box>
                 </CardContent>
             </Card>
         </Box>
     );
 };
 
-export default BookCard;
+export default RatedBookCard;

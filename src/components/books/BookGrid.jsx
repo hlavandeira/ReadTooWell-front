@@ -5,23 +5,21 @@ import {
     Box,
     Pagination
 } from "@mui/material";
-import BookCard from "./BookCard";
+import BookCard from "./BookCard.jsx";
 
-const BookGrid = ({ titulo, libros = [], page, totalPages, onPageChange }) => {
+const BookGrid = ({titulo, libros = [], page, totalPages, onPageChange, isAdmin = false, onBookDelete}) => {
     return (
-        <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Container maxWidth="lg" sx={{py: 4}}>
             <Typography
                 variant="h3"
                 component="h1"
                 gutterBottom
                 align="center"
                 sx={{
-                    fontFamily: '"Domine", serif',
-                    fontOpticalSizing: 'auto',
                     fontWeight: 600,
                     fontStyle: 'normal',
-                    letterSpacing: '1px',
-                    color: '#432818'
+                    color: '#432818',
+                    mb: 4
                 }}
             >
                 {titulo}
@@ -38,7 +36,11 @@ const BookGrid = ({ titulo, libros = [], page, totalPages, onPageChange }) => {
                 >
                     {libros.map((libro) => (
                         <Grid key={libro.id}>
-                            <BookCard libro={libro} />
+                            <BookCard
+                                libro={libro}
+                                isAdmin={isAdmin}
+                                onDelete={onBookDelete}
+                            />
                         </Grid>
                     ))}
                 </Grid>
@@ -53,7 +55,7 @@ const BookGrid = ({ titulo, libros = [], page, totalPages, onPageChange }) => {
                         color="primary"
                         showFirstButton
                         showLastButton
-                        sx={{ '& .MuiPaginationItem-root': { fontSize: '1rem' } }}
+                        sx={{'& .MuiPaginationItem-root': {fontSize: '1rem'}}}
                     />
                 </Box>
             )}

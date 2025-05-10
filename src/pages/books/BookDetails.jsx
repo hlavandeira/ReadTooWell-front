@@ -1,15 +1,19 @@
 import {Navigate, useParams} from 'react-router-dom';
 import {useNavigate} from "react-router-dom";
 import {useState, useEffect} from 'react';
+import {useAuth} from '../../context/AuthContext.jsx';
 import axios from 'axios';
 import {
-    Box, Typography, Button, CardMedia, CircularProgress, Rating, Paper, Chip,
-    Grid, Divider, TextField, Dialog, DialogTitle, DialogContent, DialogActions,
-    FormControl, RadioGroup, FormControlLabel, Radio
+    Box, Typography, Button, CardMedia, CircularProgress, Rating, Paper, Divider, Grid
 } from '@mui/material';
-import SmallBookCard from '../components/SmallBookCard';
+import SmallBookCard from '../../components/books/SmallBookCard.jsx';
+import GenreButton from '../../components/GenreButton.jsx';
+import EditReviewDialog from '../../components/dialogs/EditReviewDialog.jsx';
+import UpdateReadingStatusDialog from '../../components/dialogs/UpdateReadingStatusDialog.jsx';
+import AddToListDialog from '../../components/dialogs/AddToListDialog.jsx';
 
 const BookDetails = () => {
+    const {token} = useAuth();
     const {id} = useParams();
     const navigate = useNavigate();
     const [details, setDetails] = useState(null);
@@ -24,6 +28,9 @@ const BookDetails = () => {
 
     const [collectionBooks, setCollectionBooks] = useState([]);
 
+    const [lists, setLists] = useState([]);
+    const [addToListDialogOpen, setAddToListDialogOpen] = useState(false);
+
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString('es-ES', {
             day: 'numeric',
@@ -34,8 +41,6 @@ const BookDetails = () => {
 
     const handleSaveToLibrary = async () => {
         try {
-            const token = localStorage.getItem('token');
-
             const response = await axios.post(
                 `http://localhost:8080/biblioteca/${id}`,
                 {},
@@ -56,32 +61,33 @@ const BookDetails = () => {
         }
     };
 
-    const handleSaveStatus = async () => {
+    const handleSaveStatus = async (newStatus, bookId) => {
         try {
-            const token = localStorage.getItem('token');
-
-            await axios.put(`http://localhost:8080/biblioteca/${id}/estado?estado=${selectedStatus}`, null, {
-                headers: {
-                    Authorization: `Bearer ${token}`
+            const response = await axios.put(
+                `http://localhost:8080/biblioteca/${bookId}/estado?estado=${newStatus}`,
+                null,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
                 }
-            });
+            );
 
             setDetails(prev => ({
                 ...prev,
-                readingStatus: selectedStatus
+                readingStatus: newStatus
             }));
 
-            setModalOpen(false);
+            return response.data;
         } catch (error) {
-            console.error("Error al actualizar el estado de lectura: ", error);
+            console.error("Error al actualizar el estado de lectura:", error);
+            throw error;
         }
     };
 
     const handleSaveReview = async (reviewText) => {
         try {
-            const token = localStorage.getItem('token');
-
-            const response = await axios.put(
+            await axios.put(
                 `http://localhost:8080/biblioteca/${id}/escribir-reseña`,
                 null,
                 {
@@ -103,19 +109,19 @@ const BookDetails = () => {
 
     const handleSaveRating = async (newValue) => {
         try {
-            const token = localStorage.getItem('token');
-
             const response = await axios.put(
                 `http://localhost:8080/biblioteca/${details.book.id}/calificar`,
                 null,
                 {
-                    params: { calificacion: newValue },
-                    headers: { Authorization: `Bearer ${token}` },
+                    params: {calificacion: newValue},
+                    headers: {Authorization: `Bearer ${token}`},
                 }
             );
 
             setDetails(prev => ({
                 ...prev,
+                saved: true,
+                readingStatus: 2,
                 rating: response.data.libraryBook.rating,
                 averageRating: response.data.averageRating
             }));
@@ -124,10 +130,36 @@ const BookDetails = () => {
         }
     };
 
+    const handleAddToList = async (listId, bookId) => {
+        try {
+            await axios.post(
+                `http://localhost:8080/listas/${listId}/añadir-libro/${bookId}`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            const updatedListsResponse = await axios.get(
+                `http://localhost:8080/listas/${bookId}/otras-listas`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            setLists(updatedListsResponse.data.content);
+        } catch (error) {
+            console.error('Error adding book to list:', error);
+            throw error;
+        }
+    };
+
     useEffect(() => {
         const fetchBookDetails = async () => {
             try {
-                const token = localStorage.getItem('token');
                 const response = await axios.get(`http://localhost:8080/libros/${id}/detalles`, {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -158,6 +190,25 @@ const BookDetails = () => {
 
         fetchBookDetails();
     }, [id, navigate]);
+
+    useEffect(() => {
+        const fetchUserLists = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/listas/${id}/otras-listas`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                setLists(response.data.content);
+            } catch (error) {
+                console.error('Error fetching user lists:', error);
+            }
+        };
+
+        if (details?.saved) {
+            fetchUserLists();
+        }
+    }, [details?.saved]);
 
     if (loading) {
         return (
@@ -259,7 +310,7 @@ const BookDetails = () => {
                             alignItems: 'center',
                             justifyContent: 'center',
                             gap: 1,
-                            width: { xs: '90%', sm: '300px' },
+                            width: {xs: '90%', sm: '300px'},
                             maxWidth: '300px'
                         }}>
                             <Rating
@@ -268,9 +319,9 @@ const BookDetails = () => {
                                 precision={0.5}
                                 size="large"
                                 sx={{
-                                    '& .MuiRating-iconFilled': { color: '#FFD700' },
-                                    '& .MuiRating-iconHover': { color: '#FFC107' },
-                                    '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' }
+                                    '& .MuiRating-iconFilled': {color: '#FFD700'},
+                                    '& .MuiRating-iconHover': {color: '#FFC107'},
+                                    '&:hover': {transform: 'scale(1.05)', transition: 'transform 0.2s'}
                                 }}
                                 onChange={(event, newValue) => handleSaveRating(newValue)}
                             />
@@ -314,112 +365,13 @@ const BookDetails = () => {
                         </Button>
 
                         {/* Diálogo para el cambio de estado de lectura */}
-                        <Dialog
+                        <UpdateReadingStatusDialog
                             open={modalOpen}
                             onClose={() => setModalOpen(false)}
-                            PaperProps={{
-                                sx: {
-                                    borderRadius: '12px',
-                                    minWidth: '350px',
-                                    background: '#f5f5f5'
-                                }
-                            }}
-                        >
-                            <DialogTitle
-                                sx={{
-                                    backgroundColor: '#432818',
-                                    color: 'white',
-                                    fontWeight: 'bold',
-                                    padding: '16px 24px'
-                                }}
-                            >
-                                Cambiar estado de lectura
-                            </DialogTitle>
-
-                            <DialogContent sx={{padding: '40px 24px 16px', pt: 10}}>
-                                <FormControl component="fieldset" fullWidth>
-                                    <RadioGroup
-                                        value={selectedStatus}
-                                        onChange={(e) => setSelectedStatus(parseInt(e.target.value))}
-                                        sx={{gap: '8px', pt: '10px'}}
-                                    >
-                                        {[
-                                            {value: 0, label: 'Pendiente', color: '#6c757d'},
-                                            {value: 1, label: 'Leyendo', color: '#4C88A8'},
-                                            {value: 2, label: 'Leído', color: '#1C945C'},
-                                            {value: 3, label: 'Pausado', color: '#DEA807'},
-                                            {value: 4, label: 'Abandonado', color: '#CC4D3D'}
-                                        ].map((item) => (
-                                            <FormControlLabel
-                                                key={item.value}
-                                                value={item.value}
-                                                control={
-                                                    <Radio
-                                                        sx={{
-                                                            color: item.color,
-                                                            '&.Mui-checked': {color: item.color}
-                                                        }}
-                                                    />
-                                                }
-                                                label={
-                                                    <Typography
-                                                        variant="body1"
-                                                        sx={{
-                                                            fontWeight: 500,
-                                                            color: selectedStatus === item.value ? item.color : 'inherit'
-                                                        }}
-                                                    >
-                                                        {item.label}
-                                                    </Typography>
-                                                }
-                                                sx={{
-                                                    margin: 0,
-                                                    padding: '8px 12px',
-                                                    pb: '3px',
-                                                    borderRadius: '8px',
-                                                    backgroundColor: selectedStatus === item.value ? `${item.color}10` : 'transparent',
-                                                    '&:hover': {
-                                                        backgroundColor: `${item.color}15`
-                                                    }
-                                                }}
-                                            />
-                                        ))}
-                                    </RadioGroup>
-                                </FormControl>
-                            </DialogContent>
-
-                            <DialogActions sx={{padding: '16px 24px', pt: '2px'}}>
-                                <Button
-                                    onClick={() => setModalOpen(false)}
-                                    sx={{
-                                        textTransform: 'none',
-                                        fontWeight: '500',
-                                        color: '#6c757d',
-                                        '&:hover': {
-                                            backgroundColor: '#f0f0f0'
-                                        }
-                                    }}
-                                >
-                                    Cancelar
-                                </Button>
-                                <Button
-                                    onClick={handleSaveStatus}
-                                    variant="contained"
-                                    sx={{
-                                        textTransform: 'none',
-                                        fontWeight: '500',
-                                        backgroundColor: '#432818',
-                                        borderRadius: '8px',
-                                        padding: '8px 16px',
-                                        '&:hover': {
-                                            backgroundColor: '#5a3a23'
-                                        }
-                                    }}
-                                >
-                                    Guardar
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
+                            currentStatus={details.readingStatus}
+                            onSave={handleSaveStatus}
+                            bookId={id}
+                        />
                     </Box>
                 </Grid>
 
@@ -440,27 +392,7 @@ const BookDetails = () => {
                         }}>
                             {details.book.genres?.length > 0 ? (
                                 details.book.genres.map((genre) => (
-                                    <Chip
-                                        key={genre.id}
-                                        label={genre.name}
-                                        clickable
-                                        onClick={() => navigate(`/genero/${genre.id}`, {
-                                            state: {
-                                                genreName: genre.name
-                                            }
-                                        })}
-                                        sx={{
-                                            borderRadius: '16px',
-                                            backgroundColor: '#f0f0f0',
-                                            color: 'text.primary',
-                                            border: '1px solid #ddd',
-                                            '&:hover': {
-                                                backgroundColor: '#e0e0e0',
-                                                transform: 'scale(1.05)'
-                                            },
-                                            transition: 'all 0.2s ease-in-out'
-                                        }}
-                                    />
+                                    <GenreButton key={genre.id} genre={genre}/>
                                 ))
                             ) : (
                                 <Typography variant="body2" color="text.secondary">
@@ -523,14 +455,14 @@ const BookDetails = () => {
                                 <Typography variant="subtitle1" component="span">
                                     Valoración media:
                                 </Typography>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
                                     <Rating
                                         value={details.averageRating || 0}
                                         precision={0.1}
                                         readOnly
                                         size="medium"
                                         sx={{
-                                            '& .MuiRating-iconFilled': { color: '#FFD700' }
+                                            '& .MuiRating-iconFilled': {color: '#FFD700'}
                                         }}
                                     />
                                     <Typography variant="h6" component="span">
@@ -582,8 +514,8 @@ const BookDetails = () => {
                             </Grid>
                         </Paper>
 
-                        {/* Botón para otros libros del autor */}
-                        <Box textAlign='center'>
+                        <Box justifyContent='center' sx={{display: 'flex', gap: 3}}>
+                            {/* Botón para otros libros del autor */}
                             <Button
                                 variant="contained"
                                 onClick={() => navigate(`/autor`, {
@@ -609,7 +541,43 @@ const BookDetails = () => {
                             >
                                 Otros libros del autor
                             </Button>
+
+                            {/* Botón añadir a lista */}
+                            {details.saved && (
+                                <Button
+                                    variant="contained"
+                                    onClick={() => setAddToListDialogOpen(true)}
+                                    sx={{
+                                        mt: 1,
+                                        px: {xs: 3, sm: 4},
+                                        py: 1,
+                                        width: {xs: '90%', sm: 'auto'},
+                                        maxWidth: '300px',
+                                        borderRadius: 2,
+                                        backgroundColor: '#E3D5C8',
+                                        color: 'black',
+                                        '&:hover': {
+                                            backgroundColor: '#D5C7BA'
+                                        },
+                                        textTransform: 'none',
+                                        fontSize: {xs: '0.875rem', sm: '1rem'}
+                                    }}
+                                >
+                                    Añadir a lista
+                                </Button>
+                            )}
                         </Box>
+
+                        {/* Diálogo para añadir a lista */}
+                        <AddToListDialog
+                            open={addToListDialogOpen}
+                            onClose={() => setAddToListDialogOpen(false)}
+                            lists={lists}
+                            bookId={id}
+                            onAddToList={handleAddToList}
+                            onSuccess={() => {
+                            }}
+                        />
                     </Box>
                 </Grid>
             </Grid>
@@ -696,49 +664,15 @@ const BookDetails = () => {
                     )}
 
                     {/* Diálogo para editar reseña */}
-                    <Dialog open={reviewDialogOpen} onClose={() => setReviewDialogOpen(false)}>
-                        <DialogTitle sx={{
-                            backgroundColor: '#432818',
-                            color: 'white',
-                            fontWeight: 'bold'
-                        }}>
-                            {userReview.trim() === '' ? 'Añadir reseña' : 'Editar reseña'}
-                        </DialogTitle>
-                        <DialogContent sx={{p: 3, pb: 1}}>
-                            <TextField
-                                fullWidth
-                                multiline
-                                rows={6}
-                                value={reviewText}
-                                onChange={(e) => setReviewText(e.target.value)}
-                                placeholder="Escribe tu reseña sobre este libro..."
-                                variant="outlined"
-                                sx={{minWidth: '400px', pt: 2}}
-                            />
-                        </DialogContent>
-                        <DialogActions sx={{p: 2, pt: 0.5}}>
-                            <Button
-                                onClick={() => setReviewDialogOpen(false)}
-                                sx={{color: 'text.secondary', textTransform: 'none'}}
-                            >
-                                Cancelar
-                            </Button>
-                            <Button
-                                onClick={() => {
-                                    handleSaveReview(reviewText);
-                                    setReviewDialogOpen(false);
-                                }}
-                                variant="contained"
-                                sx={{
-                                    backgroundColor: '#432818',
-                                    '&:hover': {backgroundColor: '#5a3a23'},
-                                    textTransform: 'none'
-                                }}
-                            >
-                                Guardar
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
+                    <EditReviewDialog
+                        open={reviewDialogOpen}
+                        onClose={() => setReviewDialogOpen(false)}
+                        initialReview={userReview}
+                        onSave={(review) => {
+                            handleSaveReview(review);
+                            setUserReview(review);
+                        }}
+                    />
                 </Box>
 
                 {details.otherUsersReviews?.length > 0 && (
@@ -832,16 +766,16 @@ const BookDetails = () => {
                         flexDirection: 'column',
                         alignItems: 'center'
                     }}>
-                        <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
+                        <Typography variant="h5" gutterBottom sx={{fontWeight: 'bold', mb: 3}}>
                             Otros libros de la colección "{details.collectionName}"
                         </Typography>
 
                         {loading ? (
                             <Box display="flex" justifyContent="center">
-                                <CircularProgress />
+                                <CircularProgress/>
                             </Box>
                         ) : collectionBooks.length > 0 ? (
-                            <Grid container spacing={2}>
+                            <Grid container spacing={2} justifyContent="center">
                                 {collectionBooks.map(book => (
                                     <Grid key={book.id}>
                                         <SmallBookCard

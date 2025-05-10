@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext.jsx';
 import {
@@ -9,8 +9,8 @@ import {
     IconButton,
     Menu,
     MenuItem,
-    Avatar,
-    Typography
+    Typography,
+    Avatar, Divider
 } from '@mui/material';
 import {
     Login as LoginIcon,
@@ -20,11 +20,35 @@ import {
     AdminPanelSettings as AdminIcon,
     LibraryBooks as LibrarianIcon
 } from '@mui/icons-material';
+import axios from "axios";
 
 export default function DynamicAppBar() {
-    const {role, logout} = useAuth();
+    const {role, logout, profilePic, id, name, token} = useAuth();
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
+
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        if (!token) {
+            return;
+        }
+
+        const verifyAdmin = async () => {
+            try {
+                const response = await axios.get('http://localhost:8080/usuarios/verificar-admin', {
+                    headers: {Authorization: `Bearer ${token}`}
+                });
+
+                setIsAdmin(response.data);
+            } catch (error) {
+                console.error('Error verificando rol:', error);
+                setIsAdmin(false);
+            }
+        };
+
+        verifyAdmin();
+    }, [token]);
 
     const handleMenu = (event) => setAnchorEl(event.currentTarget);
     const handleClose = () => setAnchorEl(null);
@@ -93,6 +117,12 @@ export default function DynamicAppBar() {
                     {/* Menú específico por rol */}
                     <Box sx={{flexGrow: 1, display: 'flex', ml: 3}}>
                         <Button
+                            onClick={() => navigate('/')}
+                            sx={{my: 2, color: 'white', textTransform: 'none'}}
+                        >
+                            Inicio
+                        </Button>
+                        <Button
                             onClick={() => navigate('/catalogo')}
                             sx={{my: 2, color: 'white', textTransform: 'none'}}
                         >
@@ -109,7 +139,7 @@ export default function DynamicAppBar() {
                                     Mi biblioteca
                                 </Button>
                                 <Button
-                                    onClick={() => navigate('/objetivos')}
+                                    onClick={() => navigate('/objetivos-lectura')}
                                     sx={{color: 'white', textTransform: 'none'}}
                                 >
                                     Objetivos
@@ -133,7 +163,11 @@ export default function DynamicAppBar() {
                         {role === 1 && (
                             <>
                                 <Button
-                                    onClick={() => navigate('/libros-autor')}
+                                    onClick={() => navigate(`/autor`, {
+                                        state: {
+                                            authorName: name
+                                        }
+                                    })}
                                     sx={{color: 'white', textTransform: 'none', mr: 2}}
                                     startIcon={<LibrarianIcon/>}
                                 >
@@ -143,7 +177,7 @@ export default function DynamicAppBar() {
                         )}
 
                         {/* Opciones para admin (rol 2) */}
-                        {role === 2 && (
+                        {isAdmin && (
                             <>
                                 <Button
                                     onClick={() => navigate('/admin/sugerencias')}
@@ -153,7 +187,7 @@ export default function DynamicAppBar() {
                                     Sugerencias
                                 </Button>
                                 <Button
-                                    onClick={() => navigate('/admin/solicitudes-autor')}
+                                    onClick={() => navigate('/admin/verificaciones')}
                                     sx={{color: 'white', textTransform: 'none'}}
                                     startIcon={<AdminIcon/>}
                                 >
@@ -173,7 +207,15 @@ export default function DynamicAppBar() {
                     {/* Menú de usuario (común a todos los roles autenticados) */}
                     <Box sx={{display: 'flex', alignItems: 'center'}}>
                         <IconButton onClick={handleMenu} sx={{color: 'white'}}>
-                            <AccountCircleIcon sx={{fontSize: 30}}/>
+                            <Avatar
+                                src={profilePic ? profilePic : "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1741801696/readtoowell/profilepics/pfp.jpg"}
+                                alt="Foto de perfil"
+                                sx={{
+                                    width: 32,
+                                    height: 32,
+                                    border: '2px solid white'
+                                }}
+                            />
                             <ExpandMoreIcon sx={{fontSize: 16}}/>
                         </IconButton>
                         <Menu
@@ -181,13 +223,16 @@ export default function DynamicAppBar() {
                             open={Boolean(anchorEl)}
                             onClose={handleClose}
                         >
-                            <MenuItem onClick={() => {
-                                navigate('/perfil');
-                                handleClose();
-                            }}>
-                                <AccountCircleIcon sx={{mr: 1}}/>
-                                Mi perfil
-                            </MenuItem>
+                            {!isAdmin && ([
+                                <MenuItem key="perfil" onClick={() => {
+                                    navigate(`/perfil/${id}`);
+                                    handleClose();
+                                }}>
+                                    <AccountCircleIcon sx={{mr: 1}}/>
+                                    Mi perfil
+                                </MenuItem>,
+                                <Divider key="divider" sx={{my: 2, mx: 'auto', borderColor: 'divider', width: '80%'}}/>
+                            ])}
                             <MenuItem onClick={handleLogout}>
                                 <LoginIcon sx={{
                                     mr: 1,
