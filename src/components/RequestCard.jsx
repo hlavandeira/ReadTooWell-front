@@ -23,7 +23,7 @@ const RequestCard = ({request, activeTab, onStatusChange}) => {
             }}>
                 <Avatar
                     src={request.user.profilePic || "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1741801696/readtoowell/profilepics/pfp.jpg"}
-                    alt={`Foto de ${request.user.profileName}`}
+                    alt={`Foto de ${request.user.username}`}
                     sx={{
                         width: 100,
                         height: 100,
@@ -60,7 +60,7 @@ const RequestCard = ({request, activeTab, onStatusChange}) => {
             <Box sx={{flexGrow: 1}}>
                 <Box sx={{display: 'flex', alignItems: 'center', mb: 1}}>
                     <Typography variant="h6" sx={{fontWeight: 'bold', mr: 2}}>
-                        {request.user.profileName}
+                        {request.name}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
                         {request.user.email}

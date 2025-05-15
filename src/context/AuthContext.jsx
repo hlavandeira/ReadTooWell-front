@@ -47,7 +47,7 @@ export const AuthProvider = ({children}) => {
         localStorage.removeItem('name');
         localStorage.removeItem('profilePic');
         localStorage.removeItem('id');
-        setAuthState({token: null, role: null, name: null, profileImage: null, id: null});
+        setAuthState({token: null, role: null, name: null, profilePic: null, id: null});
     };
 
     useEffect(() => {

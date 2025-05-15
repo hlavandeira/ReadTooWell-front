@@ -48,7 +48,7 @@ const UsersList = ({type}) => {
     }
 
     return (
-        <Box sx={{maxWidth: 800, mx: 'auto', p: 3}}>
+        <Box sx={{maxWidth: 800, mx: 'auto', p: 3, minHeight: '80vh'}}>
             <Typography variant="h5" sx={{
                 mb: 4,
                 fontWeight: 'bold',

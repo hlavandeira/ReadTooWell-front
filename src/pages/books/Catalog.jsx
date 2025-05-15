@@ -89,7 +89,6 @@ const Catalog = () => {
                 page={page}
                 totalPages={totalPages}
                 onPageChange={handlePageChange}
-                isAdmin={isAdmin}
                 onBookDelete={(deletedBookId) => {
                     setLibros(libros.filter(book => book.id !== deletedBookId));
                     fetchLibros();

@@ -110,7 +110,9 @@ const EditProfileDialog = ({open, onClose, profile, onSave}) => {
         setSubmitError('');
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = (e) => {
+        if (e) e.preventDefault();
+
         if (!validateForm()) {
             setSubmitError('Por favor, corrige los errores antes de guardar');
             return;
@@ -122,104 +124,106 @@ const EditProfileDialog = ({open, onClose, profile, onSave}) => {
 
     return (
         <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-            <DialogTitle sx={{backgroundColor: '#432818', color: 'white', fontWeight: 'bold'}}>
-                Editar perfil
-            </DialogTitle>
-            <DialogContent sx={{p: 3}}>
-                {submitError && (
-                    <Alert severity="error" sx={{mb: 2}}>
-                        {submitError}
-                    </Alert>
-                )}
-
-                <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3}}>
-                    <Avatar
-                        src={editForm.profilePic || "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1741801696/readtoowell/profilepics/pfp.jpg"}
-                        alt="Foto de perfil"
-                        sx={{
-                            width: 100,
-                            height: 100,
-                            border: '2px solid #8B0000',
-                            cursor: 'pointer',
-                            mb: 1,
-                            mt: 1.5
-                        }}
-                        onClick={handleImageClick}
-                    />
-                    <input
-                        type="file"
-                        ref={fileInputRef}
-                        onChange={handleImageUpload}
-                        accept="image/*"
-                        style={{display: 'none'}}
-                    />
-                    <Button
-                        variant="outlined"
-                        onClick={handleImageClick}
-                        disabled={uploading}
-                        sx={{textTransform: 'none', color: '#8B0000', borderColor: '#8B0000'}}
-                    >
-                        {uploading ? <CircularProgress size={24}/> : 'Cambiar foto'}
-                    </Button>
-                    {errors.profilePic && (
-                        <Typography color="error" variant="body2" sx={{mt: 1}}>
-                            {errors.profilePic}
-                        </Typography>
+            <form onSubmit={handleSubmit}>
+                <DialogTitle sx={{backgroundColor: '#432818', color: 'white', fontWeight: 'bold'}}>
+                    Editar perfil
+                </DialogTitle>
+                <DialogContent sx={{p: 3}}>
+                    {submitError && (
+                        <Alert severity="error" sx={{mb: 2}}>
+                            {submitError}
+                        </Alert>
                     )}
-                </Box>
 
-                <TextField
-                    fullWidth
-                    label="Nombre de perfil"
-                    name="profileName"
-                    value={editForm.profileName}
-                    onChange={handleChange}
-                    error={!!errors.profileName}
-                    helperText={errors.profileName}
-                    sx={{mb: 3}}
-                    required
-                />
+                    <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3}}>
+                        <Avatar
+                            src={editForm.profilePic || "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1741801696/readtoowell/profilepics/pfp.jpg"}
+                            alt="Foto de perfil"
+                            sx={{
+                                width: 100,
+                                height: 100,
+                                border: '2px solid #8B0000',
+                                cursor: 'pointer',
+                                mb: 1,
+                                mt: 1.5
+                            }}
+                            onClick={handleImageClick}
+                        />
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleImageUpload}
+                            accept="image/*"
+                            style={{display: 'none'}}
+                        />
+                        <Button
+                            variant="outlined"
+                            onClick={handleImageClick}
+                            disabled={uploading}
+                            sx={{textTransform: 'none', color: '#8B0000', borderColor: '#8B0000'}}
+                        >
+                            {uploading ? <CircularProgress size={24}/> : 'Cambiar foto'}
+                        </Button>
+                        {errors.profilePic && (
+                            <Typography color="error" variant="body2" sx={{mt: 1}}>
+                                {errors.profilePic}
+                            </Typography>
+                        )}
+                    </Box>
 
-                <TextField
-                    fullWidth
-                    label="Biografía"
-                    name="biography"
-                    value={editForm.biography}
-                    onChange={handleChange}
-                    multiline
-                    rows={4}
-                    error={!!errors.biography}
-                    helperText={errors.biography}
-                    inputProps={{maxLength: 2000}}
-                />
-                <Typography
-                    variant="caption"
-                    color={editForm.biography.length > 2000 ? 'error' : 'textSecondary'}
-                    sx={{display: 'block', textAlign: 'right'}}
-                >
-                    {editForm.biography.length}/{2000}
-                </Typography>
-            </DialogContent>
-            <DialogActions sx={{p: 2}}>
-                <Button
-                    onClick={onClose}
-                    sx={{textTransform: 'none', color: '#6c757d'}}
-                >
-                    Cancelar
-                </Button>
-                <Button
-                    onClick={handleSubmit}
-                    variant="contained"
-                    disabled={uploading || Object.keys(errors).length > 0}
-                    sx={{
-                        textTransform: 'none',
-                        backgroundColor: '#432818',
-                        '&:hover': {backgroundColor: '#5a3a23'}
-                    }}
-                >
-                    Guardar cambios
-                </Button>
-            </DialogActions>
+                    <TextField
+                        fullWidth
+                        label="Nombre de perfil"
+                        name="profileName"
+                        value={editForm.profileName}
+                        onChange={handleChange}
+                        error={!!errors.profileName}
+                        helperText={errors.profileName}
+                        sx={{mb: 3}}
+                        required
+                    />
+
+                    <TextField
+                        fullWidth
+                        label="Biografía"
+                        name="biography"
+                        value={editForm.biography}
+                        onChange={handleChange}
+                        multiline
+                        rows={4}
+                        error={!!errors.biography}
+                        helperText={errors.biography}
+                        inputProps={{maxLength: 2000}}
+                    />
+                    <Typography
+                        variant="caption"
+                        color={editForm.biography.length > 2000 ? 'error' : 'textSecondary'}
+                        sx={{display: 'block', textAlign: 'right'}}
+                    >
+                        {editForm.biography.length}/{2000}
+                    </Typography>
+                </DialogContent>
+                <DialogActions sx={{p: 2}}>
+                    <Button
+                        onClick={onClose}
+                        sx={{textTransform: 'none', color: '#6c757d'}}
+                    >
+                        Cancelar
+                    </Button>
+                    <Button
+                        onClick={handleSubmit}
+                        variant="contained"
+                        disabled={uploading || Object.keys(errors).length > 0}
+                        sx={{
+                            textTransform: 'none',
+                            backgroundColor: '#432818',
+                            '&:hover': {backgroundColor: '#5a3a23'}
+                        }}
+                    >
+                        Guardar cambios
+                    </Button>
+                </DialogActions>
+            </form>
         </Dialog>
     );
 };

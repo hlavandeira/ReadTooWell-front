@@ -24,22 +24,34 @@ const AuthorRequest = () => {
     });
     const [error, setError] = useState('');
 
-    const handleChange = (e) => {
+    const handleInputChange = (e) => {
         const {name, value} = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: value
         }));
+        if (error) setError(null);
     };
 
     const handleBookChange = (index, e) => {
         const {name, value} = e.target;
         const updatedBooks = [...formData.books];
-        updatedBooks[index][name] = value;
-        setFormData(prev => ({
-            ...prev,
-            books: updatedBooks
-        }));
+
+        if (name === 'publicationYear') {
+            if (value === '' || /^[0-9\b]+$/.test(value)) {
+                updatedBooks[index][name] = value;
+                setFormData(prev => ({
+                    ...prev,
+                    books: updatedBooks
+                }));
+            }
+        } else {
+            updatedBooks[index][name] = value;
+            setFormData(prev => ({
+                ...prev,
+                books: updatedBooks
+            }));
+        }
     };
 
     const addBookField = () => {
@@ -96,9 +108,9 @@ const AuthorRequest = () => {
                     <TextField
                         fullWidth
                         label="Nombre completo"
-                        name="fullName"
-                        value={formData.fullName}
-                        onChange={handleChange}
+                        name="profileName"
+                        value={formData.name}
+                        onChange={handleInputChange}
                         required
                         sx={{mb: 2}}
                     />
@@ -107,7 +119,7 @@ const AuthorRequest = () => {
                         label="Biografía"
                         name="biography"
                         value={formData.biography}
-                        onChange={handleChange}
+                        onChange={handleInputChange}
                         required
                         multiline
                         rows={4}
@@ -178,8 +190,6 @@ const AuthorRequest = () => {
                                     fullWidth
                                     label="Año de publicación"
                                     name="publicationYear"
-                                    type="number"
-                                    inputProps={{min: 1900, max: new Date().getFullYear()}}
                                     value={book.publicationYear}
                                     onChange={(e) => handleBookChange(index, e)}
                                     required

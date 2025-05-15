@@ -70,10 +70,6 @@ const Profile = () => {
                         })
                     ]);
 
-                if (profileRes.data.role === 2) { // Si el usuario es administrador, no dejar ver perfil
-                    navigate('/');
-                }
-
                 if (currentUserId) {
                     const isUserFollowing = followersRes.data.some(follower => follower.id === parseInt(currentUserId));
                     setIsFollowing(isUserFollowing);

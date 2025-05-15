@@ -54,7 +54,9 @@ const BookDetails = () => {
             setDetails(prev => ({
                 ...prev,
                 saved: true,
-                readingStatus: response.data.readingStatus
+                readingStatus: response.data.readingStatus,
+                dateStart: response.data.dateStart,
+                dateFinish: response.data.dateFinish
             }));
         } catch (error) {
             console.error("Error al guardar el libro: ", error);
@@ -75,7 +77,9 @@ const BookDetails = () => {
 
             setDetails(prev => ({
                 ...prev,
-                readingStatus: newStatus
+                readingStatus: newStatus,
+                dateStart: response.data.dateStart,
+                dateFinish: response.data.dateFinish
             }));
 
             return response.data;
@@ -123,7 +127,9 @@ const BookDetails = () => {
                 saved: true,
                 readingStatus: 2,
                 rating: response.data.libraryBook.rating,
-                averageRating: response.data.averageRating
+                averageRating: response.data.averageRating,
+                dateStart: response.data.dateStart,
+                dateFinish: response.data.dateFinish
             }));
         } catch (error) {
             console.error("Error al guardar la valoración:", error);

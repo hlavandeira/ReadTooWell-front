@@ -5,8 +5,17 @@ import {useNavigate} from 'react-router-dom';
 const SmallBookCard = ({libro}) => {
     const navigate = useNavigate();
 
+    const handleRedirect = () => {
+        navigate(`/detalles/${libro.id}`)
+
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    };
+
     return (
-        <Box onClick={() => navigate(`/detalles/${libro.id}`)} sx={{cursor: 'pointer'}}>
+        <Box onClick={handleRedirect} sx={{cursor: 'pointer'}}>
             <Card
                 sx={{
                     width: 160,

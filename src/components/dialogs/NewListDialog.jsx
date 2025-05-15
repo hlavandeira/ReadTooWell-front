@@ -33,8 +33,10 @@ const NewListDialog = ({open, onClose, onListCreated, genres = []}) => {
         });
     };
 
-    const handleCreateList = async () => {
+    const handleCreateList = async (e) => {
         try {
+            if (e) e.preventDefault();
+
             setIsSubmitting(true);
 
             const response = await axios.post('http://localhost:8080/listas',
@@ -76,112 +78,114 @@ const NewListDialog = ({open, onClose, onListCreated, genres = []}) => {
             maxWidth="sm"
             fullWidth
         >
-            <DialogTitle sx={{
-                backgroundColor: '#432818',
-                color: 'white',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1
-            }}>
-                <LibraryBooksIcon/>
-                Nueva lista de libros
-            </DialogTitle>
+            <form onSubmit={handleCreateList}>
+                <DialogTitle sx={{
+                    backgroundColor: '#432818',
+                    color: 'white',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1
+                }}>
+                    <LibraryBooksIcon/>
+                    Nueva lista de libros
+                </DialogTitle>
 
-            <DialogContent sx={{p: 3}}>
-                <Box component="form" sx={{mt: 1}}>
-                    {/* Nombre */}
-                    <TextField
-                        autoFocus
-                        margin="normal"
-                        label="Nombre de la lista*"
-                        fullWidth
-                        value={newListName}
-                        onChange={(e) => setNewListName(e.target.value)}
-                        sx={{mb: 2}}
-                    />
+                <DialogContent sx={{p: 3}}>
+                    <Box component="form" sx={{mt: 1}}>
+                        {/* Nombre */}
+                        <TextField
+                            autoFocus
+                            margin="normal"
+                            label="Nombre de la lista*"
+                            fullWidth
+                            value={newListName}
+                            onChange={(e) => setNewListName(e.target.value)}
+                            sx={{mb: 2}}
+                        />
 
-                    {/* Descripción */}
-                    <TextField
-                        margin="normal"
-                        label="Descripción (opcional)"
-                        fullWidth
-                        multiline
-                        rows={3}
-                        value={newListDescription}
-                        onChange={(e) => {
-                            if (e.target.value.length <= 2000) {
-                                setNewListDescription(e.target.value);
-                            }
-                        }}
-                        inputProps={{
-                            maxLength: 2000
-                        }}
-                        helperText={`${newListDescription.length}/2000 caracteres`}
-                        sx={{mb: 3}}
-                    />
+                        {/* Descripción */}
+                        <TextField
+                            margin="normal"
+                            label="Descripción (opcional)"
+                            fullWidth
+                            multiline
+                            rows={3}
+                            value={newListDescription}
+                            onChange={(e) => {
+                                if (e.target.value.length <= 2000) {
+                                    setNewListDescription(e.target.value);
+                                }
+                            }}
+                            inputProps={{
+                                maxLength: 2000
+                            }}
+                            helperText={`${newListDescription.length}/2000 caracteres`}
+                            sx={{mb: 3}}
+                        />
 
-                    {/* Selección de géneros */}
-                    <Typography variant="subtitle2" sx={{mb: 1, color: '#432818'}}>
-                        Selecciona géneros (opcional):
-                    </Typography>
+                        {/* Selección de géneros */}
+                        <Typography variant="subtitle2" sx={{mb: 1, color: '#432818'}}>
+                            Selecciona géneros (opcional):
+                        </Typography>
 
-                    <Box sx={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        gap: 1,
-                        mb: 2,
-                        maxHeight: '200px',
-                        overflowY: 'auto',
-                        p: 1
-                    }}>
-                        {genres.map((genre) => (
-                            <Chip
-                                key={genre.id}
-                                label={genre.name}
-                                clickable
-                                variant={selectedGenreIds.has(genre.id) ? 'filled' : 'outlined'}
-                                color={selectedGenreIds.has(genre.id) ? 'primary' : 'default'}
-                                onClick={() => handleGenreToggle(genre.id)}
-                                sx={{
-                                    borderRadius: '4px',
-                                    borderColor: selectedGenreIds.has(genre.id) ? '#432818' : '#ddd',
-                                    backgroundColor: selectedGenreIds.has(genre.id) ? '#CCC4B7' : 'transparent',
-                                    '&:hover': {
-                                        backgroundColor: selectedGenreIds.has(genre.id) ? '#E0DCD3' : '#f5f5f5'
-                                    },
-                                    color: selectedGenreIds.has(genre.id) ? 'black' : 'inherit'
-                                }}
-                            />
-                        ))}
+                        <Box sx={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: 1,
+                            mb: 2,
+                            maxHeight: '200px',
+                            overflowY: 'auto',
+                            p: 1
+                        }}>
+                            {genres.map((genre) => (
+                                <Chip
+                                    key={genre.id}
+                                    label={genre.name}
+                                    clickable
+                                    variant={selectedGenreIds.has(genre.id) ? 'filled' : 'outlined'}
+                                    color={selectedGenreIds.has(genre.id) ? 'primary' : 'default'}
+                                    onClick={() => handleGenreToggle(genre.id)}
+                                    sx={{
+                                        borderRadius: '4px',
+                                        borderColor: selectedGenreIds.has(genre.id) ? '#432818' : '#ddd',
+                                        backgroundColor: selectedGenreIds.has(genre.id) ? '#CCC4B7' : 'transparent',
+                                        '&:hover': {
+                                            backgroundColor: selectedGenreIds.has(genre.id) ? '#E0DCD3' : '#f5f5f5'
+                                        },
+                                        color: selectedGenreIds.has(genre.id) ? 'black' : 'inherit'
+                                    }}
+                                />
+                            ))}
+                        </Box>
                     </Box>
-                </Box>
-            </DialogContent>
+                </DialogContent>
 
-            <DialogActions sx={{p: 2}}>
-                <Button
-                    onClick={resetDialog}
-                    disabled={isSubmitting}
-                    sx={{
-                        textTransform: 'none',
-                        color: '#6c757d'
-                    }}
-                >
-                    Cancelar
-                </Button>
-                <Button
-                    onClick={handleCreateList}
-                    variant="contained"
-                    sx={{
-                        textTransform: 'none',
-                        backgroundColor: '#8B0000',
-                        '&:hover': {backgroundColor: '#6d0000'},
-                        borderRadius: '20px',
-                        px: 3
-                    }}
-                >
-                    Crear lista
-                </Button>
-            </DialogActions>
+                <DialogActions sx={{p: 2}}>
+                    <Button
+                        onClick={resetDialog}
+                        disabled={isSubmitting}
+                        sx={{
+                            textTransform: 'none',
+                            color: '#6c757d'
+                        }}
+                    >
+                        Cancelar
+                    </Button>
+                    <Button
+                        onClick={handleCreateList}
+                        variant="contained"
+                        sx={{
+                            textTransform: 'none',
+                            backgroundColor: '#8B0000',
+                            '&:hover': {backgroundColor: '#6d0000'},
+                            borderRadius: '20px',
+                            px: 3
+                        }}
+                    >
+                        Crear lista
+                    </Button>
+                </DialogActions>
+            </form>
         </Dialog>
     );
 };

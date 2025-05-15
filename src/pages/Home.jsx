@@ -1,4 +1,4 @@
-import {Box, Typography, Button, useTheme, TextField, InputAdornment} from '@mui/material';
+import {Box, Typography, Button, useTheme, TextField, InputAdornment, CircularProgress} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import {useNavigate} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext.jsx';
@@ -13,6 +13,7 @@ const Home = () => {
     const [searchInput, setSearchInput] = useState('');
 
     const [isAdmin, setIsAdmin] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (!token) {
@@ -21,14 +22,17 @@ const Home = () => {
 
         const verifyAdmin = async () => {
             try {
+                setLoading(true);
                 const response = await axios.get('http://localhost:8080/usuarios/verificar-admin', {
                     headers: {Authorization: `Bearer ${token}`}
                 });
 
                 setIsAdmin(response.data);
+                setLoading(false);
             } catch (error) {
                 console.error('Error verificando rol:', error);
                 setIsAdmin(false);
+                setLoading(false);
             }
         };
 
@@ -84,6 +88,14 @@ const Home = () => {
     ];
 
     const actionsToShow = isAdmin ? actionsAdmin : actionsUser;
+
+    if (loading) {
+        return (
+            <Box display="flex" justifyContent="center" mt={4}>
+                <CircularProgress sx={{color: '#8B0000'}}/>
+            </Box>
+        );
+    }
 
     // Página para usuarios NO autenticados
     if (!token) {
