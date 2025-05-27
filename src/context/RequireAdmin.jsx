@@ -1,12 +1,11 @@
 import {useEffect, useState} from "react";
 import {Navigate} from "react-router-dom";
 import axios from "axios";
-import {useAuth} from "./AuthContext.jsx";
 import {Box, CircularProgress} from "@mui/material";
 
 const RequireAdmin = ({children}) => {
+    const token = localStorage.getItem("token");
     const [isAdmin, setIsAdmin] = useState(null);
-    const {token} = useAuth();
 
     useEffect(() => {
         if (!token) {

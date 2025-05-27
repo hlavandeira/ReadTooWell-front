@@ -55,7 +55,7 @@ const Goal = () => {
     }, []);
 
     return (
-        <Box sx={{maxWidth: 800, mx: 'auto', p: 3}}>
+        <Box sx={{maxWidth: 800, mx: 'auto', p: 3, minHeight: '80vh'}}>
             <Typography variant="h3" component="h1" sx={{
                 mb: 2,
                 fontWeight: 'bold',

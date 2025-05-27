@@ -128,7 +128,8 @@ const Bookshelf = () => {
             p: 3,
             display: 'flex',
             flexDirection: 'column',
-            gap: 3
+            gap: 3,
+            minHeight: '80vh'
         }}>
             <Typography variant="h4" sx={{
                 fontWeight: 'bold',

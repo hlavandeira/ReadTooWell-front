@@ -39,8 +39,6 @@ const SearchPage = () => {
     const itemsPerPage = 10;
     const currentPage = parseInt(searchParams.get('page')) || 1;
 
-    const [isAdmin, setIsAdmin] = useState(false);
-
     const searchBooks = async () => {
         setIsLoading(true);
         try {
@@ -136,26 +134,6 @@ const SearchPage = () => {
 
         fetchGenres();
     }, []);
-
-    useEffect(() => {
-        if (!token) {
-            return;
-        }
-        const verifyAdmin = async () => {
-            try {
-                const response = await axios.get('http://localhost:8080/usuarios/verificar-admin', {
-                    headers: {Authorization: `Bearer ${token}`}
-                });
-
-                setIsAdmin(response.data);
-            } catch (error) {
-                console.error('Error verificando rol:', error);
-                setIsAdmin(false);
-            }
-        };
-
-        verifyAdmin();
-    }, [token]);
 
     return (
         <Box sx={{p: {xs: 2, md: 3}, maxWidth: 1400, mx: 'auto'}}>
@@ -362,7 +340,6 @@ const SearchPage = () => {
                     page={currentPage}
                     totalPages={totalPages}
                     onPageChange={handlePageChange}
-                    isAdmin={isAdmin}
                     onBookDelete={(deletedBookId) => {
                         setBooks(books.filter(book => book.id !== deletedBookId));
                     }}

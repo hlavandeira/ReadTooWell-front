@@ -1,24 +1,16 @@
 import React from 'react';
-import {Card, CardMedia, CardContent, Typography, Box} from '@mui/material';
+import {Card, CardMedia, CardContent, Typography, Box, Rating} from '@mui/material';
 import {useNavigate} from 'react-router-dom';
 
-const SmallBookCard = ({libro}) => {
+const BookCardRating = ({libro}) => {
     const navigate = useNavigate();
 
-    const handleRedirect = () => {
-        navigate(`/detalles/${libro.id}`)
-
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    };
-
     return (
-        <Box onClick={handleRedirect} sx={{cursor: 'pointer'}}>
+        <Box onClick={() => navigate(`/detalles/${libro.book.id}`)}
+             sx={{cursor: 'pointer'}}>
             <Card
                 sx={{
-                    width: 160,
+                    width: 200,
                     height: "100%",
                     display: "flex",
                     flexDirection: "column",
@@ -31,7 +23,7 @@ const SmallBookCard = ({libro}) => {
             >
                 <Box sx={{
                     width: "100%",
-                    height: 250,
+                    height: 300,
                     overflow: "hidden",
                     display: "flex",
                     alignItems: "center",
@@ -39,8 +31,8 @@ const SmallBookCard = ({libro}) => {
                 }}>
                     <CardMedia
                         component="img"
-                        image={libro.cover}
-                        alt={`Portada de ${libro.title}`}
+                        image={libro.book.cover}
+                        alt={`Portada de ${libro.book.title}`}
                         sx={{
                             width: "100%",
                             height: "100%",
@@ -61,7 +53,7 @@ const SmallBookCard = ({libro}) => {
                 }}>
                     <Typography
                         gutterBottom
-                        variant="h6"
+                        variant="h5"
                         component="h2"
                         sx={{
                             textAlign: "center",
@@ -71,15 +63,42 @@ const SmallBookCard = ({libro}) => {
                             overflow: "hidden",
                             minHeight: "3em",
                             lineHeight: "1.5em",
-                            fontSize: "0.9rem"
+                            fontSize: "1.05rem"
                         }}
                     >
-                        {libro.title}
+                        {libro.book.title}
                     </Typography>
+                    <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{
+                            textAlign: "center",
+                            mt: 0.4,
+                            display: "-webkit-box",
+                            WebkitLineClamp: 1,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden"
+                        }}
+                    >
+                        {libro.book.author}
+                    </Typography>
+
+                    <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                        <Rating
+                            value={libro.averageRating}
+                            precision={0.1}
+                            readOnly
+                            size="small"
+                            sx={{mb: 0.5, mt: 1}}
+                        />
+                        <Typography variant="caption" color="text.secondary">
+                            {libro.averageRating?.toFixed(1) || 'Sin valoraciones'}
+                        </Typography>
+                    </Box>
                 </CardContent>
             </Card>
         </Box>
     );
 };
 
-export default SmallBookCard;
+export default BookCardRating;

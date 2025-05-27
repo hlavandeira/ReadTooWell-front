@@ -6,8 +6,34 @@ import {
     Pagination
 } from "@mui/material";
 import BookCard from "./BookCard.jsx";
+import {useEffect, useState} from "react";
+import axios from "axios";
+import {useAuth} from "../../context/AuthContext.jsx";
 
-const BookGrid = ({titulo, libros = [], page, totalPages, onPageChange, isAdmin = false, onBookDelete}) => {
+const BookGrid = ({titulo, libros = [], page, totalPages, onPageChange, onBookDelete}) => {
+    const {token} = useAuth();
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        if (!token) {
+            return;
+        }
+        const verifyAdmin = async () => {
+            try {
+                const response = await axios.get('http://localhost:8080/usuarios/verificar-admin', {
+                    headers: {Authorization: `Bearer ${token}`}
+                });
+
+                setIsAdmin(response.data);
+            } catch (error) {
+                console.error('Error verificando rol:', error);
+                setIsAdmin(false);
+            }
+        };
+
+        verifyAdmin();
+    }, [token]);
+
     return (
         <Container maxWidth="lg" sx={{py: 4}}>
             <Typography
@@ -25,7 +51,7 @@ const BookGrid = ({titulo, libros = [], page, totalPages, onPageChange, isAdmin 
                 {titulo}
             </Typography>
 
-            <Box display="flex" justifyContent="center">
+            <Box display="flex" justifyContent="center" sx={{minHeight: '65vh'}}>
                 <Grid
                     container
                     spacing={4}

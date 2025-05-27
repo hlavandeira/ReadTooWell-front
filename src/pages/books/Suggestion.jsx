@@ -22,12 +22,20 @@ const Suggestion = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const handleChange = (e) => {
+    const handleInputChange = (e) => {
         const {name, value} = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: value
         }));
+        if (error) setError(null);
+    };
+
+    const handleNumericInput = (e) => {
+        const {name, value} = e.target;
+        if (value === '' || /^[0-9\b]+$/.test(value)) {
+            handleInputChange(e);
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -65,7 +73,7 @@ const Suggestion = () => {
                         label="Título del libro"
                         name="title"
                         value={formData.title}
-                        onChange={handleChange}
+                        onChange={handleInputChange}
                         required
                         sx={{mb: 2}}
                     />
@@ -74,7 +82,7 @@ const Suggestion = () => {
                         label="Autor"
                         name="author"
                         value={formData.author}
-                        onChange={handleChange}
+                        onChange={handleInputChange}
                         required
                         sx={{mb: 2}}
                     />
@@ -82,13 +90,8 @@ const Suggestion = () => {
                         fullWidth
                         label="Año de publicación"
                         name="publicationYear"
-                        type="number"
-                        inputProps={{
-                            min: 0,
-                            max: new Date().getFullYear()
-                        }}
                         value={formData.publicationYear}
-                        onChange={handleChange}
+                        onChange={handleNumericInput}
                         required
                         sx={{mb: 3}}
                     />

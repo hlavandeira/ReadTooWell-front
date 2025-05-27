@@ -27,8 +27,10 @@ const UpdateProgressDialog = ({open, onClose, book, onProgressUpdated}) => {
         }
     }, [book]);
 
-    const handleSaveProgress = async () => {
+    const handleSaveProgress = async (e) => {
         try {
+            if (e) e.preventDefault();
+
             setIsSubmitting(true);
 
             await axios.put(`http://localhost:8080/biblioteca/${book.id.bookId}/progreso`, null, {
@@ -58,84 +60,81 @@ const UpdateProgressDialog = ({open, onClose, book, onProgressUpdated}) => {
 
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogTitle sx={{
-                backgroundColor: '#432818',
-                color: 'white',
-                fontWeight: 'bold'
-            }}>
-                Actualizar progreso
-            </DialogTitle>
+            <form onSubmit={handleSaveProgress}>
+                <DialogTitle sx={{
+                    backgroundColor: '#432818',
+                    color: 'white',
+                    fontWeight: 'bold'
+                }}>
+                    Actualizar progreso
+                </DialogTitle>
 
-            <DialogContent sx={{p: 5, pb: 2, mt: 2}}>
-                {book && (
-                    <>
-                        <RadioGroup
-                            value={progressType}
-                            onChange={(e) => setProgressType(e.target.value)}
-                            sx={{mb: 3}}
-                        >
-                            <FormControlLabel
-                                value="paginas"
-                                control={<Radio/>}
-                                label="Páginas leídas"
+                <DialogContent sx={{p: 5, pb: 2, mt: 2}}>
+                    {book && (
+                        <>
+                            <RadioGroup
+                                value={progressType}
+                                onChange={(e) => setProgressType(e.target.value)}
+                                sx={{mb: 3}}
+                            >
+                                <FormControlLabel
+                                    value="paginas"
+                                    control={<Radio/>}
+                                    label="Páginas leídas"
+                                />
+                                <FormControlLabel
+                                    value="porcentaje"
+                                    control={<Radio/>}
+                                    label="Porcentaje completado"
+                                />
+                            </RadioGroup>
+
+                            <TextField
+                                fullWidth
+                                label={progressType === 'paginas' ? 'Páginas leídas' : 'Porcentaje completado'}
+                                value={progressValue}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (value === '' || !isNaN(value) || /^[1-9]\d*$/.test(value)) {
+                                        setProgressValue(value === '' ? '' : Number(value));
+                                    }
+                                }}
                             />
-                            <FormControlLabel
-                                value="porcentaje"
-                                control={<Radio/>}
-                                label="Porcentaje completado"
-                            />
-                        </RadioGroup>
 
-                        <TextField
-                            fullWidth
-                            type="number"
-                            label={progressType === 'paginas' ? 'Páginas leídas' : 'Porcentaje completado'}
-                            value={progressValue}
-                            onChange={(e) => {
-                                const value = e.target.value;
-                                if (value === '' || !isNaN(value)) {
-                                    setProgressValue(value === '' ? '' : Number(value));
-                                }
-                            }}
-                            inputProps={{
-                                min: 0,
-                                max: progressType === 'paginas' ? book.book.pageNumber : 100
-                            }}
-                        />
+                            {progressType === 'paginas' && book.book.pageNumber && (
+                                <Typography variant="caption" display="block" sx={{mt: 1}}>
+                                    Total de páginas: {book.book.pageNumber}
+                                </Typography>
+                            )}
+                        </>
+                    )}
+                </DialogContent>
 
-                        {progressType === 'paginas' && book.book.pageNumber && (
-                            <Typography variant="caption" display="block" sx={{mt: 1}}>
-                                Total de páginas: {book.book.pageNumber}
-                            </Typography>
-                        )}
-                    </>
-                )}
-            </DialogContent>
-
-            <DialogActions sx={{p: 2}}>
-                <Button
-                    onClick={onClose}
-                    disabled={isSubmitting}
-                    sx={{
-                        textTransform: 'none',
-                        color: '#6c757d'
-                    }}
-                >
-                    Cancelar
-                </Button>
-                <Button
-                    onClick={handleSaveProgress}
-                    variant="contained"
-                    disabled={isSubmitting || progressValue === ''}
-                    sx={{
-                        backgroundColor: '#8B0000',
-                        '&:hover': {backgroundColor: '#6d0000'},
-                        textTransform: 'none'
-                    }}
-                >
-                    {isSubmitting ? 'Guardando...' : 'Guardar'}
-                </Button>
-            </DialogActions>
+                <DialogActions sx={{p: 2}}>
+                    <Button
+                        onClick={onClose}
+                        disabled={isSubmitting}
+                        sx={{
+                            textTransform: 'none',
+                            color: '#6c757d'
+                        }}
+                    >
+                        Cancelar
+                    </Button>
+                    <Button
+                        onClick={handleSaveProgress}
+                        variant="contained"
+                        disabled={isSubmitting || progressValue === ''}
+                        sx={{
+                            backgroundColor: '#8B0000',
+                            '&:hover': {backgroundColor: '#6d0000'},
+                            textTransform: 'none'
+                        }}
+                    >
+                        {isSubmitting ? 'Guardando...' : 'Guardar'}
+                    </Button>
+                </DialogActions>
+            </form>
         </Dialog>
     );
 };

@@ -30,6 +30,8 @@ import Authors from "./pages/users/Authors.jsx";
 import AdminBookDetails from "./pages/admin/AdminBookDetails.jsx";
 import EditBook from "./pages/admin/EditBook.jsx";
 import AddBook from "./pages/admin/AddBook.jsx";
+import Recommendations from "./pages/Recommendations.jsx";
+import RecommendedBooks from "./pages/books/RecommendedBooks.jsx";
 
 const MainLayout = ({children}) => (
     <Box sx={{display: 'flex', flexDirection: 'column', minHeight: '100vh'}}>
@@ -194,6 +196,22 @@ function App() {
                         <MainLayout>
                             <RequireAuth>
                                 <Authors/>
+                            </RequireAuth>
+                        </MainLayout>
+                    }/>
+
+                    <Route path="/recomendaciones" element={
+                        <MainLayout>
+                            <RequireAuth>
+                                <Recommendations/>
+                            </RequireAuth>
+                        </MainLayout>
+                    }/>
+
+                    <Route path="/recomendaciones/libros" element={
+                        <MainLayout>
+                            <RequireAuth>
+                                <RecommendedBooks/>
                             </RequireAuth>
                         </MainLayout>
                     }/>
