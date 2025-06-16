@@ -1,4 +1,14 @@
-import {Box, Typography, Button, useTheme, TextField, InputAdornment, CircularProgress} from '@mui/material';
+import {
+    Box,
+    Typography,
+    Button,
+    useTheme,
+    TextField,
+    InputAdornment,
+    CircularProgress,
+    Paper,
+    Divider
+} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import {useNavigate} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext.jsx';
@@ -6,7 +16,7 @@ import {useState, useEffect} from 'react';
 import axios from "axios";
 
 const Home = () => {
-    const {token, name} = useAuth();
+    const {token, name, role} = useAuth();
     const theme = useTheme();
     const navigate = useNavigate();
 
@@ -264,6 +274,53 @@ const Home = () => {
                     </Box>
                 ))}
             </Box>
+
+            <Divider sx={{my: 5, borderColor: 'divider'}}/>
+
+            {/* Sección para enviar sugerencias */}
+            {(role === 0 || role === 1) && (
+                <Paper elevation={3} sx={{
+                    p: 3,
+                    mt: 4,
+                    backgroundColor: '#f5f5f5',
+                    borderRadius: 2
+                }}>
+                    <Typography variant="h5" sx={{
+                        mb: 2,
+                        fontWeight: 'bold',
+                        color: '#432818',
+                        textAlign: 'center'
+                    }}>
+                        ¿Crees que falta algún libro?
+                    </Typography>
+                    <Typography variant="body1" sx={{
+                        mb: 3,
+                        textAlign: 'center',
+                        color: 'text.secondary'
+                    }}>
+                        ¡Ayúdanos a mejorar nuestro catálogo! Puedes sugerir libros que te gustaría ver en nuestra
+                        plataforma.
+                    </Typography>
+                    <Box sx={{display: 'flex', justifyContent: 'center'}}>
+                        <Button
+                            variant="contained"
+                            onClick={() => navigate("/libros/sugerencia")}
+                            sx={{
+                                py: 1,
+                                px: 3,
+                                textTransform: 'none',
+                                backgroundColor: '#432818',
+                                '&:hover': {
+                                    backgroundColor: '#5a3a23'
+                                },
+                                borderRadius: 2
+                            }}
+                        >
+                            Sugerir un libro
+                        </Button>
+                    </Box>
+                </Paper>
+            )}
         </Box>
     );
 };

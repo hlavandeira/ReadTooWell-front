@@ -102,13 +102,16 @@ const AuthorRequest = () => {
                     Tus datos de autor:
                 </Typography>
 
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSubmit(e);
+                }}>
 
                     {/* Nombre y biografía */}
                     <TextField
                         fullWidth
                         label="Nombre completo"
-                        name="profileName"
+                        name="name"
                         value={formData.name}
                         onChange={handleInputChange}
                         required

@@ -78,6 +78,9 @@ const AddToListDialog = ({open, onClose, lists, onAddToList, bookId, onSuccess})
                         flexDirection: 'column',
                         gap: 1
                     }}>
+                        <Typography variant="body1" textAlign="center">
+                            Selecciona una de tus listas:
+                        </Typography>
                         {lists.map((list) => (
                             <Button
                                 key={list.id}

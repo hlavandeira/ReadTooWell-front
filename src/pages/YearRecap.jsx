@@ -97,7 +97,7 @@ const YearRecap = () => {
             {/* Estadísticas principales */}
             <Box sx={{display: 'flex', justifyContent: 'center'}}>
                 <Grid container spacing={5} sx={{mb: 4, maxWidth: '600px', justifyContent: 'center'}}>
-                    <Grid item>
+                    <Grid>
                         <Paper elevation={3} sx={{p: 3, minWidth: 200, borderRadius: 2, textAlign: 'center'}}>
                             <Typography variant="h5" sx={{mb: 2, fontWeight: 'bold'}}>
                                 Libros leídos:
@@ -107,7 +107,7 @@ const YearRecap = () => {
                             </Typography>
                         </Paper>
                     </Grid>
-                    <Grid item>
+                    <Grid>
                         <Paper elevation={3} sx={{p: 3, minWidth: 200, borderRadius: 2, textAlign: 'center'}}>
                             <Typography variant="h5" sx={{mb: 2, fontWeight: 'bold'}}>
                                 Páginas leídas:

@@ -140,7 +140,6 @@ const BookList = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
-            console.log(`se eliminó el libro ${bookId} de la lista ${idList}`);
 
             const response = await axios.get(`http://localhost:8080/listas/${idList}`, {
                 params: {
@@ -254,9 +253,14 @@ const BookList = () => {
             </Typography>
 
             {listDetails.books.content.length === 0 ? (
-                <Typography variant="body1" textAlign="center" sx={{mt: 2}}>
-                    No hay libros en esta lista
-                </Typography>
+                <>
+                    <Typography variant="body1" textAlign="center" sx={{mt: 2}}>
+                        No hay libros en esta lista.
+                    </Typography>
+                    <Typography variant="body1" textAlign="center">
+                        ¡Consulta libros que hayas guardado en tu biblioteca y añádelos a la lista!
+                    </Typography>
+                </>
             ) : (
                 <>
                     <Box sx={{display: 'flex', flexDirection: 'column', gap: 3}}>

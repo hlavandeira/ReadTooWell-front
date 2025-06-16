@@ -333,7 +333,26 @@ const BookDetails = () => {
                             />
                         </Box>
 
+                        <Divider sx={{
+                            width: '80%',
+                            height: 1,
+                            backgroundColor: 'divider',
+                            my: 2
+                        }}/>
+
                         {/* Botón para guardar / cambiar estado */}
+                        {details.saved && (
+                            <Typography
+                                variant="body2"
+                                color="text.secondary"
+                                sx={{
+                                    textAlign: 'center',
+                                    fontSize: {xs: '0.75rem', sm: '0.875rem'}
+                                }}
+                            >
+                                Tu libro está en estado:
+                            </Typography>
+                        )}
                         <Button
                             variant="contained"
                             onClick={() => {
@@ -367,7 +386,7 @@ const BookDetails = () => {
                                     3: 'Pausado',
                                     4: 'Abandonado'
                                 }[details.readingStatus] || 'Guardado'
-                            ) : 'Guardar'}
+                            ) : 'Guardar libro'}
                         </Button>
 
                         {/* Diálogo para el cambio de estado de lectura */}
@@ -616,12 +635,16 @@ const BookDetails = () => {
                                 textTransform: 'none'
                             }}
                         >
-                            {userReview ? 'Editar reseña' : 'Añadir reseña'}
+                            {!userReview || userReview.trim() === "" ? 'Añadir reseña' : 'Editar reseña'}
                         </Button>
                     </Box>
 
                     {/* Visualización de la reseña existente */}
-                    {userReview ? (
+                    {!userReview || userReview.trim() === "" ? (
+                        <Typography variant="body2" color="text.secondary" sx={{mb: 3}}>
+                            No has escrito ninguna reseña todavía.
+                        </Typography>
+                    ) : (
                         <Typography variant="body1" sx={{
                             whiteSpace: 'pre-line',
                             lineHeight: 1.6,
@@ -631,10 +654,6 @@ const BookDetails = () => {
                             mb: 3
                         }}>
                             {userReview}
-                        </Typography>
-                    ) : (
-                        <Typography variant="body2" color="text.secondary" sx={{mb: 3}}>
-                            No has escrito ninguna reseña todavía.
                         </Typography>
                     )}
 

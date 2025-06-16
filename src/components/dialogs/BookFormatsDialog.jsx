@@ -77,7 +77,9 @@ const BookFormatsDialog = ({open, onClose, bookId, selectedFormats, setSelectedF
                         {error}
                     </Typography>
                 )}
-
+                <Typography variant="body1" textAlign="center" sx={{mt: 2}}>
+                    Selecciona los formatos que desees:
+                </Typography>
                 <FormGroup>
                     {[
                         {value: 0, label: 'Tapa blanda', idFormat: 1},

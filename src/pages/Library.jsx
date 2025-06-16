@@ -144,11 +144,14 @@ const Library = () => {
             {/* Título principal */}
             <Typography variant="h3" component="h1" sx={{
                 textAlign: 'center',
-                mb: 4,
+                mb: 1,
                 fontWeight: 'bold',
                 color: '#432818'
             }}>
                 Mi biblioteca
+            </Typography>
+            <Typography variant="body1" color="text.secondary" textAlign="center" sx={{mb: 4}}>
+                ¡Consulta nuestro catálogo o utiliza el buscador para encontrar libros y añadirlos a tu biblioteca!
             </Typography>
 
             {/* Panel de lecturas actuales */}
