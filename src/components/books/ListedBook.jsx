@@ -83,6 +83,7 @@ const ListedBook = ({book, onDelete}) => {
                     e.stopPropagation();
                     onDelete(book.book.id);
                 }}
+                aria-label="Borrar libro de lista"
                 sx={{
                     position: 'absolute',
                     right: 8,

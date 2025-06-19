@@ -98,7 +98,7 @@ const Recommendations = () => {
     if (loading) {
         return (
             <Box display="flex" justifyContent="center" mt={4}>
-                <CircularProgress sx={{color: '#8B0000'}}/>
+                <CircularProgress sx={{color: '#8B0000'}} aria-label="Cargando"/>
             </Box>
         );
     }
@@ -111,7 +111,7 @@ const Recommendations = () => {
 
             {/* Recomendaciones según libros favoritos */}
             <Paper elevation={3} sx={{mb: 6, p: 3, backgroundColor: '#f8f4f0'}}>
-                <Typography variant="h5" sx={{mb: 3, fontWeight: 'bold', color: '#432818'}}>
+                <Typography variant="h5" component="h2" sx={{mb: 3, fontWeight: 'bold', color: '#432818'}}>
                     Según tus libros favoritos...
                 </Typography>
 
@@ -151,7 +151,7 @@ const Recommendations = () => {
 
             {/* Recomendaciones según géneros favoritos */}
             <Paper elevation={3} sx={{mb: 6, p: 3, backgroundColor: '#f8f4f0'}}>
-                <Typography variant="h5" sx={{mb: 3, fontWeight: 'bold', color: '#432818'}}>
+                <Typography variant="h5" component="h2" sx={{mb: 3, fontWeight: 'bold', color: '#432818'}}>
                     Según tus géneros favoritos...
                 </Typography>
 
@@ -191,7 +191,7 @@ const Recommendations = () => {
 
             {/* Recomendaciones según libros leídos */}
             <Paper elevation={3} sx={{mb: 6, p: 3, backgroundColor: '#f8f4f0'}}>
-                <Typography variant="h5" sx={{mb: 3, fontWeight: 'bold', color: '#432818'}}>
+                <Typography variant="h5" component="h2" sx={{mb: 3, fontWeight: 'bold', color: '#432818'}}>
                     Según los libros que has leído...
                 </Typography>
 
@@ -231,7 +231,7 @@ const Recommendations = () => {
 
             {/* Recomendaciones según listas */}
             <Paper elevation={3} sx={{mb: 6, p: 3, backgroundColor: '#f8f4f0'}}>
-                <Typography variant="h5" sx={{mb: 1, fontWeight: 'bold', color: '#432818'}}>
+                <Typography variant="h5" component="h2" sx={{mb: 1, fontWeight: 'bold', color: '#432818'}}>
                     Según tus listas...
                 </Typography>
                 <Typography variant="body1" color="text.secondary" sx={{mb: 3}}>
@@ -310,7 +310,7 @@ const Recommendations = () => {
 
             {/* Recomendaciones generales */}
             <Paper elevation={3} sx={{mb: 6, p: 3, backgroundColor: '#f8f4f0'}}>
-                <Typography variant="h5" sx={{mb: 3, fontWeight: 'bold', color: '#432818'}}>
+                <Typography variant="h5" component="h2" sx={{mb: 3, fontWeight: 'bold', color: '#432818'}}>
                     Lo que más le gusta a la comunidad...
                 </Typography>
 

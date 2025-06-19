@@ -88,7 +88,7 @@ const AuthorRequest = () => {
 
     return (
         <Box sx={{maxWidth: 800, mx: 'auto', p: 3}}>
-            <Typography variant="h4" sx={{
+            <Typography variant="h4" component="h1" sx={{
                 mb: 3,
                 fontWeight: 'bold',
                 color: '#432818',
@@ -98,7 +98,7 @@ const AuthorRequest = () => {
             </Typography>
 
             <Paper elevation={3} sx={{p: 3}}>
-                <Typography variant="h6" sx={{mb: 2}}>
+                <Typography variant="h6" component="h2" sx={{mb: 2}}>
                     Tus datos de autor:
                 </Typography>
 
@@ -106,7 +106,6 @@ const AuthorRequest = () => {
                     e.preventDefault();
                     handleSubmit(e);
                 }}>
-
                     {/* Nombre y biografía */}
                     <TextField
                         fullWidth
@@ -133,7 +132,7 @@ const AuthorRequest = () => {
 
                     {/* Libros escritos */}
                     <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2}}>
-                        <Typography variant="h6">
+                        <Typography variant="h6" component="h2">
                             Libros que has escrito:
                         </Typography>
                         <Button

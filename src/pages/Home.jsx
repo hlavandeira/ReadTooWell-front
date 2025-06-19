@@ -52,24 +52,28 @@ const Home = () => {
     const actionsUser = [
         {
             label: 'Mi biblioteca',
+            alt: 'Botón de mi biblioteca',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743863885/readtoowell/iconos/Biblioteca_sinfondo_blanco_dw69k5.png",
             path: '/biblioteca',
             color: '#432818'
         },
         {
             label: 'Objetivos',
+            alt: 'Botón de objetivos',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743864520/readtoowell/iconos/v1olxvdjhbpfagohyv7c.png",
             path: '/objetivos-lectura',
             color: '#8B0000'
         },
         {
             label: 'Recomendaciones',
+            alt: 'Botón de recomendaciones',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743863885/readtoowell/iconos/Recom_sinfondo_blanco_avcur7.png",
             path: '/recomendaciones',
             color: '#876C40'
         },
         {
             label: 'Conectar',
+            alt: 'Botón de conectar',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1745747085/readtoowell/iconos/Social_sinfondo_blanco_piz4io.png",
             path: '/buscar/usuarios',
             color: '#2E5266'
@@ -79,18 +83,21 @@ const Home = () => {
     const actionsAdmin = [
         {
             label: 'Gestionar libros',
+            alt: 'Botón de gestionar libros',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743863885/readtoowell/iconos/Biblioteca_sinfondo_blanco_dw69k5.png",
             path: '/catalogo',
             color: '#432818'
         },
         {
             label: 'Gestionar sugerencias',
+            alt: 'Botón de gestionar sugerencias',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743863885/readtoowell/iconos/Recom_sinfondo_blanco_avcur7.png",
             path: '/admin/sugerencias',
             color: '#876C40'
         },
         {
             label: 'Gestionar verificaciones',
+            alt: 'Botón de gestionar verificaciones',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1746030780/readtoowell/iconos/Verif_sinfondo_blanco_ulrhkk.png",
             path: '/admin/verificaciones',
             color: '#2E5266'
@@ -266,6 +273,7 @@ const Home = () => {
                                 <Box
                                     component="img"
                                     src={action.icon}
+                                    alt={action.alt}
                                     sx={{width: 90, height: 90}}
                                 />
                             )}
@@ -285,7 +293,7 @@ const Home = () => {
                     backgroundColor: '#f5f5f5',
                     borderRadius: 2
                 }}>
-                    <Typography variant="h5" sx={{
+                    <Typography variant="h5" component="h2" sx={{
                         mb: 2,
                         fontWeight: 'bold',
                         color: '#432818',

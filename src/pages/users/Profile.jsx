@@ -275,7 +275,6 @@ const Profile = () => {
 
     return (
         <>
-
             <Box sx={{maxWidth: 1200, mx: 'auto', p: 3}}>
                 {/* Datos del usuario */}
                 <Box sx={{textAlign: 'center', mb: 4}}>
@@ -291,25 +290,25 @@ const Profile = () => {
                         }}
                     />
 
-                    <Typography variant="h3" sx={{fontWeight: 'bold', mb: 0.5}}>
+                    <Typography variant="h3" component="h1" sx={{fontWeight: 'bold', mb: 0.5}}>
                         {profile.profileName}
                     </Typography>
 
-                    <Typography variant="h5" color="text.secondary" sx={{mb: 2}}>
+                    <Typography variant="h5" component="h2" color="text.secondary" sx={{mb: 2}}>
                         @{profile.username}
                     </Typography>
 
                     {/* Seguidos y seguidores */}
                     <Box sx={{display: 'flex', justifyContent: 'center', gap: 4, mb: 0.5}}>
                         <Typography
-                            variant="h6"
+                            variant="h6" component="h3"
                             sx={{cursor: 'pointer', '&:hover': {textDecoration: 'underline'}}}
                             onClick={() => navigate(`/perfil/${id}/seguidos`)}
                         >
                             {following.length} seguidos
                         </Typography>
                         <Typography
-                            variant="h6"
+                            variant="h6" component="h3"
                             sx={{cursor: 'pointer', '&:hover': {textDecoration: 'underline'}}}
                             onClick={() => navigate(`/perfil/${id}/seguidores`)}
                         >
@@ -576,7 +575,7 @@ const Profile = () => {
                                     <CircularProgress size={24} sx={{color: '#8B0000'}}/>
                                 </Box>
                             ) : hasPendingRequest ? (
-                                <Typography variant="h6" sx={{
+                                <Typography variant="h5" sx={{
                                     mb: 3,
                                     textAlign: 'center',
                                     color: 'text.secondary',

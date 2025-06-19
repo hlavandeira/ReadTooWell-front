@@ -71,7 +71,7 @@ const GoalCard = ({goal, onDelete}) => {
             }}
         >
             <Box sx={{display: 'flex', justifyContent: 'space-between', mb: 1}}>
-                <Typography variant="h6" sx={{fontWeight: 'bold'}}>
+                <Typography variant="h6" component="h2" sx={{fontWeight: 'bold'}}>
                     {createGoalTitle(goal)}
                 </Typography>
                 {isCompleted ? (
@@ -103,6 +103,7 @@ const GoalCard = ({goal, onDelete}) => {
                 <LinearProgress
                     variant="determinate"
                     value={progress}
+                    aria-label="Objetivo de lectura"
                     sx={{
                         flexGrow: 1,
                         height: 8,
@@ -144,6 +145,7 @@ const GoalCard = ({goal, onDelete}) => {
                             },
                             ml: 1
                         }}
+                        aria-label="Borrar objetivo"
                     >
                         <DeleteIcon fontSize="small"/>
                     </IconButton>

@@ -40,6 +40,7 @@ const Library = () => {
     const bookshelves = [
         {
             label: 'Pendientes',
+            alt: 'Botón de libros pendientes',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1744206368/readtoowell/other/pendientes_gtdds6.jpg",
             path: '/biblioteca/pendientes',
             color: '#E3C9A8',
@@ -48,6 +49,7 @@ const Library = () => {
         },
         {
             label: 'Leídos',
+            alt: 'Botón de libros leídos',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1744206369/readtoowell/other/leyendo_yuueyf.jpg",
             path: '/biblioteca/leidos',
             color: '#A8BBA2',
@@ -56,6 +58,7 @@ const Library = () => {
         },
         {
             label: 'Pausados',
+            alt: 'Botón de libros pausados',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1744206368/readtoowell/other/pausados_j9dowa.jpg",
             path: '/biblioteca/pausados',
             color: '#FFF8F0',
@@ -64,6 +67,7 @@ const Library = () => {
         },
         {
             label: 'Abandonados',
+            alt: 'Botón de libros abandonados',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1744206369/readtoowell/other/abandonados_yaixwe.jpg",
             path: '/biblioteca/abandonados',
             color: '#7E6651',
@@ -232,7 +236,7 @@ const Library = () => {
                                         }}>
                                             {/* Título y autor */}
                                             <Box>
-                                                <Typography variant="subtitle1" noWrap>
+                                                <Typography variant="subtitle1" component="h3" noWrap>
                                                     {item.book.title}
                                                 </Typography>
                                                 <Typography variant="body2" color="text.secondary">
@@ -248,6 +252,9 @@ const Library = () => {
                                                 </Typography>
                                                 <LinearProgress
                                                     variant="determinate"
+                                                    role="progressbar"
+                                                    id={`Progreso de ${item.book.title}`}
+                                                    aria-label={item.book.title}
                                                     value={
                                                         item.progressType === 'paginas'
                                                             ? (item.progress / item.book.pageNumber) * 100
@@ -345,6 +352,7 @@ const Library = () => {
                             <Box
                                 component="img"
                                 src={shelf.icon}
+                                alt={shelf.alt}
                                 sx={{
                                     width: '100px',
                                     height: '100%',

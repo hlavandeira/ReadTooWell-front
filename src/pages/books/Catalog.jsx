@@ -124,7 +124,7 @@ const Catalog = () => {
                     backgroundColor: '#f5f5f5',
                     borderRadius: 2
                 }}>
-                    <Typography variant="h5" sx={{
+                    <Typography variant="h5" component="h2" sx={{
                         mb: 2,
                         fontWeight: 'bold',
                         color: '#432818',
