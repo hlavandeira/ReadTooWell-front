@@ -28,7 +28,7 @@ const AuthorCard = ({user}) => {
                     border: '3px solid #8B0000'
                 }}
             />
-            <Typography variant="h6" sx={{fontWeight: 'bold', mb: 0.5}}>
+            <Typography variant="h6" component="h5" sx={{fontWeight: 'bold', mb: 0.5}}>
                 {user.profileName}
             </Typography>
             <Typography variant="body2" color="text.secondary">

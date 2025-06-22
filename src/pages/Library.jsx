@@ -211,7 +211,7 @@ const Library = () => {
                                         <CardMedia
                                             component="img"
                                             image={item.book.cover}
-                                            alt={item.book.title}
+                                            alt={`Portada de ${item.book.title}`}
                                             onClick={() => navigate(`/detalles/${item.id.bookId}`)}
                                             sx={{
                                                 height: 100,

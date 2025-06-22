@@ -575,7 +575,7 @@ const Profile = () => {
                                     <CircularProgress size={24} sx={{color: '#8B0000'}}/>
                                 </Box>
                             ) : hasPendingRequest ? (
-                                <Typography variant="h5" sx={{
+                                <Typography variant="h5" component="h4" sx={{
                                     mb: 3,
                                     textAlign: 'center',
                                     color: 'text.secondary',
@@ -585,10 +585,10 @@ const Profile = () => {
                                 </Typography>
                             ) : (
                                 <>
-                                    <Typography variant="h5" sx={{mb: 0.5, fontWeight: 'bold', textAlign: 'center'}}>
+                                    <Typography variant="h5" component="h3" sx={{mb: 0.5, fontWeight: 'bold', textAlign: 'center'}}>
                                         ¿Eres autor?
                                     </Typography>
-                                    <Typography variant="h6" sx={{mb: 3, textAlign: 'center'}}>
+                                    <Typography variant="subtitle1" component="h4" sx={{mb: 3, textAlign: 'center'}}>
                                         Puedes solicitar la verificación rellenando un simple formulario.
                                     </Typography>
 

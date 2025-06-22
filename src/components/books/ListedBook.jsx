@@ -25,7 +25,7 @@ const ListedBook = ({book, onDelete}) => {
                     component="img"
                     height="100%"
                     image={book.book.cover}
-                    alt={book.book.title}
+                    alt={`Portada de ${book.book.title}`}
                     onClick={() => navigate(`/detalles/${book.book.id}`)}
                     sx={{
                         objectFit: 'cover',
@@ -42,7 +42,7 @@ const ListedBook = ({book, onDelete}) => {
                 display: 'flex',
                 flexDirection: 'column'
             }}>
-                <Typography variant="h6" sx={{
+                <Typography variant="h6" component="h3" sx={{
                     fontWeight: 'bold',
                     pr: 4
                 }}>

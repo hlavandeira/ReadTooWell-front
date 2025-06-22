@@ -67,7 +67,7 @@ export default function DynamicAppBar() {
                     <Toolbar>
                         <img
                             src="https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743519261/readtoowell/iconos/LogoImagen_blanco_r72r75.png"
-                            alt="Logo"
+                            alt="ReadTooWell Logo"
                             style={{height: 45, cursor: 'pointer'}}
                             onClick={() => navigate('/')}
                         />

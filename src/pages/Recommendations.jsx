@@ -105,7 +105,7 @@ const Recommendations = () => {
 
     return (
         <Box sx={{maxWidth: 1200, mx: 'auto', p: 3}}>
-            <Typography variant="h3" sx={{mb: 4, fontWeight: 'bold', textAlign: 'center', color: '#432818'}}>
+            <Typography variant="h3" component="h1" sx={{mb: 4, fontWeight: 'bold', textAlign: 'center', color: '#432818'}}>
                 Recomendaciones para ti
             </Typography>
 

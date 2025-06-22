@@ -148,7 +148,7 @@ const Home = () => {
                         alt="ReadTooWell Logo"
                         style={{height: '120px', marginBottom: theme.spacing(4)}}
                     />
-                    <Typography variant="h5" component="h2" sx={{fontStyle: 'italic', mb: 5}}>
+                    <Typography variant="h5" component="h1" sx={{fontStyle: 'italic', mb: 5}}>
                         Todo sobre tus libros, en un solo lugar
                     </Typography>
                     <Box sx={{'& > *:not(:last-child)': {mr: 2}}}>
@@ -212,6 +212,8 @@ const Home = () => {
                 {/* Barra de búsqueda */}
                 <TextField
                     fullWidth
+                    id="search-field"
+                    label="Buscar"
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
                     onKeyPress={(e) => {

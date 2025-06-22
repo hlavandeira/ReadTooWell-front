@@ -124,7 +124,7 @@ const NewListDialog = ({open, onClose, onListCreated, genres = []}) => {
                         />
 
                         {/* Selección de géneros */}
-                        <Typography variant="subtitle2" sx={{mb: 1, color: '#432818'}}>
+                        <Typography variant="subtitle2" component="h3" sx={{mb: 1, color: '#432818'}}>
                             Selecciona géneros (opcional):
                         </Typography>
 

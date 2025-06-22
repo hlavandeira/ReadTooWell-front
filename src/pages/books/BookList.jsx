@@ -195,7 +195,7 @@ const BookList = () => {
                     alignItems: 'center',
                     mb: 2
                 }}>
-                    <Typography variant="h4" sx={{
+                    <Typography variant="h4" component="h1" sx={{
                         fontWeight: 'bold',
                         color: '#432818'
                     }}>
@@ -244,7 +244,7 @@ const BookList = () => {
             </Box>
 
             {/* Lista de libros */}
-            <Typography variant="h5" sx={{
+            <Typography variant="h5" component="h2" sx={{
                 fontWeight: 'medium',
                 color: '#432818',
                 mt: 2

@@ -39,6 +39,8 @@ const SearchPage = () => {
     const itemsPerPage = 10;
     const currentPage = parseInt(searchParams.get('page')) || 1;
 
+    const [displayedSearchTerm, setDisplayedSearchTerm] = useState(searchParams.get('searchString') || '');
+
     const searchBooks = async () => {
         setIsLoading(true);
         try {
@@ -70,6 +72,8 @@ const SearchPage = () => {
 
             setBooks(response.data.content);
             setTotalPages(response.data.totalPages);
+
+            setDisplayedSearchTerm(searchInput);
         } catch (error) {
             console.error('Error searching books:', error);
         } finally {
@@ -151,6 +155,7 @@ const SearchPage = () => {
                 <TextField
                     fullWidth
                     value={searchInput}
+                    label="Buscar"
                     onChange={(e) => setSearchInput(e.target.value)}
                     placeholder="Buscar libros, autores, colecciones..."
                     InputProps={{
@@ -252,6 +257,7 @@ const SearchPage = () => {
                                         handleFilterChange('maxPages', newValue[1]);
                                     }}
                                     valueLabelDisplay="auto"
+                                    aria-label="Filtro por número de páginas"
                                     min={0}
                                     max={1600}
                                     step={100}
@@ -336,6 +342,7 @@ const SearchPage = () => {
                 </Box>
             ) : books.length > 0 ? (
                 <BookGrid
+                    titulo={displayedSearchTerm ? `Resultados para "${displayedSearchTerm}"` : "Resultados de búsqueda"}
                     libros={books}
                     page={currentPage}
                     totalPages={totalPages}

@@ -110,6 +110,7 @@ const SearchUsers = () => {
                 <TextField
                     fullWidth
                     value={searchInput}
+                    label="Buscar"
                     onChange={(e) => setSearchInput(e.target.value)}
                     placeholder="Buscar usuarios por nombre o email..."
                     InputProps={{
@@ -147,7 +148,7 @@ const SearchUsers = () => {
                         }}
                     >
                         {users.map((user) => (
-                            <Grid item key={user.id}>
+                            <Grid key={user.id}>
                                 <UserCard user={user}/>
                             </Grid>
                         ))}
