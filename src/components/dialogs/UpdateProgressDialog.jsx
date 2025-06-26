@@ -1,3 +1,4 @@
+import React from 'react';
 import {useState, useEffect} from 'react';
 import axios from 'axios';
 import {
@@ -80,12 +81,12 @@ const UpdateProgressDialog = ({open, onClose, book, onProgressUpdated}) => {
                                 <FormControlLabel
                                     value="paginas"
                                     control={<Radio/>}
-                                    label="Páginas leídas"
+                                    label="Páginas"
                                 />
                                 <FormControlLabel
                                     value="porcentaje"
                                     control={<Radio/>}
-                                    label="Porcentaje completado"
+                                    label="Porcentaje"
                                 />
                             </RadioGroup>
 

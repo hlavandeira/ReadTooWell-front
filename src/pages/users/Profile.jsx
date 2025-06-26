@@ -1,3 +1,4 @@
+import React from 'react';
 import {useState, useEffect} from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 import axios from 'axios';
@@ -9,7 +10,7 @@ import {
     Paper,
     CircularProgress,
     Grid,
-    Button
+    Button, Tooltip
 } from '@mui/material';
 import {useAuth} from '../../context/AuthContext.jsx';
 import GenreButton from '../../components/GenreButton.jsx';
@@ -21,6 +22,7 @@ import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import EditProfileDialog from '../../components/dialogs/EditProfileDialog.jsx';
 import FavoriteGenresDialog from '../../components/dialogs/FavoriteGenresDialog.jsx';
 import FavoriteBooksDialog from '../../components/dialogs/FavoriteBooksDialog.jsx';
+import VerifiedIcon from "@mui/icons-material/Verified";
 
 const Profile = () => {
     const {id} = useParams();
@@ -290,9 +292,16 @@ const Profile = () => {
                         }}
                     />
 
-                    <Typography variant="h3" component="h1" sx={{fontWeight: 'bold', mb: 0.5}}>
-                        {profile.profileName}
-                    </Typography>
+                    <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
+                        <Typography variant="h3" component="h1" sx={{fontWeight: 'bold', mb: 0.5}}>
+                            {profile.profileName}
+                        </Typography>
+                        {profile?.role === 1 && (
+                            <Tooltip title="Autor verificado" arrow>
+                                <VerifiedIcon fontSize="small" sx={{color: '#8B0000'}}/>
+                            </Tooltip>
+                        )}
+                    </Box>
 
                     <Typography variant="h5" component="h2" color="text.secondary" sx={{mb: 2}}>
                         @{profile.username}
@@ -585,7 +594,8 @@ const Profile = () => {
                                 </Typography>
                             ) : (
                                 <>
-                                    <Typography variant="h5" component="h3" sx={{mb: 0.5, fontWeight: 'bold', textAlign: 'center'}}>
+                                    <Typography variant="h5" component="h3"
+                                                sx={{mb: 0.5, fontWeight: 'bold', textAlign: 'center'}}>
                                         ¿Eres autor?
                                     </Typography>
                                     <Typography variant="subtitle1" component="h4" sx={{mb: 3, textAlign: 'center'}}>
