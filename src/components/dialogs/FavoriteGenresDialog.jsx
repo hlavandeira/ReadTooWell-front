@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import {useAuth} from '../../context/AuthContext.jsx';
+import API_URL from '../../apiUrl';
 
 const FavoriteGenresDialog = ({open, onClose, currentFavoriteGenres}) => {
     const {token} = useAuth();
@@ -24,7 +25,7 @@ const FavoriteGenresDialog = ({open, onClose, currentFavoriteGenres}) => {
     useEffect(() => {
         const fetchGenres = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/libros/generos', {
+                const response = await axios.get(`${API_URL}/libros/generos`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
                 setGenres(response.data);
@@ -62,7 +63,7 @@ const FavoriteGenresDialog = ({open, onClose, currentFavoriteGenres}) => {
             setIsSubmitting(true);
 
             await axios.put(
-                'http://localhost:8080/usuarios/generos-favoritos',
+                `${API_URL}/usuarios/generos-favoritos`,
                 {},
                 {
                     params: {genreIds: Array.from(selectedGenreIds).join(',')},

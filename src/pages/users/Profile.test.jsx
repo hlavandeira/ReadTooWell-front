@@ -12,6 +12,11 @@ jest.mock('react-router-dom', () => ({
     useParams: jest.fn(),
 }));
 
+jest.mock('../../apiUrl', () => ({
+    __esModule: true,
+    default: 'http://localhost:8080'
+}));
+
 const mockToken = 'fake-token';
 const mockUpdateAuth = jest.fn();
 const mockUpdateProfileImage = jest.fn();
@@ -31,7 +36,9 @@ describe('Perfil de usuario', () => {
         localStorage.setItem('token', mockToken);
 
         axios.get.mockImplementation((url) => {
-            if (url === `http://localhost:8080/usuarios/1`) {
+            if (url.includes('/usuarios/1') && !url.includes('seguidores')
+                && !url.includes('seguidos') && !url.includes('favoritos')) {
+
                 return Promise.resolve({ data: mockProfile });
             }
             if (url.includes('/seguidores') || url.includes('/seguidos') || url.includes('/favoritos')) {

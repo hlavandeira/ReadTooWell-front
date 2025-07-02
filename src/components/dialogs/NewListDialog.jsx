@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import {useAuth} from '../../context/AuthContext.jsx';
+import API_URL from '../../apiUrl';
 
 const NewListDialog = ({open, onClose, onListCreated, genres = []}) => {
     const {token} = useAuth();
@@ -40,7 +41,7 @@ const NewListDialog = ({open, onClose, onListCreated, genres = []}) => {
 
             setIsSubmitting(true);
 
-            const response = await axios.post('http://localhost:8080/listas',
+            const response = await axios.post(`${API_URL}/listas`,
                 {
                     name: newListName,
                     description: newListDescription

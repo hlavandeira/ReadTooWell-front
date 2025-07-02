@@ -10,6 +10,7 @@ import {
     Paper,
     CircularProgress
 } from '@mui/material';
+import API_URL from '../../apiUrl';
 
 const Suggestion = () => {
     const {token} = useAuth();
@@ -44,7 +45,7 @@ const Suggestion = () => {
         setLoading(true);
 
         try {
-            await axios.post('http://localhost:8080/sugerencias/enviar-sugerencia', formData, {
+            await axios.post(`${API_URL}/sugerencias/enviar-sugerencia`, formData, {
                 headers: {Authorization: `Bearer ${token}`}
             });
             navigate('/catalogo');

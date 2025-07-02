@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
+import API_URL from '../../apiUrl';
 
 const AuthorRequest = () => {
     const {id, token} = useAuth();
@@ -76,7 +77,7 @@ const AuthorRequest = () => {
         setError('');
 
         try {
-            await axios.post('http://localhost:8080/solicitud-autor', formData, {
+            await axios.post(`${API_URL}/solicitud-autor`, formData, {
                 headers: {Authorization: `Bearer ${token}`}
             });
 

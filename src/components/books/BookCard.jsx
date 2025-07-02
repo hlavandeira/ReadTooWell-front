@@ -3,6 +3,7 @@ import {Card, CardMedia, CardContent, Typography, Box, Button} from '@mui/materi
 import {useNavigate} from 'react-router-dom';
 import {useAuth} from "../../context/AuthContext.jsx";
 import axios from 'axios';
+import API_URL from '../../apiUrl';
 
 const BookCard = ({libro, isAdmin = false, onDelete, showDeleteButton = true}) => {
     const {token} = useAuth();
@@ -11,7 +12,7 @@ const BookCard = ({libro, isAdmin = false, onDelete, showDeleteButton = true}) =
     const handleDelete = async (e) => {
         e.stopPropagation();
         try {
-            await axios.delete(`http://localhost:8080/libros/${libro.id}`, {
+            await axios.delete(`${API_URL}/libros/${libro.id}`, {
                 headers: {Authorization: `Bearer ${token}`}
             });
 

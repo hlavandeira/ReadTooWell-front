@@ -14,6 +14,7 @@ import {
 import GoalCard from '../components/GoalCard';
 import AddGoalDialog from '../components/dialogs/AddGoalDialog';
 import AddIcon from "@mui/icons-material/Add";
+import API_URL from '../apiUrl';
 
 const Goal = () => {
     const {token} = useAuth();
@@ -28,17 +29,21 @@ const Goal = () => {
     };
 
     const handleGoalCreated = (newGoal) => {
-        setInProgressGoals(prev => [...prev, newGoal]);
+        if (newGoal.completed) {
+            setCompletedGoals(prev => [...prev, newGoal]);
+        } else {
+            setInProgressGoals(prev => [...prev, newGoal]);
+        }
     };
 
     useEffect(() => {
         const fetchGoals = async () => {
             try {
                 const [inProgressRes, completedRes] = await Promise.all([
-                    axios.get('http://localhost:8080/objetivos/en-curso', {
+                    axios.get(`${API_URL}/objetivos/en-curso`, {
                         headers: {Authorization: `Bearer ${token}`}
                     }),
-                    axios.get('http://localhost:8080/objetivos/terminados', {
+                    axios.get(`${API_URL}/objetivos/terminados`, {
                         headers: {Authorization: `Bearer ${token}`}
                     })
                 ]);

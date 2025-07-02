@@ -14,6 +14,11 @@ jest.mock('react-router-dom', () => ({
     useNavigate: () => mockedNavigate,
 }));
 
+jest.mock('../../apiUrl', () => ({
+    __esModule: true,
+    default: 'http://localhost:8080'
+}));
+
 describe('Página de inicio de sesión', () => {
     it('permite iniciar sesión con credenciales correctos', async () => {
         const mockToken = 'fake-token';

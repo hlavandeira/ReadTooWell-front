@@ -17,6 +17,7 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import BookGrid from '../../components/books/BookGrid.jsx';
 import GenreButton from '../../components/GenreButton.jsx';
 import axios from "axios";
+import API_URL from '../../apiUrl';
 
 const SearchPage = () => {
     const {token} = useAuth();
@@ -63,7 +64,7 @@ const SearchPage = () => {
                 page: currentPage
             });
 
-            const response = await axios.get(`http://localhost:8080/libros/buscar`, {
+            const response = await axios.get(`${API_URL}/libros/buscar`, {
                 params,
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -122,7 +123,7 @@ const SearchPage = () => {
     useEffect(() => {
         const fetchGenres = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/libros/generos', {
+                const response = await axios.get(`${API_URL}/libros/generos`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }

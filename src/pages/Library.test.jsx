@@ -14,6 +14,11 @@ jest.mock('react-router-dom', () => ({
     useSearchParams: jest.fn(),
 }));
 
+jest.mock('../apiUrl', () => ({
+    __esModule: true,
+    default: 'http://localhost:8080'
+}));
+
 const mockToken = 'fake-token';
 const mockUpdateAuth = jest.fn();
 const mockNavigate = jest.fn();
@@ -38,7 +43,7 @@ describe('Biblioteca personal', () => {
         useSearchParams.mockReturnValue([new URLSearchParams(), jest.fn()]);
 
         axios.get.mockImplementation((url) => {
-            if (url === 'http://localhost:8080/biblioteca') {
+            if (url.includes('/biblioteca')) {
                 return Promise.resolve({
                     data: {
                         content: [mockCurrentlyReadingBook],
@@ -46,12 +51,12 @@ describe('Biblioteca personal', () => {
                     }
                 });
             }
-            if (url === 'http://localhost:8080/listas') {
+            if (url.includes('/listas')) {
                 return Promise.resolve({
                     data: { content: [], totalPages: 1 }
                 });
             }
-            if (url === 'http://localhost:8080/libros/generos') {
+            if (url.includes('/libros/generos')) {
                 return Promise.resolve({ data: [] });
             }
             return Promise.reject(new Error(`Unmocked URL: ${url}`));
@@ -106,7 +111,7 @@ describe('Biblioteca personal', () => {
 
         await waitFor(() => {
             expect(axios.put).toHaveBeenCalledWith(
-                `http://localhost:8080/biblioteca/1/progreso`,
+                'http://localhost:8080/biblioteca/1/progreso',
                 null,
                 {
                     params: {
@@ -147,7 +152,7 @@ describe('Biblioteca personal', () => {
         fireEvent.change(progressInput, { target: { value: '400' } });
 
         axios.get.mockImplementation((url) => {
-            if (url === 'http://localhost:8080/biblioteca') {
+            if (url.includes('/biblioteca')) {
                 return Promise.resolve({
                     data: {
                         content: [],
@@ -165,7 +170,7 @@ describe('Biblioteca personal', () => {
         });
 
         expect(axios.put).toHaveBeenCalledWith(
-            `http://localhost:8080/biblioteca/1/progreso`,
+            'http://localhost:8080/biblioteca/1/progreso',
             null,
             {
                 params: {

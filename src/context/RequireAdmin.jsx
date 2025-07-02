@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import {Navigate} from "react-router-dom";
 import axios from "axios";
 import {Box, CircularProgress} from "@mui/material";
+import API_URL from '../apiUrl';
 
 const RequireAdmin = ({children}) => {
     const token = localStorage.getItem("token");
@@ -15,7 +16,7 @@ const RequireAdmin = ({children}) => {
 
         const verifyAdmin = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/usuarios/verificar-admin', {
+                const response = await axios.get(`${API_URL}/usuarios/verificar-admin`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
                 setIsAdmin(response.data);

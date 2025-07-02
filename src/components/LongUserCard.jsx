@@ -15,6 +15,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import {useState, useEffect} from 'react';
 import axios from 'axios';
 import {useAuth} from '../context/AuthContext';
+import API_URL from '../apiUrl';
 
 const LongUserCard = ({user}) => {
     const [counts, setCounts] = useState({
@@ -28,10 +29,10 @@ const LongUserCard = ({user}) => {
         const fetchCounts = async () => {
             try {
                 const [followersRes, followingRes] = await Promise.all([
-                    axios.get(`http://localhost:8080/usuarios/${user.id}/seguidores`, {
+                    axios.get(`${API_URL}/usuarios/${user.id}/seguidores`, {
                         headers: {Authorization: `Bearer ${token}`}
                     }),
-                    axios.get(`http://localhost:8080/usuarios/${user.id}/seguidos`, {
+                    axios.get(`${API_URL}/usuarios/${user.id}/seguidos`, {
                         headers: {Authorization: `Bearer ${token}`}
                     })
                 ]);

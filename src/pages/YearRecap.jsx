@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import RatedBookCard from '../components/books/RatedBookCard.jsx';
 import GenreButton from "../components/GenreButton.jsx";
+import API_URL from '../apiUrl';
 
 const YearRecap = () => {
     const {name, profilePic, id} = useAuth();
@@ -24,12 +25,12 @@ const YearRecap = () => {
         const fetchYearRecap = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get('http://localhost:8080/biblioteca/resumen-anual', {
+                const response = await axios.get(`${API_URL}/biblioteca/resumen-anual`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
                 setYearRecap(response.data);
 
-                const responseUser = await axios.get(`http://localhost:8080/usuarios/${id}`, {
+                const responseUser = await axios.get(`${API_URL}/usuarios/${id}`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
                 setUserBio(responseUser.data.biography || '');

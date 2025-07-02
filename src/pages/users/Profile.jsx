@@ -23,6 +23,7 @@ import EditProfileDialog from '../../components/dialogs/EditProfileDialog.jsx';
 import FavoriteGenresDialog from '../../components/dialogs/FavoriteGenresDialog.jsx';
 import FavoriteBooksDialog from '../../components/dialogs/FavoriteBooksDialog.jsx';
 import VerifiedIcon from "@mui/icons-material/Verified";
+import API_URL from '../../apiUrl';
 
 const Profile = () => {
     const {id} = useParams();
@@ -58,16 +59,16 @@ const Profile = () => {
 
                 const [profileRes, followersRes, followingRes, favoritesRes] =
                     await Promise.all([
-                        axios.get(`http://localhost:8080/usuarios/${id}`, {
+                        axios.get(`${API_URL}/usuarios/${id}`, {
                             headers: {Authorization: `Bearer ${token}`}
                         }),
-                        axios.get(`http://localhost:8080/usuarios/${id}/seguidores`, {
+                        axios.get(`${API_URL}/usuarios/${id}/seguidores`, {
                             headers: {Authorization: `Bearer ${token}`}
                         }),
-                        axios.get(`http://localhost:8080/usuarios/${id}/seguidos`, {
+                        axios.get(`${API_URL}/usuarios/${id}/seguidos`, {
                             headers: {Authorization: `Bearer ${token}`}
                         }),
-                        axios.get(`http://localhost:8080/usuarios/${id}/favoritos`, {
+                        axios.get(`${API_URL}/usuarios/${id}/favoritos`, {
                             headers: {Authorization: `Bearer ${token}`}
                         })
                     ]);
@@ -105,7 +106,7 @@ const Profile = () => {
         try {
             const token = localStorage.getItem('token');
             const response = await axios.put(
-                'http://localhost:8080/usuarios/perfil',
+                `${API_URL}/usuarios/perfil`,
                 {
                     ...updatedData,
                     biography: updatedData.biography.replace(/\n/g, '\\n')
@@ -147,7 +148,7 @@ const Profile = () => {
 
             if (isFollowing) {
                 // Dejar de seguir
-                await axios.delete(`http://localhost:8080/usuarios/dejar-seguir/${id}`, {
+                await axios.delete(`${API_URL}/usuarios/dejar-seguir/${id}`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
 
@@ -155,7 +156,7 @@ const Profile = () => {
                 setFollowers(prev => prev.filter(follower => follower.id !== parseInt(currentUserId)));
             } else {
                 // Seguir
-                await axios.post(`http://localhost:8080/usuarios/seguir/${id}`, {}, {
+                await axios.post(`${API_URL}/usuarios/seguir/${id}`, {}, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
 
@@ -180,7 +181,7 @@ const Profile = () => {
 
             try {
                 setBooksLoading(true);
-                const response = await axios.get('http://localhost:8080/libros/libros-autor', {
+                const response = await axios.get(`${API_URL}/libros/libros-autor`, {
                     params: {
                         authorName: profile.profileName,
                         page: 0,
@@ -208,7 +209,7 @@ const Profile = () => {
                 try {
                     const token = localStorage.getItem('token');
 
-                    const favoritesRes = await axios.get(`http://localhost:8080/usuarios/${id}/favoritos`, {
+                    const favoritesRes = await axios.get(`${API_URL}/usuarios/${id}/favoritos`, {
                         headers: {Authorization: `Bearer ${token}`}
                     });
 
@@ -229,7 +230,7 @@ const Profile = () => {
                 try {
                     const token = localStorage.getItem('token');
 
-                    const favoritesRes = await axios.get(`http://localhost:8080/usuarios/${id}/favoritos`, {
+                    const favoritesRes = await axios.get(`${API_URL}/usuarios/${id}/favoritos`, {
                         headers: {Authorization: `Bearer ${token}`}
                     });
 
@@ -249,7 +250,7 @@ const Profile = () => {
                 try {
                     const token = localStorage.getItem('token');
                     const response = await axios.get(
-                        'http://localhost:8080/solicitud-autor/comprobar-pendiente',
+                        `${API_URL}/solicitud-autor/comprobar-pendiente`,
                         {headers: {Authorization: `Bearer ${token}`}}
                     );
                     setHasPendingRequest(response.data);
@@ -291,16 +292,16 @@ const Profile = () => {
                             mb: 2
                         }}
                     />
-
-                    <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
-                        <Typography variant="h3" component="h1" sx={{fontWeight: 'bold', mb: 0.5}}>
-                            {profile.profileName}
-                        </Typography>
+                    <Typography variant="h3" component="h1" sx={{fontWeight: 'bold', mb: 0.5}}>
+                        {profile.profileName}
                         {profile?.role === 1 && (
-                            <Tooltip title="Autor verificado" arrow>
-                                <VerifiedIcon fontSize="small" sx={{color: '#8B0000'}}/>
-                            </Tooltip>
-                        )}
+                        <Tooltip title="Autor verificado" arrow>
+                            <VerifiedIcon fontSize="large" sx={{color: '#8B0000', ml: 1}}/>
+                        </Tooltip>
+                    )}
+                    </Typography>
+
+                    <Box sx={{display: 'flex', textAlign: 'center', gap: 1}}>
                     </Box>
 
                     <Typography variant="h5" component="h2" color="text.secondary" sx={{mb: 2}}>

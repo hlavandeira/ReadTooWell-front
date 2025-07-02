@@ -15,6 +15,7 @@ import {
     Typography
 } from '@mui/material';
 import {useAuth} from '../../context/AuthContext.jsx';
+import API_URL from '../../apiUrl';
 
 const AddGoalDialog = ({open, onClose, onGoalCreated}) => {
     const {token} = useAuth();
@@ -43,7 +44,7 @@ const AddGoalDialog = ({open, onClose, onGoalCreated}) => {
                 amount: amount
             };
 
-            const response = await axios.post('http://localhost:8080/objetivos', goalData, {
+            const response = await axios.post(`${API_URL}/objetivos`, goalData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json'

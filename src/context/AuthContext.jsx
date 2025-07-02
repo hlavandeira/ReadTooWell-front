@@ -1,5 +1,6 @@
 import {createContext, useState, useContext, useEffect} from 'react';
 import axios from 'axios';
+import API_URL from '../apiUrl';
 
 export const AuthContext = createContext();
 
@@ -55,7 +56,7 @@ export const AuthProvider = ({children}) => {
             if (!authState.token) return;
 
             try {
-                const response = await axios.get("http://localhost:8080/auth/validar", {
+                const response = await axios.get(`${API_URL}/auth/validar`, {
                     headers: {
                         Authorization: 'Bearer ' + authState.token,
                     },

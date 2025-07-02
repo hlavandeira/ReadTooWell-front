@@ -14,6 +14,7 @@ import {
     Button
 } from '@mui/material';
 import {useAuth} from '../../context/AuthContext.jsx';
+import API_URL from '../../apiUrl';
 
 const UpdateProgressDialog = ({open, onClose, book, onProgressUpdated}) => {
     const {token} = useAuth();
@@ -34,7 +35,7 @@ const UpdateProgressDialog = ({open, onClose, book, onProgressUpdated}) => {
 
             setIsSubmitting(true);
 
-            await axios.put(`http://localhost:8080/biblioteca/${book.id.bookId}/progreso`, null, {
+            await axios.put(`${API_URL}/biblioteca/${book.id.bookId}/progreso`, null, {
                 params: {
                     tipoProgreso: progressType,
                     progreso: progressValue

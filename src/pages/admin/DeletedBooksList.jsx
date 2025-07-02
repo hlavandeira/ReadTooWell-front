@@ -11,6 +11,7 @@ import {
     Button
 } from '@mui/material';
 import BookCard from '../../components/books/BookCard.jsx';
+import API_URL from '../../apiUrl';
 
 const DeletedBooksList = () => {
     const {token} = useAuth();
@@ -28,7 +29,7 @@ const DeletedBooksList = () => {
         try {
             setLoading(true);
 
-            const response = await axios.get('http://localhost:8080/libros/desactivados', {
+            const response = await axios.get(`${API_URL}/libros/desactivados`, {
                 params: {
                     page,
                     size: 10
@@ -61,7 +62,7 @@ const DeletedBooksList = () => {
     const handleRestoreBook = async (bookId) => {
         try {
             await axios.put(
-                `http://localhost:8080/libros/reactivar/${bookId}`, {}, {
+                `${API_URL}/libros/reactivar/${bookId}`, {}, {
                     headers: {Authorization: `Bearer ${token}`}
                 }
             );
@@ -84,7 +85,7 @@ const DeletedBooksList = () => {
         }
         const verifyAdmin = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/usuarios/verificar-admin', {
+                const response = await axios.get(`${API_URL}/usuarios/verificar-admin`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
 

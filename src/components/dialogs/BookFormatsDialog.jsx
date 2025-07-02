@@ -13,6 +13,7 @@ import {
 import {useState} from 'react';
 import axios from 'axios';
 import {useAuth} from '../../context/AuthContext.jsx';
+import API_URL from '../../apiUrl';
 
 const BookFormatsDialog = ({open, onClose, bookId, selectedFormats, setSelectedFormats, onSave}) => {
     const {token} = useAuth();
@@ -25,7 +26,7 @@ const BookFormatsDialog = ({open, onClose, bookId, selectedFormats, setSelectedF
 
             if (isChecked) {
                 const response = await axios.post(
-                    `http://localhost:8080/biblioteca/${bookId}/formatos/${idFormat}`,
+                    `${API_URL}/biblioteca/${bookId}/formatos/${idFormat}`,
                     {},
                     {headers: {Authorization: `Bearer ${token}`}}
                 );
@@ -34,7 +35,7 @@ const BookFormatsDialog = ({open, onClose, bookId, selectedFormats, setSelectedF
                 }
             } else {
                 const response = await axios.delete(
-                    `http://localhost:8080/biblioteca/${bookId}/formatos/${idFormat}`,
+                    `${API_URL}/biblioteca/${bookId}/formatos/${idFormat}`,
                     {headers: {Authorization: `Bearer ${token}`}}
                 );
                 if (response.data && Array.isArray(response.data)) {

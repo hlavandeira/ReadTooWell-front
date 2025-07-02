@@ -10,6 +10,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import NewListDialog from '../components/dialogs/NewListDialog.jsx';
 import UpdateProgressDialog from '../components/dialogs/UpdateProgressDialog.jsx';
+import API_URL from '../apiUrl';
 
 const Library = () => {
     const {token} = useAuth();
@@ -116,15 +117,15 @@ const Library = () => {
         const fetchInitialData = async () => {
             try {
                 const [readingRes, listsRes, genresRes] = await Promise.all([
-                    axios.get('http://localhost:8080/biblioteca', {
+                    axios.get(`${API_URL}/biblioteca`, {
                         params: {page: page - 1, size: itemsPerPage, status: 1},
                         headers: {Authorization: `Bearer ${token}`}
                     }),
-                    axios.get('http://localhost:8080/listas', {
+                    axios.get(`${API_URL}/listas`, {
                         params: {page: 0, size: 10},
                         headers: {Authorization: `Bearer ${token}`}
                     }),
-                    axios.get('http://localhost:8080/libros/generos', {
+                    axios.get(`${API_URL}/libros/generos`, {
                         headers: {Authorization: `Bearer ${token}`}
                     })
                 ]);

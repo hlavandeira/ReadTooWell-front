@@ -4,6 +4,7 @@ import {Box, CircularProgress, Grid, Typography, Pagination} from '@mui/material
 import axios from 'axios';
 import AuthorCard from '../../components/AuthorCard.jsx';
 import {useAuth} from "../../context/AuthContext.jsx";
+import API_URL from '../../apiUrl';
 
 const Authors = () => {
     const {token} = useAuth();
@@ -18,7 +19,7 @@ const Authors = () => {
     const fetchAuthors = async () => {
         setIsLoading(true);
         try {
-            const response = await axios.get('http://localhost:8080/usuarios/autores', {
+            const response = await axios.get(`${API_URL}/usuarios/autores`, {
                 params: {
                     page: currentPage - 1,
                     size: itemsPerPage

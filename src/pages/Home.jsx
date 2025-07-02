@@ -14,6 +14,7 @@ import {useNavigate} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext.jsx';
 import {useState, useEffect} from 'react';
 import axios from "axios";
+import API_URL from '../apiUrl';
 
 const Home = () => {
     const {token, name, role} = useAuth();
@@ -33,7 +34,7 @@ const Home = () => {
         const verifyAdmin = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get('http://localhost:8080/usuarios/verificar-admin', {
+                const response = await axios.get(`${API_URL}/usuarios/verificar-admin`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
 

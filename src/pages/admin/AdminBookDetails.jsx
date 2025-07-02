@@ -6,6 +6,7 @@ import {
     Box, Typography, Button, CardMedia, CircularProgress, Paper, Divider, Grid, Rating, Chip
 } from '@mui/material';
 import GenreButton from '../../components/GenreButton.jsx';
+import API_URL from '../../apiUrl';
 
 const AdminBookDetails = () => {
     const {token} = useAuth();
@@ -18,7 +19,7 @@ const AdminBookDetails = () => {
     useEffect(() => {
         const fetchBookDetails = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/libros/${id}/detalles`, {
+                const response = await axios.get(`${API_URL}/libros/${id}/detalles`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
 
@@ -26,7 +27,7 @@ const AdminBookDetails = () => {
 
                 if (response.data.book.collectionId) {
                     const collectionResponse = await axios.get(
-                        `http://localhost:8080/libros/coleccion/${response.data.book.id}`, {
+                        `${API_URL}/libros/coleccion/${response.data.book.id}`, {
                             headers: {Authorization: `Bearer ${token}`}
                         }
                     );
@@ -44,7 +45,7 @@ const AdminBookDetails = () => {
 
     const handleDeleteBook = async () => {
         try {
-            await axios.delete(`http://localhost:8080/libros/${id}`, {
+            await axios.delete(`${API_URL}/libros/${id}`, {
                 headers: {Authorization: `Bearer ${token}`}
             });
 
@@ -62,7 +63,7 @@ const AdminBookDetails = () => {
 
     const handleRestoreBook = async () => {
         try {
-            await axios.put(`http://localhost:8080/libros/reactivar/${id}`, {}, {
+            await axios.put(`${API_URL}/libros/reactivar/${id}`, {}, {
                 headers: {Authorization: `Bearer ${token}`}
             });
 

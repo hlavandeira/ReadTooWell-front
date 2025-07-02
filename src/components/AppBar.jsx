@@ -21,6 +21,7 @@ import {
     LibraryBooks as LibrarianIcon
 } from '@mui/icons-material';
 import axios from "axios";
+import API_URL from '../apiUrl';
 
 export default function DynamicAppBar() {
     const {role, logout, profilePic, id, name, token} = useAuth();
@@ -36,7 +37,7 @@ export default function DynamicAppBar() {
 
         const verifyAdmin = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/usuarios/verificar-admin', {
+                const response = await axios.get(`${API_URL}/usuarios/verificar-admin`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
 

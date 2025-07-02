@@ -8,6 +8,11 @@ import '@testing-library/jest-dom';
 
 jest.mock('axios');
 
+jest.mock('../apiUrl', () => ({
+    __esModule: true,
+    default: 'http://localhost:8080'
+}));
+
 const mockToken = 'fake-token';
 const mockUpdateAuth = jest.fn();
 
@@ -26,12 +31,12 @@ describe('Objetivos de lectura', () => {
 
     beforeEach(() => {
         axios.get.mockImplementation((url) => {
-            if (url === 'http://localhost:8080/objetivos/en-curso') {
+            if (url.includes('/objetivos/en-curso')) {
                 return Promise.resolve({
                     data: [mockGoal]
                 });
             }
-            if (url === 'http://localhost:8080/objetivos/terminados') {
+            if (url.includes('/objetivos/terminados')) {
                 return Promise.resolve({ data: [] });
             }
             return Promise.reject(new Error(`Unmocked URL: ${url}`));
@@ -77,7 +82,7 @@ describe('Objetivos de lectura', () => {
         });
 
         axios.get.mockImplementation((url) => {
-            if (url === 'http://localhost:8080/objetivos/en-curso') {
+            if (url.includes('/objetivos/en-curso')) {
                 return Promise.resolve({
                     data: [
                         {
@@ -94,7 +99,7 @@ describe('Objetivos de lectura', () => {
                     ]
                 });
             }
-            if (url === 'http://localhost:8080/objetivos/terminados') {
+            if (url.includes('/objetivos/terminados')) {
                 return Promise.resolve({ data: [] });
             }
             return Promise.reject(new Error(`Unmocked URL: ${url}`));

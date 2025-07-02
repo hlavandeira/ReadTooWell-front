@@ -12,6 +12,11 @@ jest.mock('react-router-dom', () => ({
     useParams: jest.fn(),
 }));
 
+jest.mock('../../apiUrl', () => ({
+    __esModule: true,
+    default: 'http://localhost:8080'
+}));
+
 const mockToken = 'fake-token';
 const mockUpdateAuth = jest.fn();
 

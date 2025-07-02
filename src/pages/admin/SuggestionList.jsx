@@ -3,6 +3,7 @@ import {useAuth} from '../../context/AuthContext.jsx';
 import {Box, CircularProgress, List, Pagination, Paper, Tab, Tabs, Typography} from '@mui/material';
 import axios from 'axios';
 import SuggestionCard from '../../components/SuggestionCard.jsx';
+import API_URL from '../../apiUrl';
 
 const SuggestionList = () => {
     const {token} = useAuth();
@@ -16,7 +17,7 @@ const SuggestionList = () => {
         try {
             setLoading(true);
 
-            const response = await axios.get('http://localhost:8080/sugerencias/estado', {
+            const response = await axios.get(`${API_URL}/sugerencias/estado`, {
                 params: {
                     page,
                     size: 10,
@@ -43,7 +44,7 @@ const SuggestionList = () => {
             const token = localStorage.getItem('token');
 
             await axios.put(
-                `http://localhost:8080/sugerencias/${suggestionId}`, {},
+                `${API_URL}/sugerencias/${suggestionId}`, {},
                 {
                     params: {
                         newStatus: newStatus

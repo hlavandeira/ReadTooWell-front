@@ -3,6 +3,7 @@ import {Paper, Box, Typography, Chip, LinearProgress, IconButton, Stack} from '@
 import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 import {useAuth} from '../context/AuthContext.jsx';
+import API_URL from '../apiUrl';
 
 const GoalCard = ({goal, onDelete}) => {
     const {token} = useAuth();
@@ -48,7 +49,7 @@ const GoalCard = ({goal, onDelete}) => {
 
     const handleDelete = async () => {
         try {
-            await axios.delete(`http://localhost:8080/objetivos/${goal.id}`, {
+            await axios.delete(`${API_URL}/objetivos/${goal.id}`, {
                 headers: {Authorization: `Bearer ${token}`}
             });
             onDelete(goal.id);

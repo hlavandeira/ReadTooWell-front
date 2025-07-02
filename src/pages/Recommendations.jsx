@@ -4,6 +4,7 @@ import {Box, Typography, Button, CircularProgress, Grid, MenuItem, Select, FormC
 import axios from 'axios';
 import {useAuth} from "../context/AuthContext.jsx";
 import SmallBookCardRating from '../components/books/SmallBookCardRating';
+import API_URL from '../apiUrl';
 
 const Recommendations = () => {
     const {token} = useAuth();
@@ -25,19 +26,19 @@ const Recommendations = () => {
         const fetchRecommendations = async () => {
             try {
                 const [favoritesRes, genresRes, booksByReadBooksRes, generalRecommendationsRes, listsRes] = await Promise.all([
-                    axios.get('http://localhost:8080/recomendaciones/libros-favoritos', {
+                    axios.get(`${API_URL}/recomendaciones/libros-favoritos`, {
                         headers: {Authorization: `Bearer ${token}`}
                     }),
-                    axios.get('http://localhost:8080/recomendaciones/generos-favoritos', {
+                    axios.get(`${API_URL}/recomendaciones/generos-favoritos`, {
                         headers: {Authorization: `Bearer ${token}`}
                     }),
-                    axios.get('http://localhost:8080/recomendaciones/libros-leidos', {
+                    axios.get(`${API_URL}/recomendaciones/libros-leidos`, {
                         headers: {Authorization: `Bearer ${token}`}
                     }),
-                    axios.get('http://localhost:8080/recomendaciones/catalogo', {
+                    axios.get(`${API_URL}/recomendaciones/catalogo`, {
                         headers: {Authorization: `Bearer ${token}`}
                     }),
-                    axios.get('http://localhost:8080/listas/todas-no-vacias', {
+                    axios.get(`${API_URL}/listas/todas-no-vacias`, {
                         headers: {Authorization: `Bearer ${token}`}
                     })
                 ]);
@@ -77,7 +78,7 @@ const Recommendations = () => {
         setLoadingLists(true);
 
         try {
-            const response = await axios.get(`http://localhost:8080/recomendaciones/lista/${listId}`, {
+            const response = await axios.get(`${API_URL}/recomendaciones/lista/${listId}`, {
                 headers: {Authorization: `Bearer ${token}`}
             });
             setListRecommendations(response.data);

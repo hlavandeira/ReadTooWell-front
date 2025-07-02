@@ -20,6 +20,7 @@ import {
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
+import API_URL from '../../apiUrl';
 
 const EditBook = () => {
     const {token} = useAuth();
@@ -62,7 +63,7 @@ const EditBook = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const bookResponse = await axios.get(`http://localhost:8080/libros/${id}/detalles`, {
+                const bookResponse = await axios.get(`${API_URL}/libros/${id}/detalles`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
 
@@ -83,12 +84,12 @@ const EditBook = () => {
                 setCoverPreview(bookDetails.book.cover);
                 setSelectedGenres(bookDetails.book.genres?.map(g => g.id) || []);
 
-                const genresResponse = await axios.get('http://localhost:8080/libros/generos', {
+                const genresResponse = await axios.get(`${API_URL}/libros/generos`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
                 setGenres(genresResponse.data);
 
-                const collectionsResponse = await axios.get('http://localhost:8080/libros/colecciones', {
+                const collectionsResponse = await axios.get(`${API_URL}/libros/colecciones`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
                 setCollections(collectionsResponse.data);
@@ -202,7 +203,7 @@ const EditBook = () => {
         try {
             setCollectionError('');
             const response = await axios.post(
-                'http://localhost:8080/libros/colecciones',
+                `${API_URL}/libros/colecciones`,
                 {name},
                 {headers: {Authorization: `Bearer ${token}`}}
             );
@@ -240,7 +241,7 @@ const EditBook = () => {
             };
 
             const response = await axios.put(
-                `http://localhost:8080/libros/${id}`,
+                `${API_URL}/libros/${id}`,
                 updatedBook,
                 {
                     headers: {Authorization: `Bearer ${token}`},
