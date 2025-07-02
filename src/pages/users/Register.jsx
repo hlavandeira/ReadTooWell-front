@@ -12,6 +12,7 @@ import {
 import {Link} from 'react-router-dom';
 import ErrorIcon from '@mui/icons-material/Error';
 import {useAuth} from "../../context/AuthContext.jsx";
+import API_URL from '../../apiUrl';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -31,7 +32,7 @@ const Register = () => {
         e.preventDefault();
 
         try {
-            const response = await axios.post("http://localhost:8080/auth/register", {
+            const response = await axios.post(`${API_URL}/auth/register`, {
                 username,
                 email,
                 password,

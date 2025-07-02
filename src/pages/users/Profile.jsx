@@ -1,3 +1,4 @@
+import React from 'react';
 import {useState, useEffect} from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 import axios from 'axios';
@@ -9,7 +10,7 @@ import {
     Paper,
     CircularProgress,
     Grid,
-    Button
+    Button, Tooltip
 } from '@mui/material';
 import {useAuth} from '../../context/AuthContext.jsx';
 import GenreButton from '../../components/GenreButton.jsx';
@@ -21,6 +22,8 @@ import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import EditProfileDialog from '../../components/dialogs/EditProfileDialog.jsx';
 import FavoriteGenresDialog from '../../components/dialogs/FavoriteGenresDialog.jsx';
 import FavoriteBooksDialog from '../../components/dialogs/FavoriteBooksDialog.jsx';
+import VerifiedIcon from "@mui/icons-material/Verified";
+import API_URL from '../../apiUrl';
 
 const Profile = () => {
     const {id} = useParams();
@@ -56,16 +59,16 @@ const Profile = () => {
 
                 const [profileRes, followersRes, followingRes, favoritesRes] =
                     await Promise.all([
-                        axios.get(`http://localhost:8080/usuarios/${id}`, {
+                        axios.get(`${API_URL}/usuarios/${id}`, {
                             headers: {Authorization: `Bearer ${token}`}
                         }),
-                        axios.get(`http://localhost:8080/usuarios/${id}/seguidores`, {
+                        axios.get(`${API_URL}/usuarios/${id}/seguidores`, {
                             headers: {Authorization: `Bearer ${token}`}
                         }),
-                        axios.get(`http://localhost:8080/usuarios/${id}/seguidos`, {
+                        axios.get(`${API_URL}/usuarios/${id}/seguidos`, {
                             headers: {Authorization: `Bearer ${token}`}
                         }),
-                        axios.get(`http://localhost:8080/usuarios/${id}/favoritos`, {
+                        axios.get(`${API_URL}/usuarios/${id}/favoritos`, {
                             headers: {Authorization: `Bearer ${token}`}
                         })
                     ]);
@@ -103,7 +106,7 @@ const Profile = () => {
         try {
             const token = localStorage.getItem('token');
             const response = await axios.put(
-                'http://localhost:8080/usuarios/perfil',
+                `${API_URL}/usuarios/perfil`,
                 {
                     ...updatedData,
                     biography: updatedData.biography.replace(/\n/g, '\\n')
@@ -145,7 +148,7 @@ const Profile = () => {
 
             if (isFollowing) {
                 // Dejar de seguir
-                await axios.delete(`http://localhost:8080/usuarios/dejar-seguir/${id}`, {
+                await axios.delete(`${API_URL}/usuarios/dejar-seguir/${id}`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
 
@@ -153,7 +156,7 @@ const Profile = () => {
                 setFollowers(prev => prev.filter(follower => follower.id !== parseInt(currentUserId)));
             } else {
                 // Seguir
-                await axios.post(`http://localhost:8080/usuarios/seguir/${id}`, {}, {
+                await axios.post(`${API_URL}/usuarios/seguir/${id}`, {}, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
 
@@ -178,7 +181,7 @@ const Profile = () => {
 
             try {
                 setBooksLoading(true);
-                const response = await axios.get('http://localhost:8080/libros/libros-autor', {
+                const response = await axios.get(`${API_URL}/libros/libros-autor`, {
                     params: {
                         authorName: profile.profileName,
                         page: 0,
@@ -206,7 +209,7 @@ const Profile = () => {
                 try {
                     const token = localStorage.getItem('token');
 
-                    const favoritesRes = await axios.get(`http://localhost:8080/usuarios/${id}/favoritos`, {
+                    const favoritesRes = await axios.get(`${API_URL}/usuarios/${id}/favoritos`, {
                         headers: {Authorization: `Bearer ${token}`}
                     });
 
@@ -227,7 +230,7 @@ const Profile = () => {
                 try {
                     const token = localStorage.getItem('token');
 
-                    const favoritesRes = await axios.get(`http://localhost:8080/usuarios/${id}/favoritos`, {
+                    const favoritesRes = await axios.get(`${API_URL}/usuarios/${id}/favoritos`, {
                         headers: {Authorization: `Bearer ${token}`}
                     });
 
@@ -247,7 +250,7 @@ const Profile = () => {
                 try {
                     const token = localStorage.getItem('token');
                     const response = await axios.get(
-                        'http://localhost:8080/solicitud-autor/comprobar-pendiente',
+                        `${API_URL}/solicitud-autor/comprobar-pendiente`,
                         {headers: {Authorization: `Bearer ${token}`}}
                     );
                     setHasPendingRequest(response.data);
@@ -275,7 +278,6 @@ const Profile = () => {
 
     return (
         <>
-
             <Box sx={{maxWidth: 1200, mx: 'auto', p: 3}}>
                 {/* Datos del usuario */}
                 <Box sx={{textAlign: 'center', mb: 4}}>
@@ -290,26 +292,33 @@ const Profile = () => {
                             mb: 2
                         }}
                     />
-
-                    <Typography variant="h3" sx={{fontWeight: 'bold', mb: 0.5}}>
+                    <Typography variant="h3" component="h1" sx={{fontWeight: 'bold', mb: 0.5}}>
                         {profile.profileName}
+                        {profile?.role === 1 && (
+                        <Tooltip title="Autor verificado" arrow>
+                            <VerifiedIcon fontSize="large" sx={{color: '#8B0000', ml: 1}}/>
+                        </Tooltip>
+                    )}
                     </Typography>
 
-                    <Typography variant="h5" color="text.secondary" sx={{mb: 2}}>
+                    <Box sx={{display: 'flex', textAlign: 'center', gap: 1}}>
+                    </Box>
+
+                    <Typography variant="h5" component="h2" color="text.secondary" sx={{mb: 2}}>
                         @{profile.username}
                     </Typography>
 
                     {/* Seguidos y seguidores */}
                     <Box sx={{display: 'flex', justifyContent: 'center', gap: 4, mb: 0.5}}>
                         <Typography
-                            variant="h6"
+                            variant="h6" component="h3"
                             sx={{cursor: 'pointer', '&:hover': {textDecoration: 'underline'}}}
                             onClick={() => navigate(`/perfil/${id}/seguidos`)}
                         >
                             {following.length} seguidos
                         </Typography>
                         <Typography
-                            variant="h6"
+                            variant="h6" component="h3"
                             sx={{cursor: 'pointer', '&:hover': {textDecoration: 'underline'}}}
                             onClick={() => navigate(`/perfil/${id}/seguidores`)}
                         >
@@ -576,7 +585,7 @@ const Profile = () => {
                                     <CircularProgress size={24} sx={{color: '#8B0000'}}/>
                                 </Box>
                             ) : hasPendingRequest ? (
-                                <Typography variant="h6" sx={{
+                                <Typography variant="h5" component="h4" sx={{
                                     mb: 3,
                                     textAlign: 'center',
                                     color: 'text.secondary',
@@ -586,10 +595,11 @@ const Profile = () => {
                                 </Typography>
                             ) : (
                                 <>
-                                    <Typography variant="h5" sx={{mb: 0.5, fontWeight: 'bold', textAlign: 'center'}}>
+                                    <Typography variant="h5" component="h3"
+                                                sx={{mb: 0.5, fontWeight: 'bold', textAlign: 'center'}}>
                                         ¿Eres autor?
                                     </Typography>
-                                    <Typography variant="h6" sx={{mb: 3, textAlign: 'center'}}>
+                                    <Typography variant="subtitle1" component="h4" sx={{mb: 3, textAlign: 'center'}}>
                                         Puedes solicitar la verificación rellenando un simple formulario.
                                     </Typography>
 

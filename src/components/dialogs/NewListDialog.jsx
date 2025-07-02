@@ -1,3 +1,4 @@
+import React from 'react';
 import {useState} from 'react';
 import axios from 'axios';
 import {
@@ -13,6 +14,7 @@ import {
 } from '@mui/material';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import {useAuth} from '../../context/AuthContext.jsx';
+import API_URL from '../../apiUrl';
 
 const NewListDialog = ({open, onClose, onListCreated, genres = []}) => {
     const {token} = useAuth();
@@ -39,7 +41,7 @@ const NewListDialog = ({open, onClose, onListCreated, genres = []}) => {
 
             setIsSubmitting(true);
 
-            const response = await axios.post('http://localhost:8080/listas',
+            const response = await axios.post(`${API_URL}/listas`,
                 {
                     name: newListName,
                     description: newListDescription
@@ -124,7 +126,7 @@ const NewListDialog = ({open, onClose, onListCreated, genres = []}) => {
                         />
 
                         {/* Selección de géneros */}
-                        <Typography variant="subtitle2" sx={{mb: 1, color: '#432818'}}>
+                        <Typography variant="subtitle2" component="h3" sx={{mb: 1, color: '#432818'}}>
                             Selecciona géneros (opcional):
                         </Typography>
 

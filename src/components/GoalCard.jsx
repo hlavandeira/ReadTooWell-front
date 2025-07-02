@@ -1,7 +1,9 @@
+import React from 'react';
 import {Paper, Box, Typography, Chip, LinearProgress, IconButton, Stack} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 import {useAuth} from '../context/AuthContext.jsx';
+import API_URL from '../apiUrl';
 
 const GoalCard = ({goal, onDelete}) => {
     const {token} = useAuth();
@@ -47,7 +49,7 @@ const GoalCard = ({goal, onDelete}) => {
 
     const handleDelete = async () => {
         try {
-            await axios.delete(`http://localhost:8080/objetivos/${goal.id}`, {
+            await axios.delete(`${API_URL}/objetivos/${goal.id}`, {
                 headers: {Authorization: `Bearer ${token}`}
             });
             onDelete(goal.id);
@@ -71,7 +73,7 @@ const GoalCard = ({goal, onDelete}) => {
             }}
         >
             <Box sx={{display: 'flex', justifyContent: 'space-between', mb: 1}}>
-                <Typography variant="h6" sx={{fontWeight: 'bold'}}>
+                <Typography variant="h6" component="h2" sx={{fontWeight: 'bold'}}>
                     {createGoalTitle(goal)}
                 </Typography>
                 {isCompleted ? (
@@ -103,6 +105,7 @@ const GoalCard = ({goal, onDelete}) => {
                 <LinearProgress
                     variant="determinate"
                     value={progress}
+                    aria-label="Objetivo de lectura"
                     sx={{
                         flexGrow: 1,
                         height: 8,
@@ -144,6 +147,7 @@ const GoalCard = ({goal, onDelete}) => {
                             },
                             ml: 1
                         }}
+                        aria-label="Borrar objetivo"
                     >
                         <DeleteIcon fontSize="small"/>
                     </IconButton>

@@ -24,6 +24,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import Pagination from '@mui/material/Pagination';
+import API_URL from '../../apiUrl';
 
 const AddBook = () => {
     const {token} = useAuth();
@@ -74,7 +75,7 @@ const AddBook = () => {
     useEffect(() => {
         const fetchGenres = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/libros/generos', {
+                const response = await axios.get(`${API_URL}/libros/generos`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
                 setGenres(response.data);
@@ -85,7 +86,7 @@ const AddBook = () => {
 
         const fetchCollections = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/libros/colecciones', {
+                const response = await axios.get(`${API_URL}/libros/colecciones`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
                 setCollections(response.data);
@@ -197,7 +198,7 @@ const AddBook = () => {
         try {
             setCollectionError('');
             const response = await axios.post(
-                'http://localhost:8080/libros/colecciones',
+                `${API_URL}/libros/colecciones`,
                 {name},
                 {headers: {Authorization: `Bearer ${token}`}}
             );
@@ -260,7 +261,7 @@ const AddBook = () => {
             };
 
             const response = await axios.post(
-                'http://localhost:8080/libros',
+                `${API_URL}/libros`,
                 newBook,
                 {
                     headers: {Authorization: `Bearer ${token}`},
@@ -316,7 +317,7 @@ const AddBook = () => {
     const fetchAcceptedSuggestions = async (page = 0) => {
         setLoadingSuggestions(true);
         try {
-            const response = await axios.get('http://localhost:8080/sugerencias/estado', {
+            const response = await axios.get(`${API_URL}/sugerencias/estado`, {
                 headers: {Authorization: `Bearer ${token}`},
                 params: {
                     page: page,

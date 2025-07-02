@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
+import API_URL from '../../apiUrl';
 
 const AuthorRequest = () => {
     const {id, token} = useAuth();
@@ -76,7 +77,7 @@ const AuthorRequest = () => {
         setError('');
 
         try {
-            await axios.post('http://localhost:8080/solicitud-autor', formData, {
+            await axios.post(`${API_URL}/solicitud-autor`, formData, {
                 headers: {Authorization: `Bearer ${token}`}
             });
 
@@ -88,7 +89,7 @@ const AuthorRequest = () => {
 
     return (
         <Box sx={{maxWidth: 800, mx: 'auto', p: 3}}>
-            <Typography variant="h4" sx={{
+            <Typography variant="h4" component="h1" sx={{
                 mb: 3,
                 fontWeight: 'bold',
                 color: '#432818',
@@ -98,17 +99,19 @@ const AuthorRequest = () => {
             </Typography>
 
             <Paper elevation={3} sx={{p: 3}}>
-                <Typography variant="h6" sx={{mb: 2}}>
+                <Typography variant="h6" component="h2" sx={{mb: 2}}>
                     Tus datos de autor:
                 </Typography>
 
-                <form onSubmit={handleSubmit}>
-
+                <form onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSubmit(e);
+                }}>
                     {/* Nombre y biografía */}
                     <TextField
                         fullWidth
                         label="Nombre completo"
-                        name="profileName"
+                        name="name"
                         value={formData.name}
                         onChange={handleInputChange}
                         required
@@ -130,7 +133,7 @@ const AuthorRequest = () => {
 
                     {/* Libros escritos */}
                     <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2}}>
-                        <Typography variant="h6">
+                        <Typography variant="h6" component="h2">
                             Libros que has escrito:
                         </Typography>
                         <Button

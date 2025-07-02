@@ -1,12 +1,23 @@
-import {Box, Typography, Button, useTheme, TextField, InputAdornment, CircularProgress} from '@mui/material';
+import {
+    Box,
+    Typography,
+    Button,
+    useTheme,
+    TextField,
+    InputAdornment,
+    CircularProgress,
+    Paper,
+    Divider
+} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import {useNavigate} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext.jsx';
 import {useState, useEffect} from 'react';
 import axios from "axios";
+import API_URL from '../apiUrl';
 
 const Home = () => {
-    const {token, name} = useAuth();
+    const {token, name, role} = useAuth();
     const theme = useTheme();
     const navigate = useNavigate();
 
@@ -23,7 +34,7 @@ const Home = () => {
         const verifyAdmin = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get('http://localhost:8080/usuarios/verificar-admin', {
+                const response = await axios.get(`${API_URL}/usuarios/verificar-admin`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
 
@@ -42,24 +53,28 @@ const Home = () => {
     const actionsUser = [
         {
             label: 'Mi biblioteca',
+            alt: 'Botón de mi biblioteca',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743863885/readtoowell/iconos/Biblioteca_sinfondo_blanco_dw69k5.png",
             path: '/biblioteca',
             color: '#432818'
         },
         {
             label: 'Objetivos',
+            alt: 'Botón de objetivos',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743864520/readtoowell/iconos/v1olxvdjhbpfagohyv7c.png",
             path: '/objetivos-lectura',
             color: '#8B0000'
         },
         {
             label: 'Recomendaciones',
+            alt: 'Botón de recomendaciones',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743863885/readtoowell/iconos/Recom_sinfondo_blanco_avcur7.png",
             path: '/recomendaciones',
             color: '#876C40'
         },
         {
             label: 'Conectar',
+            alt: 'Botón de conectar',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1745747085/readtoowell/iconos/Social_sinfondo_blanco_piz4io.png",
             path: '/buscar/usuarios',
             color: '#2E5266'
@@ -69,18 +84,21 @@ const Home = () => {
     const actionsAdmin = [
         {
             label: 'Gestionar libros',
+            alt: 'Botón de gestionar libros',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743863885/readtoowell/iconos/Biblioteca_sinfondo_blanco_dw69k5.png",
             path: '/catalogo',
             color: '#432818'
         },
         {
             label: 'Gestionar sugerencias',
+            alt: 'Botón de gestionar sugerencias',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1743863885/readtoowell/iconos/Recom_sinfondo_blanco_avcur7.png",
             path: '/admin/sugerencias',
             color: '#876C40'
         },
         {
             label: 'Gestionar verificaciones',
+            alt: 'Botón de gestionar verificaciones',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1746030780/readtoowell/iconos/Verif_sinfondo_blanco_ulrhkk.png",
             path: '/admin/verificaciones',
             color: '#2E5266'
@@ -131,7 +149,7 @@ const Home = () => {
                         alt="ReadTooWell Logo"
                         style={{height: '120px', marginBottom: theme.spacing(4)}}
                     />
-                    <Typography variant="h5" component="h2" sx={{fontStyle: 'italic', mb: 5}}>
+                    <Typography variant="h5" component="h1" sx={{fontStyle: 'italic', mb: 5}}>
                         Todo sobre tus libros, en un solo lugar
                     </Typography>
                     <Box sx={{'& > *:not(:last-child)': {mr: 2}}}>
@@ -195,6 +213,8 @@ const Home = () => {
                 {/* Barra de búsqueda */}
                 <TextField
                     fullWidth
+                    id="search-field"
+                    label="Buscar"
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
                     onKeyPress={(e) => {
@@ -256,6 +276,7 @@ const Home = () => {
                                 <Box
                                     component="img"
                                     src={action.icon}
+                                    alt={action.alt}
                                     sx={{width: 90, height: 90}}
                                 />
                             )}
@@ -264,6 +285,53 @@ const Home = () => {
                     </Box>
                 ))}
             </Box>
+
+            <Divider sx={{my: 5, borderColor: 'divider'}}/>
+
+            {/* Sección para enviar sugerencias */}
+            {(role === 0 || role === 1) && (
+                <Paper elevation={3} sx={{
+                    p: 3,
+                    mt: 4,
+                    backgroundColor: '#f5f5f5',
+                    borderRadius: 2
+                }}>
+                    <Typography variant="h5" component="h2" sx={{
+                        mb: 2,
+                        fontWeight: 'bold',
+                        color: '#432818',
+                        textAlign: 'center'
+                    }}>
+                        ¿Crees que falta algún libro?
+                    </Typography>
+                    <Typography variant="body1" sx={{
+                        mb: 3,
+                        textAlign: 'center',
+                        color: 'text.secondary'
+                    }}>
+                        ¡Ayúdanos a mejorar nuestro catálogo! Puedes sugerir libros que te gustaría ver en nuestra
+                        plataforma.
+                    </Typography>
+                    <Box sx={{display: 'flex', justifyContent: 'center'}}>
+                        <Button
+                            variant="contained"
+                            onClick={() => navigate("/libros/sugerencia")}
+                            sx={{
+                                py: 1,
+                                px: 3,
+                                textTransform: 'none',
+                                backgroundColor: '#432818',
+                                '&:hover': {
+                                    backgroundColor: '#5a3a23'
+                                },
+                                borderRadius: 2
+                            }}
+                        >
+                            Sugerir un libro
+                        </Button>
+                    </Box>
+                </Paper>
+            )}
         </Box>
     );
 };

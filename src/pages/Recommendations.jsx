@@ -4,6 +4,7 @@ import {Box, Typography, Button, CircularProgress, Grid, MenuItem, Select, FormC
 import axios from 'axios';
 import {useAuth} from "../context/AuthContext.jsx";
 import SmallBookCardRating from '../components/books/SmallBookCardRating';
+import API_URL from '../apiUrl';
 
 const Recommendations = () => {
     const {token} = useAuth();
@@ -25,19 +26,19 @@ const Recommendations = () => {
         const fetchRecommendations = async () => {
             try {
                 const [favoritesRes, genresRes, booksByReadBooksRes, generalRecommendationsRes, listsRes] = await Promise.all([
-                    axios.get('http://localhost:8080/recomendaciones/libros-favoritos', {
+                    axios.get(`${API_URL}/recomendaciones/libros-favoritos`, {
                         headers: {Authorization: `Bearer ${token}`}
                     }),
-                    axios.get('http://localhost:8080/recomendaciones/generos-favoritos', {
+                    axios.get(`${API_URL}/recomendaciones/generos-favoritos`, {
                         headers: {Authorization: `Bearer ${token}`}
                     }),
-                    axios.get('http://localhost:8080/recomendaciones/libros-leidos', {
+                    axios.get(`${API_URL}/recomendaciones/libros-leidos`, {
                         headers: {Authorization: `Bearer ${token}`}
                     }),
-                    axios.get('http://localhost:8080/recomendaciones/catalogo', {
+                    axios.get(`${API_URL}/recomendaciones/catalogo`, {
                         headers: {Authorization: `Bearer ${token}`}
                     }),
-                    axios.get('http://localhost:8080/listas/todas-no-vacias', {
+                    axios.get(`${API_URL}/listas/todas-no-vacias`, {
                         headers: {Authorization: `Bearer ${token}`}
                     })
                 ]);
@@ -77,7 +78,7 @@ const Recommendations = () => {
         setLoadingLists(true);
 
         try {
-            const response = await axios.get(`http://localhost:8080/recomendaciones/lista/${listId}`, {
+            const response = await axios.get(`${API_URL}/recomendaciones/lista/${listId}`, {
                 headers: {Authorization: `Bearer ${token}`}
             });
             setListRecommendations(response.data);
@@ -98,20 +99,20 @@ const Recommendations = () => {
     if (loading) {
         return (
             <Box display="flex" justifyContent="center" mt={4}>
-                <CircularProgress sx={{color: '#8B0000'}}/>
+                <CircularProgress sx={{color: '#8B0000'}} aria-label="Cargando"/>
             </Box>
         );
     }
 
     return (
         <Box sx={{maxWidth: 1200, mx: 'auto', p: 3}}>
-            <Typography variant="h3" sx={{mb: 4, fontWeight: 'bold', textAlign: 'center', color: '#432818'}}>
+            <Typography variant="h3" component="h1" sx={{mb: 4, fontWeight: 'bold', textAlign: 'center', color: '#432818'}}>
                 Recomendaciones para ti
             </Typography>
 
             {/* Recomendaciones según libros favoritos */}
             <Paper elevation={3} sx={{mb: 6, p: 3, backgroundColor: '#f8f4f0'}}>
-                <Typography variant="h5" sx={{mb: 3, fontWeight: 'bold', color: '#432818'}}>
+                <Typography variant="h5" component="h2" sx={{mb: 3, fontWeight: 'bold', color: '#432818'}}>
                     Según tus libros favoritos...
                 </Typography>
 
@@ -151,7 +152,7 @@ const Recommendations = () => {
 
             {/* Recomendaciones según géneros favoritos */}
             <Paper elevation={3} sx={{mb: 6, p: 3, backgroundColor: '#f8f4f0'}}>
-                <Typography variant="h5" sx={{mb: 3, fontWeight: 'bold', color: '#432818'}}>
+                <Typography variant="h5" component="h2" sx={{mb: 3, fontWeight: 'bold', color: '#432818'}}>
                     Según tus géneros favoritos...
                 </Typography>
 
@@ -191,7 +192,7 @@ const Recommendations = () => {
 
             {/* Recomendaciones según libros leídos */}
             <Paper elevation={3} sx={{mb: 6, p: 3, backgroundColor: '#f8f4f0'}}>
-                <Typography variant="h5" sx={{mb: 3, fontWeight: 'bold', color: '#432818'}}>
+                <Typography variant="h5" component="h2" sx={{mb: 3, fontWeight: 'bold', color: '#432818'}}>
                     Según los libros que has leído...
                 </Typography>
 
@@ -231,7 +232,7 @@ const Recommendations = () => {
 
             {/* Recomendaciones según listas */}
             <Paper elevation={3} sx={{mb: 6, p: 3, backgroundColor: '#f8f4f0'}}>
-                <Typography variant="h5" sx={{mb: 1, fontWeight: 'bold', color: '#432818'}}>
+                <Typography variant="h5" component="h2" sx={{mb: 1, fontWeight: 'bold', color: '#432818'}}>
                     Según tus listas...
                 </Typography>
                 <Typography variant="body1" color="text.secondary" sx={{mb: 3}}>
@@ -310,7 +311,7 @@ const Recommendations = () => {
 
             {/* Recomendaciones generales */}
             <Paper elevation={3} sx={{mb: 6, p: 3, backgroundColor: '#f8f4f0'}}>
-                <Typography variant="h5" sx={{mb: 3, fontWeight: 'bold', color: '#432818'}}>
+                <Typography variant="h5" component="h2" sx={{mb: 3, fontWeight: 'bold', color: '#432818'}}>
                     Lo que más le gusta a la comunidad...
                 </Typography>
 

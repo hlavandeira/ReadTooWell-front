@@ -7,6 +7,7 @@ import {useAuth} from '../../context/AuthContext.jsx';
 import axios from 'axios';
 import ShelvedBookCard from '../../components/books/ShelvedBookCard.jsx';
 import BookFormatsDialog from '../../components/dialogs/BookFormatsDialog.jsx';
+import API_URL from '../../apiUrl';
 
 const Bookshelf = () => {
     const {token} = useAuth();
@@ -35,7 +36,7 @@ const Bookshelf = () => {
 
     const handleDeleteBook = async (bookId) => {
         try {
-            await axios.delete(`http://localhost:8080/biblioteca/${bookId}`, {
+            await axios.delete(`${API_URL}/biblioteca/${bookId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -58,7 +59,7 @@ const Bookshelf = () => {
         try {
             setLoadingFormats(true);
 
-            const response = await axios.get(`http://localhost:8080/biblioteca/${bookId}/formatos`, {
+            const response = await axios.get(`${API_URL}/biblioteca/${bookId}/formatos`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -86,7 +87,7 @@ const Bookshelf = () => {
             try {
                 setLoading(true);
 
-                const response = await axios.get('http://localhost:8080/biblioteca', {
+                const response = await axios.get(`${API_URL}/biblioteca`, {
                     params: {
                         status: readingStatus,
                         page: page - 1,

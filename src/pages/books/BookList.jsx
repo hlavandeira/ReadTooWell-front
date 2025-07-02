@@ -10,6 +10,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ListedBook from '../../components/books/ListedBook.jsx';
 import GenreButton from "../../components/GenreButton.jsx";
 import EditListDialog from '../../components/dialogs/EditListDialog.jsx';
+import API_URL from '../../apiUrl';
 
 const BookList = () => {
     const {token} = useAuth();
@@ -32,7 +33,7 @@ const BookList = () => {
     useEffect(() => {
         const fetchListDetails = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/listas/${idList}`, {
+                const response = await axios.get(`${API_URL}/listas/${idList}`, {
                     params: {
                         page: page - 1,
                         size: itemsPerPage
@@ -58,7 +59,7 @@ const BookList = () => {
         const fetchGenres = async () => {
             try {
                 setLoadingGenres(true);
-                const response = await axios.get('http://localhost:8080/libros/generos', {
+                const response = await axios.get(`${API_URL}/libros/generos`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -83,7 +84,7 @@ const BookList = () => {
 
     const handleUpdateList = async (updatedData) => {
         try {
-            await axios.put(`http://localhost:8080/listas/${idList}`, {
+            await axios.put(`${API_URL}/listas/${idList}`, {
                     name: updatedData.name,
                     description: updatedData.description
                 },
@@ -98,7 +99,7 @@ const BookList = () => {
                 }
             );
 
-            const response = await axios.get(`http://localhost:8080/listas/${idList}`, {
+            const response = await axios.get(`${API_URL}/listas/${idList}`, {
                 params: {
                     page: page - 1,
                     size: itemsPerPage
@@ -117,7 +118,7 @@ const BookList = () => {
 
     const handleDeleteList = async () => {
         try {
-            await axios.delete(`http://localhost:8080/listas/${idList}`, {
+            await axios.delete(`${API_URL}/listas/${idList}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -135,14 +136,13 @@ const BookList = () => {
 
     const handleDeleteBook = async (bookId) => {
         try {
-            await axios.delete(`http://localhost:8080/listas/${idList}/eliminar-libro/${bookId}`, {
+            await axios.delete(`${API_URL}/listas/${idList}/eliminar-libro/${bookId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-            console.log(`se eliminó el libro ${bookId} de la lista ${idList}`);
 
-            const response = await axios.get(`http://localhost:8080/listas/${idList}`, {
+            const response = await axios.get(`${API_URL}/listas/${idList}`, {
                 params: {
                     page: page - 1,
                     size: itemsPerPage
@@ -196,7 +196,7 @@ const BookList = () => {
                     alignItems: 'center',
                     mb: 2
                 }}>
-                    <Typography variant="h4" sx={{
+                    <Typography variant="h4" component="h1" sx={{
                         fontWeight: 'bold',
                         color: '#432818'
                     }}>
@@ -245,7 +245,7 @@ const BookList = () => {
             </Box>
 
             {/* Lista de libros */}
-            <Typography variant="h5" sx={{
+            <Typography variant="h5" component="h2" sx={{
                 fontWeight: 'medium',
                 color: '#432818',
                 mt: 2
@@ -254,9 +254,14 @@ const BookList = () => {
             </Typography>
 
             {listDetails.books.content.length === 0 ? (
-                <Typography variant="body1" textAlign="center" sx={{mt: 2}}>
-                    No hay libros en esta lista
-                </Typography>
+                <>
+                    <Typography variant="body1" textAlign="center" sx={{mt: 2}}>
+                        No hay libros en esta lista.
+                    </Typography>
+                    <Typography variant="body1" textAlign="center">
+                        ¡Consulta libros que hayas guardado en tu biblioteca y añádelos a la lista!
+                    </Typography>
+                </>
             ) : (
                 <>
                     <Box sx={{display: 'flex', flexDirection: 'column', gap: 3}}>

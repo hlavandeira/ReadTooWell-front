@@ -3,6 +3,7 @@ import {useAuth} from '../../context/AuthContext.jsx';
 import {Box, CircularProgress, List, Pagination, Paper, Tab, Tabs, Typography} from '@mui/material';
 import axios from 'axios';
 import RequestCard from '../../components/RequestCard.jsx';
+import API_URL from '../../apiUrl';
 
 const RequestList = () => {
     const {token} = useAuth();
@@ -16,7 +17,7 @@ const RequestList = () => {
         try {
             setLoading(true);
 
-            const response = await axios.get('http://localhost:8080/solicitud-autor/estado', {
+            const response = await axios.get(`${API_URL}/solicitud-autor/estado`, {
                 params: {
                     page,
                     size: 10,
@@ -41,7 +42,7 @@ const RequestList = () => {
     const handleStatusChange = async (requestId, newStatus) => {
         try {
             await axios.put(
-                `http://localhost:8080/solicitud-autor/${requestId}`, {},
+                `${API_URL}/solicitud-autor/${requestId}`, {},
                 {
                     params: {
                         newStatus: newStatus

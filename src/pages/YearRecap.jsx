@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import RatedBookCard from '../components/books/RatedBookCard.jsx';
 import GenreButton from "../components/GenreButton.jsx";
+import API_URL from '../apiUrl';
 
 const YearRecap = () => {
     const {name, profilePic, id} = useAuth();
@@ -24,12 +25,12 @@ const YearRecap = () => {
         const fetchYearRecap = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get('http://localhost:8080/biblioteca/resumen-anual', {
+                const response = await axios.get(`${API_URL}/biblioteca/resumen-anual`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
                 setYearRecap(response.data);
 
-                const responseUser = await axios.get(`http://localhost:8080/usuarios/${id}`, {
+                const responseUser = await axios.get(`${API_URL}/usuarios/${id}`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
                 setUserBio(responseUser.data.biography || '');
@@ -97,9 +98,9 @@ const YearRecap = () => {
             {/* Estadísticas principales */}
             <Box sx={{display: 'flex', justifyContent: 'center'}}>
                 <Grid container spacing={5} sx={{mb: 4, maxWidth: '600px', justifyContent: 'center'}}>
-                    <Grid item>
+                    <Grid>
                         <Paper elevation={3} sx={{p: 3, minWidth: 200, borderRadius: 2, textAlign: 'center'}}>
-                            <Typography variant="h5" sx={{mb: 2, fontWeight: 'bold'}}>
+                            <Typography variant="h5" component="h3" sx={{mb: 2, fontWeight: 'bold'}}>
                                 Libros leídos:
                             </Typography>
                             <Typography variant="h2" sx={{color: '#8B0000', fontWeight: 'bold'}}>
@@ -107,9 +108,9 @@ const YearRecap = () => {
                             </Typography>
                         </Paper>
                     </Grid>
-                    <Grid item>
+                    <Grid>
                         <Paper elevation={3} sx={{p: 3, minWidth: 200, borderRadius: 2, textAlign: 'center'}}>
-                            <Typography variant="h5" sx={{mb: 2, fontWeight: 'bold'}}>
+                            <Typography variant="h5" component="h3" sx={{mb: 2, fontWeight: 'bold'}}>
                                 Páginas leídas:
                             </Typography>
                             <Typography variant="h2" sx={{color: '#8B0000', fontWeight: 'bold'}}>
@@ -126,7 +127,7 @@ const YearRecap = () => {
                 <Box sx={{display: 'flex', justifyContent: 'center', mb: 4}}>
                     <Box sx={{width: '80%'}}>
                         <Typography variant="h5" component="h2" sx={{mb: 3, fontWeight: 'bold', textAlign: "center"}}>
-                            Tus objetivos de lectura completados este año
+                            Tus objetivos de lectura completados este año:
                         </Typography>
 
                         <Grid container spacing={3} sx={{justifyContent: 'center'}}>
@@ -142,7 +143,7 @@ const YearRecap = () => {
                                         flexDirection: 'column',
                                         backgroundColor: goal.duration === 'Anual' ? '#F5EBE4' : 'white'
                                     }}>
-                                        <Typography variant="h6" sx={{fontWeight: 'bold'}}>
+                                        <Typography variant="h6" component="h3" sx={{fontWeight: 'bold'}}>
                                             Objetivo de {goal.duration === 'Mensual'
                                             ? new Date(goal.dateStart).toLocaleString('es-ES', {month: 'long'})
                                             : new Date(goal.dateStart).getFullYear()}
@@ -158,7 +159,7 @@ const YearRecap = () => {
                                             }}>
                                                 {goal.currentAmount}/{goal.amount}
                                             </Typography>
-                                            <Typography variant="h6" sx={{mt: 1}}>
+                                            <Typography variant="h6" component="subtitle1" sx={{mt: 1}}>
                                                 {goal.type.toLowerCase()}
                                             </Typography>
                                         </Box>

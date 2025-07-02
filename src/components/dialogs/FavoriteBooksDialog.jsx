@@ -1,3 +1,4 @@
+import React from 'react';
 import {useState, useEffect} from 'react';
 import {
     Dialog,
@@ -15,6 +16,7 @@ import {
 import axios from 'axios';
 import SmallShelvedBookCard from '../books/SmallShelvedBookCard';
 import {useAuth} from '../../context/AuthContext.jsx';
+import API_URL from '../../apiUrl';
 
 const FavoriteBooksDialog = ({open, onClose, currentFavoriteBooks}) => {
     const {token} = useAuth();
@@ -37,7 +39,7 @@ const FavoriteBooksDialog = ({open, onClose, currentFavoriteBooks}) => {
             try {
                 setLoading(true);
 
-                const response = await axios.get('http://localhost:8080/biblioteca/todos', {
+                const response = await axios.get(`${API_URL}/biblioteca/todos`, {
                     params: {page, size: 10},
                     headers: {Authorization: `Bearer ${token}`}
                 });
@@ -77,7 +79,7 @@ const FavoriteBooksDialog = ({open, onClose, currentFavoriteBooks}) => {
             setIsSubmitting(true);
 
             await axios.put(
-                'http://localhost:8080/usuarios/libros-favoritos',
+                `${API_URL}/usuarios/libros-favoritos`,
                 {},
                 {
                     params: {bookIds: Array.from(selectedBookIds).join(',')},

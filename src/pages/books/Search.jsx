@@ -17,6 +17,7 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import BookGrid from '../../components/books/BookGrid.jsx';
 import GenreButton from '../../components/GenreButton.jsx';
 import axios from "axios";
+import API_URL from '../../apiUrl';
 
 const SearchPage = () => {
     const {token} = useAuth();
@@ -38,6 +39,8 @@ const SearchPage = () => {
 
     const itemsPerPage = 10;
     const currentPage = parseInt(searchParams.get('page')) || 1;
+
+    const [displayedSearchTerm, setDisplayedSearchTerm] = useState(searchParams.get('searchString') || '');
 
     const searchBooks = async () => {
         setIsLoading(true);
@@ -61,7 +64,7 @@ const SearchPage = () => {
                 page: currentPage
             });
 
-            const response = await axios.get(`http://localhost:8080/libros/buscar`, {
+            const response = await axios.get(`${API_URL}/libros/buscar`, {
                 params,
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -70,6 +73,8 @@ const SearchPage = () => {
 
             setBooks(response.data.content);
             setTotalPages(response.data.totalPages);
+
+            setDisplayedSearchTerm(searchInput);
         } catch (error) {
             console.error('Error searching books:', error);
         } finally {
@@ -118,7 +123,7 @@ const SearchPage = () => {
     useEffect(() => {
         const fetchGenres = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/libros/generos', {
+                const response = await axios.get(`${API_URL}/libros/generos`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -151,6 +156,7 @@ const SearchPage = () => {
                 <TextField
                     fullWidth
                     value={searchInput}
+                    label="Buscar"
                     onChange={(e) => setSearchInput(e.target.value)}
                     placeholder="Buscar libros, autores, colecciones..."
                     InputProps={{
@@ -252,6 +258,7 @@ const SearchPage = () => {
                                         handleFilterChange('maxPages', newValue[1]);
                                     }}
                                     valueLabelDisplay="auto"
+                                    aria-label="Filtro por número de páginas"
                                     min={0}
                                     max={1600}
                                     step={100}
@@ -336,6 +343,7 @@ const SearchPage = () => {
                 </Box>
             ) : books.length > 0 ? (
                 <BookGrid
+                    titulo={displayedSearchTerm ? `Resultados para "${displayedSearchTerm}"` : "Resultados de búsqueda"}
                     libros={books}
                     page={currentPage}
                     totalPages={totalPages}

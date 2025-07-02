@@ -1,3 +1,4 @@
+import React from 'react';
 import {Navigate, useParams} from 'react-router-dom';
 import {useNavigate} from "react-router-dom";
 import {useState, useEffect} from 'react';
@@ -11,6 +12,7 @@ import GenreButton from '../../components/GenreButton.jsx';
 import EditReviewDialog from '../../components/dialogs/EditReviewDialog.jsx';
 import UpdateReadingStatusDialog from '../../components/dialogs/UpdateReadingStatusDialog.jsx';
 import AddToListDialog from '../../components/dialogs/AddToListDialog.jsx';
+import API_URL from '../../apiUrl';
 
 const BookDetails = () => {
     const {token} = useAuth();
@@ -42,7 +44,7 @@ const BookDetails = () => {
     const handleSaveToLibrary = async () => {
         try {
             const response = await axios.post(
-                `http://localhost:8080/biblioteca/${id}`,
+                `${API_URL}/biblioteca/${id}`,
                 {},
                 {
                     headers: {
@@ -66,7 +68,7 @@ const BookDetails = () => {
     const handleSaveStatus = async (newStatus, bookId) => {
         try {
             const response = await axios.put(
-                `http://localhost:8080/biblioteca/${bookId}/estado?estado=${newStatus}`,
+                `${API_URL}/biblioteca/${bookId}/estado?estado=${newStatus}`,
                 null,
                 {
                     headers: {
@@ -92,7 +94,7 @@ const BookDetails = () => {
     const handleSaveReview = async (reviewText) => {
         try {
             await axios.put(
-                `http://localhost:8080/biblioteca/${id}/escribir-reseña`,
+                `${API_URL}/biblioteca/${id}/escribir-reseña`,
                 null,
                 {
                     params: {review: reviewText},
@@ -114,7 +116,7 @@ const BookDetails = () => {
     const handleSaveRating = async (newValue) => {
         try {
             const response = await axios.put(
-                `http://localhost:8080/biblioteca/${details.book.id}/calificar`,
+                `${API_URL}/biblioteca/${details.book.id}/calificar`,
                 null,
                 {
                     params: {calificacion: newValue},
@@ -139,7 +141,7 @@ const BookDetails = () => {
     const handleAddToList = async (listId, bookId) => {
         try {
             await axios.post(
-                `http://localhost:8080/listas/${listId}/añadir-libro/${bookId}`,
+                `${API_URL}/listas/${listId}/añadir-libro/${bookId}`,
                 {},
                 {
                     headers: {
@@ -149,7 +151,7 @@ const BookDetails = () => {
             );
 
             const updatedListsResponse = await axios.get(
-                `http://localhost:8080/listas/${bookId}/otras-listas`,
+                `${API_URL}/listas/${bookId}/otras-listas`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -166,7 +168,7 @@ const BookDetails = () => {
     useEffect(() => {
         const fetchBookDetails = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/libros/${id}/detalles`, {
+                const response = await axios.get(`${API_URL}/libros/${id}/detalles`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -178,7 +180,7 @@ const BookDetails = () => {
 
                 if (response.data.book.collectionId) {
                     const collectionResponse = await axios.get(
-                        `http://localhost:8080/libros/coleccion/${response.data.book.id}`,
+                        `${API_URL}/libros/coleccion/${response.data.book.id}`,
                         {
                             headers: {
                                 Authorization: `Bearer ${token}`
@@ -200,7 +202,7 @@ const BookDetails = () => {
     useEffect(() => {
         const fetchUserLists = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/listas/${id}/otras-listas`, {
+                const response = await axios.get(`${API_URL}/listas/${id}/otras-listas`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -333,7 +335,26 @@ const BookDetails = () => {
                             />
                         </Box>
 
+                        <Divider sx={{
+                            width: '80%',
+                            height: 1,
+                            backgroundColor: 'divider',
+                            my: 2
+                        }}/>
+
                         {/* Botón para guardar / cambiar estado */}
+                        {details.saved && (
+                            <Typography
+                                variant="body2"
+                                color="text.secondary"
+                                sx={{
+                                    textAlign: 'center',
+                                    fontSize: {xs: '0.75rem', sm: '0.875rem'}
+                                }}
+                            >
+                                Tu libro está en estado:
+                            </Typography>
+                        )}
                         <Button
                             variant="contained"
                             onClick={() => {
@@ -367,7 +388,7 @@ const BookDetails = () => {
                                     3: 'Pausado',
                                     4: 'Abandonado'
                                 }[details.readingStatus] || 'Guardado'
-                            ) : 'Guardar'}
+                            ) : 'Guardar libro'}
                         </Button>
 
                         {/* Diálogo para el cambio de estado de lectura */}
@@ -616,12 +637,16 @@ const BookDetails = () => {
                                 textTransform: 'none'
                             }}
                         >
-                            {userReview ? 'Editar reseña' : 'Añadir reseña'}
+                            {!userReview || userReview.trim() === "" ? 'Añadir reseña' : 'Editar reseña'}
                         </Button>
                     </Box>
 
                     {/* Visualización de la reseña existente */}
-                    {userReview ? (
+                    {!userReview || userReview.trim() === "" ? (
+                        <Typography variant="body2" color="text.secondary" sx={{mb: 3}}>
+                            No has escrito ninguna reseña todavía.
+                        </Typography>
+                    ) : (
                         <Typography variant="body1" sx={{
                             whiteSpace: 'pre-line',
                             lineHeight: 1.6,
@@ -631,10 +656,6 @@ const BookDetails = () => {
                             mb: 3
                         }}>
                             {userReview}
-                        </Typography>
-                    ) : (
-                        <Typography variant="body2" color="text.secondary" sx={{mb: 3}}>
-                            No has escrito ninguna reseña todavía.
                         </Typography>
                     )}
 

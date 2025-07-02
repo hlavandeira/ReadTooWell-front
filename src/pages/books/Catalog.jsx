@@ -5,6 +5,7 @@ import {Box, Button, CircularProgress, Typography, Paper} from "@mui/material";
 import {useSearchParams} from 'react-router-dom';
 import {useNavigate} from 'react-router-dom';
 import BookGrid from '../../components/books/BookGrid.jsx';
+import API_URL from '../../apiUrl';
 
 const Catalog = () => {
     const {token, role} = useAuth();
@@ -22,7 +23,7 @@ const Catalog = () => {
     const fetchLibros = async () => {
         try {
             setLoading(true);
-            const response = await axios.get("http://localhost:8080/libros", {
+            const response = await axios.get(`${API_URL}/libros`, {
                 params: {
                     page: page - 1,
                     size: itemsPerPage
@@ -47,7 +48,7 @@ const Catalog = () => {
         }
         const verifyAdmin = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/usuarios/verificar-admin', {
+                const response = await axios.get(`${API_URL}/usuarios/verificar-admin`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
 
@@ -124,7 +125,7 @@ const Catalog = () => {
                     backgroundColor: '#f5f5f5',
                     borderRadius: 2
                 }}>
-                    <Typography variant="h5" sx={{
+                    <Typography variant="h5" component="h2" sx={{
                         mb: 2,
                         fontWeight: 'bold',
                         color: '#432818',

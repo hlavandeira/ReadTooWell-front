@@ -52,6 +52,7 @@ const ShelvedBookCard = ({book, onDelete, onFormatClick}) => {
                 }}>
                     <Typography
                         variant="h6"
+                        component="h2"
                         noWrap
                         sx={{
                             fontWeight: 'bold',

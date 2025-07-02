@@ -6,6 +6,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import axios from "axios";
 import UserCard from '../../components/UserCard.jsx';
 import AuthorCard from '../../components/AuthorCard.jsx';
+import API_URL from '../../apiUrl';
 
 const SearchUsers = () => {
     const {token} = useAuth();
@@ -35,7 +36,7 @@ const SearchUsers = () => {
                 page: currentPage
             });
 
-            const response = await axios.get('http://localhost:8080/usuarios/buscar', {
+            const response = await axios.get(`${API_URL}/usuarios/buscar`, {
                 params,
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -54,7 +55,7 @@ const SearchUsers = () => {
     const fetchAuthors = async () => {
         setIsLoadingAuthors(true);
         try {
-            const response = await axios.get('http://localhost:8080/usuarios/autores', {
+            const response = await axios.get(`${API_URL}/usuarios/autores`, {
                 params: {
                     page: 0,
                     size: 4
@@ -110,6 +111,7 @@ const SearchUsers = () => {
                 <TextField
                     fullWidth
                     value={searchInput}
+                    label="Buscar"
                     onChange={(e) => setSearchInput(e.target.value)}
                     placeholder="Buscar usuarios por nombre o email..."
                     InputProps={{
@@ -147,7 +149,7 @@ const SearchUsers = () => {
                         }}
                     >
                         {users.map((user) => (
-                            <Grid item key={user.id}>
+                            <Grid key={user.id}>
                                 <UserCard user={user}/>
                             </Grid>
                         ))}

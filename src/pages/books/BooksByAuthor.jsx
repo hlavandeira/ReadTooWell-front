@@ -5,6 +5,7 @@ import {Box, CircularProgress, Typography} from "@mui/material";
 import {useSearchParams} from 'react-router-dom';
 import {useAuth} from '../../context/AuthContext.jsx';
 import BookGrid from '../../components/books/BookGrid.jsx';
+import API_URL from '../../apiUrl';
 
 const BooksByAuthor = () => {
     const {token} = useAuth();
@@ -23,7 +24,7 @@ const BooksByAuthor = () => {
         const fetchLibros = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`http://localhost:8080/libros/libros-autor`, {
+                const response = await axios.get(`${API_URL}/libros/libros-autor`, {
                     params: {
                         page: page - 1,
                         size: itemsPerPage,

@@ -35,6 +35,7 @@ const UserCard = ({user}) => {
         >
             <Avatar
                 src={user.profilePic || "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1741801696/readtoowell/profilepics/pfp.jpg"}
+                alt={`Foto de perfil de ${user.username}`}
                 sx={{width: 60, height: 60}}
             />
             <Box sx={{

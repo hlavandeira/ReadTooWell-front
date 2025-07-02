@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import LongUserCard from '../../components/LongUserCard.jsx';
 import {useAuth} from '../../context/AuthContext.jsx';
+import API_URL from '../../apiUrl';
 
 const UsersList = ({type}) => {
     const {id} = useParams();
@@ -20,10 +21,10 @@ const UsersList = ({type}) => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/usuarios/${id}/${type}`, {
+                const response = await axios.get(`${API_URL}/usuarios/${id}/${type}`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
-                const userRes = await axios.get(`http://localhost:8080/usuarios/${id}`, {
+                const userRes = await axios.get(`${API_URL}/usuarios/${id}`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
 

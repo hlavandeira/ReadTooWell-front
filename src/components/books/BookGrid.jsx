@@ -9,6 +9,7 @@ import BookCard from "./BookCard.jsx";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {useAuth} from "../../context/AuthContext.jsx";
+import API_URL from '../../apiUrl';
 
 const BookGrid = ({titulo, libros = [], page, totalPages, onPageChange, onBookDelete}) => {
     const {token} = useAuth();
@@ -20,7 +21,7 @@ const BookGrid = ({titulo, libros = [], page, totalPages, onPageChange, onBookDe
         }
         const verifyAdmin = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/usuarios/verificar-admin', {
+                const response = await axios.get(`${API_URL}/usuarios/verificar-admin`, {
                     headers: {Authorization: `Bearer ${token}`}
                 });
 

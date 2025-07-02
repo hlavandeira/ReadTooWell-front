@@ -1,3 +1,4 @@
+import React from 'react';
 import {useState, useEffect} from 'react';
 import {useSearchParams, useNavigate} from 'react-router-dom';
 import axios from 'axios';
@@ -9,6 +10,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import NewListDialog from '../components/dialogs/NewListDialog.jsx';
 import UpdateProgressDialog from '../components/dialogs/UpdateProgressDialog.jsx';
+import API_URL from '../apiUrl';
 
 const Library = () => {
     const {token} = useAuth();
@@ -40,6 +42,7 @@ const Library = () => {
     const bookshelves = [
         {
             label: 'Pendientes',
+            alt: 'Botón de libros pendientes',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1744206368/readtoowell/other/pendientes_gtdds6.jpg",
             path: '/biblioteca/pendientes',
             color: '#E3C9A8',
@@ -48,6 +51,7 @@ const Library = () => {
         },
         {
             label: 'Leídos',
+            alt: 'Botón de libros leídos',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1744206369/readtoowell/other/leyendo_yuueyf.jpg",
             path: '/biblioteca/leidos',
             color: '#A8BBA2',
@@ -56,6 +60,7 @@ const Library = () => {
         },
         {
             label: 'Pausados',
+            alt: 'Botón de libros pausados',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1744206368/readtoowell/other/pausados_j9dowa.jpg",
             path: '/biblioteca/pausados',
             color: '#FFF8F0',
@@ -64,6 +69,7 @@ const Library = () => {
         },
         {
             label: 'Abandonados',
+            alt: 'Botón de libros abandonados',
             icon: "https://res.cloudinary.com/dfrgrfw4c/image/upload/v1744206369/readtoowell/other/abandonados_yaixwe.jpg",
             path: '/biblioteca/abandonados',
             color: '#7E6651',
@@ -111,15 +117,15 @@ const Library = () => {
         const fetchInitialData = async () => {
             try {
                 const [readingRes, listsRes, genresRes] = await Promise.all([
-                    axios.get('http://localhost:8080/biblioteca', {
+                    axios.get(`${API_URL}/biblioteca`, {
                         params: {page: page - 1, size: itemsPerPage, status: 1},
                         headers: {Authorization: `Bearer ${token}`}
                     }),
-                    axios.get('http://localhost:8080/listas', {
+                    axios.get(`${API_URL}/listas`, {
                         params: {page: 0, size: 10},
                         headers: {Authorization: `Bearer ${token}`}
                     }),
-                    axios.get('http://localhost:8080/libros/generos', {
+                    axios.get(`${API_URL}/libros/generos`, {
                         headers: {Authorization: `Bearer ${token}`}
                     })
                 ]);
@@ -144,11 +150,14 @@ const Library = () => {
             {/* Título principal */}
             <Typography variant="h3" component="h1" sx={{
                 textAlign: 'center',
-                mb: 4,
+                mb: 1,
                 fontWeight: 'bold',
                 color: '#432818'
             }}>
                 Mi biblioteca
+            </Typography>
+            <Typography variant="body1" color="text.secondary" textAlign="center" sx={{mb: 4}}>
+                ¡Consulta nuestro catálogo o utiliza el buscador para encontrar libros y añadirlos a tu biblioteca!
             </Typography>
 
             {/* Panel de lecturas actuales */}
@@ -204,7 +213,7 @@ const Library = () => {
                                         <CardMedia
                                             component="img"
                                             image={item.book.cover}
-                                            alt={item.book.title}
+                                            alt={`Portada de ${item.book.title}`}
                                             onClick={() => navigate(`/detalles/${item.id.bookId}`)}
                                             sx={{
                                                 height: 100,
@@ -229,7 +238,7 @@ const Library = () => {
                                         }}>
                                             {/* Título y autor */}
                                             <Box>
-                                                <Typography variant="subtitle1" noWrap>
+                                                <Typography variant="subtitle1" component="h3" noWrap>
                                                     {item.book.title}
                                                 </Typography>
                                                 <Typography variant="body2" color="text.secondary">
@@ -245,6 +254,9 @@ const Library = () => {
                                                 </Typography>
                                                 <LinearProgress
                                                     variant="determinate"
+                                                    role="progressbar"
+                                                    id={`Progreso de ${item.book.title}`}
+                                                    aria-label={item.book.title}
                                                     value={
                                                         item.progressType === 'paginas'
                                                             ? (item.progress / item.book.pageNumber) * 100
@@ -342,6 +354,7 @@ const Library = () => {
                             <Box
                                 component="img"
                                 src={shelf.icon}
+                                alt={shelf.alt}
                                 sx={{
                                     width: '100px',
                                     height: '100%',

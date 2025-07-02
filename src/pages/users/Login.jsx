@@ -1,3 +1,4 @@
+import React from 'react';
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useAuth} from '../../context/AuthContext.jsx';
@@ -11,6 +12,7 @@ import {
     Typography
 } from '@mui/material';
 import {Link} from 'react-router-dom';
+import API_URL from '../../apiUrl';
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -24,7 +26,7 @@ const Login = () => {
         setError("");
 
         try {
-            const response = await axios.post("http://localhost:8080/auth/login", {
+            const response = await axios.post(`${API_URL}/auth/login`, {
                 email,
                 password,
             });
